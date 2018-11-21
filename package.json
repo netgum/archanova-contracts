@@ -1,0 +1,33 @@
+{
+  "name": "@archanova/solidity",
+  "version": "0.0.1",
+  "description": "Archanova solidity contracts",
+  "author": {
+    "name": "Stanislaw Glogowski",
+    "email": "hello@newobject.pl"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/archanova/archanova-solidity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/archanova/archanova-solidity/issues"
+  },
+  "scripts": {
+    "compile": "truffle compile --reset --network=development",
+    "migrate": "truffle migrate --reset --network=development",
+    "test": "truffle test --reset --network=development"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@netgum/utils": "0.0.2",
+    "@netgum/solidity": "0.0.7",
+    "bip39": "^2.5.0",
+    "bn.js": "^4.11.8",
+    "ethereumjs-wallet": "^0.6.2",
+    "expect": "^23.6.0",
+    "truffle": "^5.0.0-beta.1",
+    "truffle-hdwallet-provider": "^1.0.0-web3one.1"
+  }
+}

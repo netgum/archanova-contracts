@@ -1,7 +1,8 @@
 .*
-!.gitignore
-!.gitattributes
 !.npmignore
 build/
+test/
+migrations/
 node_modules/
+truffle.js
 *.log
