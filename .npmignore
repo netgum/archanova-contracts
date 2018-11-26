@@ -4,5 +4,6 @@ build/
 test/
 migrations/
 node_modules/
-truffle.js
+*.js
+*.ts
 *.log
