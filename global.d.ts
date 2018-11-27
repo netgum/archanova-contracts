@@ -35,3 +35,4 @@ declare const after: IAction
 declare const afterEach: IAction
 
 declare const web3: any
+declare const artifacts: any

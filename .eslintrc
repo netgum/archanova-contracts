@@ -1,0 +1,17 @@
+{
+  "extends": "airbnb-base",
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "artifacts": true,
+    "contract": true,
+    "web3": false
+  },
+  "rules": {
+    "arrow-body-style": "off",
+    "no-plusplus": "off",
+    "max-len": ["error", { "code": 160 }],
+    "import/no-extraneous-dependencies": "off"
+  }
+}

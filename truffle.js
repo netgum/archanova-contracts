@@ -1,19 +1,19 @@
-const HDWalletProvider = require('truffle-hdwallet-provider')
-const { accounts, endpoint } = require('./config')
+const HDWalletProvider = require('truffle-hdwallet-provider');
+const { accounts, endpoint } = require('./config');
 
 module.exports = {
   networks: {
     development: {
-      provider: function () {
+      provider: () => {
         return new HDWalletProvider(
           accounts.mnemonic,
           endpoint,
           0,
-          accounts.count
-        )
+          accounts.count,
+        );
       },
-      network_id: '*'
-    }
+      network_id: '*',
+    },
   },
   compilers: {
     solc: {
@@ -21,10 +21,10 @@ module.exports = {
       settings: {
         optimizer: {
           enabled: true,
-          runs: 200
+          runs: 200,
         },
-        evmVersion: 'constantinople'
-      }
-    }
-  }
-}
+        evmVersion: 'constantinople',
+      },
+    },
+  },
+};

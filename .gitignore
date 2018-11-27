@@ -1,4 +1,7 @@
 .*
+!.editorconfig
+!.eslintignore
+!.eslintrc
 !.gitignore
 !.gitattributes
 !.npmignore

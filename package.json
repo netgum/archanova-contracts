@@ -18,29 +18,23 @@
     "truffle:compile": "truffle compile --network=development",
     "truffle:migrate": "truffle migrate --network=development",
     "truffle:test": "truffle test --network=development",
-    "standard": "standard",
-    "standard:fix": "standard --fix",
-    "pretest": "npm run standard",
+    "eslint": "eslint .",
+    "pretest": "npm run eslint",
     "test": "npm run truffle:test"
   },
   "dependencies": {
-    "@netgum/solidity": "0.0.10"
+    "@netgum/solidity": "0.0.13"
   },
   "devDependencies": {
     "@netgum/utils": "0.0.2",
     "bip39": "^2.5.0",
     "bn.js": "^4.11.8",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "ethereumjs-wallet": "^0.6.2",
     "expect": "^23.6.0",
-    "standard": "^12.0.1",
     "truffle": "5.0.0-beta.2",
     "truffle-hdwallet-provider": "^1.0.0-web3one.2"
-  },
-  "standard": {
-    "globals": [
-      "artifacts",
-      "contract",
-      "web3"
-    ]
   }
 }
