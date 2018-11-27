@@ -11,7 +11,7 @@ const {
 const {
   signPersonalMessage,
   computeCreate2Address,
-  getBalance
+  getBalance,
 } = require('../utils');
 
 const Account = artifacts.require('Account');
@@ -76,7 +76,8 @@ contract('StateTokenBasicService', (devices) => {
       const founderSignature = signPersonalMessage(message, founderDevice);
       const guardianSignature = signPersonalMessage(founderSignature, guardianDevice);
 
-      expect((await getBalance(tokenAddress)).eq(new BN(tokenValue))).toBeTruthy();
+      expect((await getBalance(tokenAddress)).eq(new BN(tokenValue)))
+        .toBeTruthy();
 
       await service.burnToken(
         tokenId,
@@ -88,8 +89,10 @@ contract('StateTokenBasicService', (devices) => {
         },
       );
 
-      expect((await getBalance(service.address)).eq(new BN(0))).toBeTruthy();
-      expect((await getBalance(tokenAddress)).eq(new BN(0))).toBeTruthy();
+      expect((await getBalance(service.address)).eq(new BN(0)))
+        .toBeTruthy();
+      expect((await getBalance(tokenAddress)).eq(new BN(0)))
+        .toBeTruthy();
     });
   });
 });
