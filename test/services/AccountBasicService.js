@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-contract.skip('AccountCreatorBasicService', () => {
+contract.skip('AccountBasicService', () => {
   describe('views', () => {
     // TODO
   });

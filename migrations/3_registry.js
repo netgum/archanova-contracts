@@ -1,8 +1,6 @@
-const BytesSignatureLibrary = artifacts.require('BytesSignatureLibrary');
-const SharedAccountLibrary = artifacts.require('SharedAccountLibrary');
+const AccountLibrary = artifacts.require('AccountLibrary');
 const Registry = artifacts.require('Registry');
 
 module.exports = async (deployer) => {
-  deployer.link(BytesSignatureLibrary, Registry);
-  deployer.link(SharedAccountLibrary, Registry);
+  deployer.link(AccountLibrary, Registry);
 };

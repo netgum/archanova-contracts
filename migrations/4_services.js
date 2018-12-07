@@ -1,12 +1,8 @@
 const BytesSignatureLibrary = artifacts.require('BytesSignatureLibrary');
-const SharedAccountLibrary = artifacts.require('SharedAccountLibrary');
-const AccountCreatorBasicService = artifacts.require('AccountCreatorBasicService');
-const StateTokenBasicService = artifacts.require('StateTokenBasicService');
+const AccountLibrary = artifacts.require('AccountLibrary');
+const AccountBasicService = artifacts.require('AccountBasicService');
 
 module.exports = async (deployer) => {
-  deployer.link(BytesSignatureLibrary, AccountCreatorBasicService);
-  deployer.link(SharedAccountLibrary, AccountCreatorBasicService);
-
-  deployer.link(BytesSignatureLibrary, StateTokenBasicService);
-  deployer.link(SharedAccountLibrary, StateTokenBasicService);
+  deployer.link(BytesSignatureLibrary, AccountBasicService);
+  deployer.link(AccountLibrary, AccountBasicService);
 };
