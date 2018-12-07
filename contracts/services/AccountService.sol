@@ -6,9 +6,9 @@ import "../registry/AbstractRegistry.sol";
 
 
 /**
- * @title Account Basic Service
+ * @title Account Service
  */
-contract AccountBasicService {
+contract AccountService {
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
@@ -64,7 +64,9 @@ contract AccountBasicService {
 
     AbstractAccount(_account).initialize(_devices);
 
-    registry.registerAccount(_account);
+    if (address(registry) != address(0)) {
+      registry.registerAccount(_account);
+    }
 
     emit AccountCreated(_account, _devices);
   }
