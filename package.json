@@ -1,6 +1,6 @@
 {
   "name": "@archanova/solidity",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Archanova solidity contracts",
   "author": {
     "name": "Stanislaw Glogowski",
@@ -9,10 +9,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/archanova/archanova-solidity.git"
+    "url": "https://github.com/archanova/solidity.git"
   },
   "bugs": {
-    "url": "https://github.com/archanova/archanova-solidity/issues"
+    "url": "https://github.com/archanova/solidity/issues"
   },
   "scripts": {
     "truffle:compile": "truffle compile --network=development",
@@ -22,11 +22,9 @@
     "pretest": "npm run eslint",
     "test": "npm run truffle:test"
   },
-  "dependencies": {
-    "@netgum/solidity": "0.0.13"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@netgum/utils": "0.0.2",
+    "@netgum/utils": "0.0.3",
     "bip39": "^2.5.0",
     "bn.js": "^4.11.8",
     "eslint": "^5.9.0",
