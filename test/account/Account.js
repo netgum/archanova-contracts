@@ -5,6 +5,7 @@ require('../setup');
 const expect = require('expect');
 const BN = require('bn.js');
 const { ZERO_ADDRESS } = require('@netgum/utils');
+const { getBalance } = require('../utils');
 
 const Account = artifacts.require('Account');
 
@@ -234,6 +235,7 @@ contract('Account', (accounts) => {
 
       it('should send funds to address', async () => {
         const to = accounts[5];
+        const toBalance = await getBalance(to);
         const value = new BN(100);
         const data = '0x';
 
@@ -247,6 +249,9 @@ contract('Account', (accounts) => {
           .toBeNull();
         expect(log.args.succeeded)
           .toBeTruthy();
+
+        expect(await getBalance(to))
+          .toEqualBN(toBalance.add(value));
       });
 
       it('expect to reject when msg.sender is DELEGATE device', async () => {
