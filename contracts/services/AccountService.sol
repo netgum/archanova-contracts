@@ -1,5 +1,6 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
+import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
 import "../account/AbstractAccount.sol";
 import "../account/AccountLibrary.sol";
 import "../registry/AbstractRegistry.sol";

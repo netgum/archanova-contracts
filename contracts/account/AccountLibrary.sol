@@ -1,6 +1,6 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "../shared/BytesSignatureLibrary.sol";
+import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
 import "./AbstractAccount.sol";
 
 
