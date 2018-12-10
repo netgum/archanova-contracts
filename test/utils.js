@@ -1,13 +1,11 @@
+const BN = require('bn.js');
+const bip39 = require('bip39');
+const hdKey = require('ethereumjs-wallet/hdkey');
 const {
   anyToBuffer,
   anyToHex,
   signPersonalMessage,
-  abiEncodePacked,
-  sha3,
 } = require('@netgum/utils');
-const BN = require('bn.js');
-const bip39 = require('bip39');
-const hdKey = require('ethereumjs-wallet/hdkey');
 const { accounts } = require('../config');
 
 const privateKeys = new Map();
@@ -28,26 +26,6 @@ for (let i = 0; i < accounts.count; i += 1) {
 }
 
 module.exports = {
-
-  computeCreate2Address: (deployer, salt, byteCode) => {
-    const payload = abiEncodePacked(
-      'bytes',
-      'address',
-      'bytes32',
-      'bytes',
-    )(
-      '0xFF',
-      deployer,
-      salt,
-      sha3(byteCode),
-    );
-
-    return anyToHex(sha3(payload)
-      .slice(-20), {
-      add0x: true,
-    });
-  },
-
   getBalance: async (address) => {
     const value = await web3.eth.getBalance(address);
     return new BN(value, 10);

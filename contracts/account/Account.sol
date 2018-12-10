@@ -12,7 +12,7 @@ contract Account is AbstractAccount {
 
   modifier onlyOwner() {
     require(
-      devicesAccessType[msg.sender] == AccessType.OWNER,
+      getDeviceAccessType(msg.sender) == AccessType.OWNER,
       "msg.sender is not owner"
     );
 

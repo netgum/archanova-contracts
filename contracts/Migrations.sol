@@ -1,5 +1,9 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
+import "@netgum/solidity/contracts/ens/ENSMock.sol";
+import "@netgum/solidity/contracts/ens/ENSRegistrarMock.sol";
+import "@netgum/solidity/contracts/ens/ENSResolverMock.sol";
+
 
 /**
  * @title Migrations
