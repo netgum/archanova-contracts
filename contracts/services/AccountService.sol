@@ -55,6 +55,7 @@ contract AccountService {
     address _device = _deviceSignature.recoverAddress(
       abi.encodePacked(
         address(this),
+        msg.sig,
         _salt
       )
     );
@@ -85,6 +86,7 @@ contract AccountService {
     address _device = _deviceSignature.recoverAddress(
       abi.encodePacked(
         address(this),
+        msg.sig,
         _salt,
         _ensLabel
       )
@@ -101,7 +103,7 @@ contract AccountService {
     ens.setSubnodeOwner(ensRootNode, _ensLabel, address(this));
     ens.setResolver(_ensNode, address(ensResolver));
 
-    ensResolver.setAddr(_ensNode, _account);
+    ensResolver.setAddr(_ensNode, address(_account));
   }
 
   function _createAccount(bytes32 _salt, address _ownerDevice) internal returns (address payable _account) {

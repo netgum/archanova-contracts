@@ -3,7 +3,14 @@
 require('../setup');
 
 const expect = require('expect');
-const { sha3, abiEncodePacked, getEnsNameInfo } = require('@netgum/utils');
+const {
+  sha3,
+  abiEncodePacked,
+  getEnsNameInfo,
+  getEnsLabelHash,
+  computeCreate2Address,
+  getMethodSignature,
+} = require('@netgum/utils');
 const { AccountAccessTypes } = require('../constants');
 const { createAccount, createEnsContracts } = require('../helpers');
 const { signPersonalMessage } = require('../utils');
@@ -12,7 +19,7 @@ const Account = artifacts.require('Account');
 const AccountService = artifacts.require('AccountService');
 const Registry = artifacts.require('Registry');
 
-contract.skip('AccountService', (accounts) => {
+contract('AccountService', (accounts) => {
   let ens;
   let ensRegistrar;
   let ensResolver;
@@ -31,14 +38,14 @@ contract.skip('AccountService', (accounts) => {
       ens,
       ensResolver,
       ensRegistrar,
-    } = await createEnsContracts());
+    } = await createEnsContracts(accounts[0]));
 
     // registry
-    registryGuardian = await createAccount(registryGuardianDevice);
+    registryGuardian = await createAccount(registryGuardianDevice, accounts[0]);
     registry = await Registry.new(registryGuardian.address);
 
     // service
-    serviceGuardian = await createAccount(serviceGuardianDevice);
+    serviceGuardian = await createAccount(serviceGuardianDevice, accounts[0]);
 
     service = await AccountService.new(
       registry.address,
@@ -61,7 +68,7 @@ contract.skip('AccountService', (accounts) => {
       'bool',
     )(
       registry.address,
-      '0x5b95342c', // msg.sig
+      getMethodSignature('registerService', 'address', 'bool', 'bytes'),
       service.address,
       true,
     );
@@ -80,11 +87,19 @@ contract.skip('AccountService', (accounts) => {
       it('should create account', async () => {
         const ownerDevice = accounts[2];
         const salt = sha3(counter += 1);
+        const accountAddress = computeCreate2Address(
+          service.address,
+          salt,
+          Account.bytecode,
+        );
+
         const message = abiEncodePacked(
           'address',
+          'bytes',
           'bytes32',
         )(
           service.address,
+          getMethodSignature('createAccount', 'bytes32', 'bytes', 'bytes'),
           salt,
         );
 
@@ -101,10 +116,62 @@ contract.skip('AccountService', (accounts) => {
 
         expect(log.event)
           .toBe('AccountCreated');
-        expect(log.args.devices[0])
-          .toBe(ownerDevice);
+        expect(log.args.account.toLowerCase())
+          .toBe(accountAddress);
+
         expect(await account.getDeviceAccessType(ownerDevice))
           .toEqualBN(AccountAccessTypes.OWNER);
+
+        expect(await registry.accountExists(accountAddress))
+          .toBeTruthy();
+      });
+    });
+
+    describe('createAccountWithEnsLabel()', () => {
+      it('should create account with ens label', async () => {
+        const ownerDevice = accounts[2];
+        const salt = sha3(counter += 1);
+        const ensLabelHash = getEnsLabelHash('test1');
+        const accountAddress = computeCreate2Address(
+          service.address,
+          salt,
+          Account.bytecode,
+        );
+
+        const message = abiEncodePacked(
+          'address',
+          'bytes',
+          'bytes32',
+          'bytes32',
+        )(
+          service.address,
+          getMethodSignature('createAccountWithEnsLabel', 'bytes32', 'bytes32', 'bytes', 'bytes'),
+          salt,
+          ensLabelHash,
+        );
+
+        const deviceSignature = signPersonalMessage(message, ownerDevice);
+        const guardianSignature = signPersonalMessage(deviceSignature, serviceGuardianDevice);
+
+        const { logs: [log] } = await service.createAccountWithEnsLabel(
+          salt,
+          ensLabelHash,
+          deviceSignature,
+          guardianSignature,
+        );
+
+        const account = await Account.at(log.args.account);
+
+        expect(log.event)
+          .toBe('AccountCreated');
+        expect(log.args.account.toLowerCase())
+          .toBe(accountAddress);
+
+        expect(await account.getDeviceAccessType(ownerDevice))
+          .toEqualBN(AccountAccessTypes.OWNER);
+
+        expect(await registry.accountExists(accountAddress))
+          .toBeTruthy();
       });
     });
   });
