@@ -95,7 +95,7 @@ contract Account is AbstractAccount {
       "invalid recipient"
     );
 
-    (_succeeded, _response) = _to.call.gas(0).value(_value)(_data);
+    (_succeeded, _response) = _to.call.value(_value)(_data);
 
     emit TransactionExecuted(_to, _value, _data, _succeeded);
   }

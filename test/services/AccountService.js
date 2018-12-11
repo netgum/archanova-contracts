@@ -61,25 +61,9 @@ contract('AccountService', (accounts) => {
       service.address,
     );
 
-    const registryGuardianMessage = abiEncodePacked(
-      'address',
-      'bytes',
-      'address',
-      'bool',
-    )(
-      registry.address,
-      getMethodSignature('registerService', 'address', 'bool', 'bytes'),
-      service.address,
-      true,
-    );
-
-    const registryGuardianSignature = signPersonalMessage(registryGuardianMessage, registryGuardianDevice);
-
-    await registry.registerService(
-      service.address,
-      true,
-      registryGuardianSignature,
-    );
+    await registry.registerService(service.address, true, {
+      from: registryGuardianDevice,
+    });
   });
 
   describe('methods', () => {
