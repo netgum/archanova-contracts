@@ -26,7 +26,10 @@ contract Registry is AbstractRegistry {
 
   modifier onlyGuardian() {
     require(
-      guardian.deviceExists(msg.sender),
+      (
+      address(guardian) == msg.sender ||
+      guardian.deviceExists(msg.sender)
+      ),
       "msg.sender is not a guardian device"
     );
     _;
