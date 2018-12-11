@@ -1,7 +1,6 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "@netgum/solidity/contracts/common/BytesSignatureLibrary.sol";
-import "@netgum/solidity/contracts/sharedAccount/SharedAccountLibrary.sol";
+import "../account/AccountLibrary.sol";
 import "../account/AbstractAccount.sol";
 import "./AbstractRegistry.sol";
 
@@ -11,8 +10,7 @@ import "./AbstractRegistry.sol";
  */
 contract Registry is AbstractRegistry {
 
-  using BytesSignatureLibrary for bytes;
-  using SharedAccountLibrary for AbstractAccount;
+  using AccountLibrary for AbstractAccount;
 
   struct Service {
     bool exists;

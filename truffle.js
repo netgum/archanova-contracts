@@ -4,14 +4,12 @@ const { accounts, endpoint } = require('./config');
 module.exports = {
   networks: {
     development: {
-      provider: () => {
-        return new HDWalletProvider(
-          accounts.mnemonic,
-          endpoint,
-          0,
-          accounts.count,
-        );
-      },
+      provider: () => new HDWalletProvider(
+        accounts.mnemonic,
+        endpoint,
+        0,
+        accounts.count,
+      ),
       network_id: '*',
     },
   },
