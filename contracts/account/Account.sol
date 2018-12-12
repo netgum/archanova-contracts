@@ -88,15 +88,21 @@ contract Account is AbstractAccount {
     address payable _to,
     uint256 _value,
     bytes memory _data
-  ) onlyOwner public returns (bool _succeeded, bytes memory _response) {
+  ) onlyOwner public returns (bytes memory _response) {
     require(
       _to != address(0) &&
       _to != address(this),
       "invalid recipient"
     );
 
+    bool _succeeded;
     (_succeeded, _response) = _to.call.value(_value)(_data);
 
-    emit TransactionExecuted(_to, _value, _data, _succeeded);
+    require(
+      _succeeded,
+      "transaction failed"
+    );
+
+    emit TransactionExecuted(_to, _value, _data);
   }
 }

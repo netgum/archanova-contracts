@@ -15,7 +15,7 @@ contract AbstractAccount {
 
   event DeviceRemoved(address device);
 
-  event TransactionExecuted(address payable to, uint256 value, bytes data, bool succeeded);
+  event TransactionExecuted(address payable to, uint256 value, bytes response);
 
   bool public initialized;
 
@@ -31,5 +31,5 @@ contract AbstractAccount {
 
   function removeDevice(address _device) public;
 
-  function executeTransaction(address payable _to, uint256 _value, bytes memory _data) public returns (bool, bytes memory);
+  function executeTransaction(address payable _to, uint256 _value, bytes memory _data) public returns (bytes memory);
 }
