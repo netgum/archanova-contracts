@@ -1,7 +1,5 @@
 /* eslint-env mocha */
 
-require('../setup');
-
 const expect = require('expect');
 const BN = require('bn.js');
 const { ZERO_ADDRESS } = require('@netgum/utils');

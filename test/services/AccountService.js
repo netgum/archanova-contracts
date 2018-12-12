@@ -1,7 +1,5 @@
 /* eslint-env mocha */
 
-require('../setup');
-
 const expect = require('expect');
 const {
   sha3,
