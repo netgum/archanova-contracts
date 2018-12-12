@@ -239,8 +239,6 @@ contract('Account', (addresses) => {
           .toEqualBN(value);
         expect(log.args.data)
           .toBeNull();
-        expect(log.args.succeeded)
-          .toBeTruthy();
 
         expect(await getBalance(to))
           .toEqualBN(toBalance.add(value));

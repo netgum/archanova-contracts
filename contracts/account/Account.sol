@@ -103,6 +103,6 @@ contract Account is AbstractAccount {
       "transaction failed"
     );
 
-    emit TransactionExecuted(_to, _value, _data);
+    emit TransactionExecuted(_to, _value, _data, _response);
   }
 }

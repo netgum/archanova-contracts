@@ -15,7 +15,7 @@ contract AbstractAccount {
 
   event DeviceRemoved(address device);
 
-  event TransactionExecuted(address payable to, uint256 value, bytes response);
+  event TransactionExecuted(address payable to, uint256 value, bytes data, bytes response);
 
   bool public initialized;
 
