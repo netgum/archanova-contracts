@@ -15,6 +15,7 @@ const { signMessage } = require('../../shared/utils');
 
 const Account = artifacts.require('Account');
 const AccountService = artifacts.require('AccountService');
+const AccountProxyService = artifacts.require('AccountProxyService');
 const Registry = artifacts.require('Registry');
 
 contract('AccountService', (addresses) => {
@@ -24,6 +25,7 @@ contract('AccountService', (addresses) => {
   let registry;
   let registryGuardian;
   let service;
+  let proxyService;
   let serviceGuardian;
   let counter = 1;
 
@@ -38,6 +40,8 @@ contract('AccountService', (addresses) => {
       ensRegistrar,
     } = await createEnsContracts(addresses[0]));
 
+    proxyService = await AccountProxyService.new();
+
     // registry
     registryGuardian = await createAccount(addresses[0], registryGuardianDevice);
     registry = await Registry.new(registryGuardian.address);
@@ -51,6 +55,7 @@ contract('AccountService', (addresses) => {
       ens.address,
       ensResolver.address,
       serviceEnsRootNameInfo.nameHash,
+      proxyService.address,
       Account.bytecode,
     );
 

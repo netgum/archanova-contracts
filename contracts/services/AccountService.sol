@@ -6,6 +6,7 @@ import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
 import "../account/AbstractAccount.sol";
 import "../account/AccountLibrary.sol";
 import "../registry/AbstractRegistry.sol";
+import "./AccountProxyService.sol";
 
 
 /**
@@ -28,6 +29,8 @@ contract AccountService {
 
   bytes32 private ensRootNode;
 
+  AccountProxyService private proxyService;
+
   bytes private contractCode;
 
   constructor(
@@ -36,6 +39,7 @@ contract AccountService {
     AbstractENS _ens,
     AbstractENSResolver _ensResolver,
     bytes32 _ensRootNode,
+    AccountProxyService _proxyService,
     bytes memory _contractCode
   ) public {
     registry = _registry;
@@ -43,6 +47,7 @@ contract AccountService {
     ens = _ens;
     ensResolver = _ensResolver;
     ensRootNode = _ensRootNode;
+    proxyService = _proxyService;
     contractCode = _contractCode;
   }
 
@@ -114,12 +119,14 @@ contract AccountService {
       if iszero(extcodesize(_account)) {revert(0, 0)}
     }
 
-    address[] memory _devices = new address[](1);
+    address[] memory _devices = new address[](2);
     _devices[0] = _ownerDevice;
+    _devices[1] = address(proxyService);
 
     AbstractAccount(_account).initialize(_devices);
 
     registry.registerAccount(_account);
+    proxyService.connectAccount(_account);
 
     emit AccountCreated(_account);
   }

@@ -139,7 +139,9 @@ contract AccountProxyService {
   ) public {
     uint _refundStartGas = gasleft();
 
-    address _sender = _signature.recoverAddress(
+    address _sender = _refundGasBase == 0 && _signature.length == 0
+    ? msg.sender
+    : _signature.recoverAddress(
       abi.encodePacked(
         address(this),
         msg.sig,

@@ -34,8 +34,10 @@ contract Account is AbstractAccount {
     );
 
     for (uint i = 0; i < _devices.length; i++) {
-      devicesAccessType[_devices[i]] = AccessType.OWNER;
-      devicesLog[_devices[i]] = true;
+      if (_devices[i] != address(0)) {
+        devicesAccessType[_devices[i]] = AccessType.OWNER;
+        devicesLog[_devices[i]] = true;
+      }
     }
 
     initialized = true;
