@@ -13,112 +13,137 @@ import "../registry/AbstractRegistry.sol";
  */
 contract AccountProxyService {
 
-  event AccountDevicePurposeUpdated(address account, address device, address purpose, uint256 limit, bool unlimited);
+  event AccountVirtualDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
 
-  struct Account {
-    bool connected;
-    mapping(address => AccountDevice) devices;
-  }
-
-  struct AccountDevice {
-    bool exists;
-    uint256 nonce;
-    mapping(address => AccountDevicePurpose) purposes;
-  }
-
-  struct AccountDevicePurpose {
-    bool exists;
+  struct AccountVirtualDevice {
+    address purpose;
     uint256 limit;
     bool unlimited;
   }
 
+  struct Account {
+    bool connected;
+    uint256 nonce;
+    mapping(address => AccountVirtualDevice) virtualDevices;
+  }
+
   mapping(address => Account) accounts;
+
+  modifier verifyAccount(address _account, uint256 _nonce) {
+    require(
+      accounts[_account].connected,
+      "account is not connected"
+    );
+    require(
+      accounts[_account].nonce == _nonce,
+      "invalid account nonce"
+    );
+
+    _;
+
+    ++accounts[_account].nonce;
+  }
+
+  modifier onlyAccountOwner(address _account, address _device) {
+    require(
+      AbstractAccount(_account).getDeviceAccessType(_device) == AbstractAccount.AccessType.OWNER,
+      "device is not an account owner"
+    );
+    _;
+  }
 
   constructor() public {
     //
   }
 
-  function accountConnected(address _account) public view returns (bool) {
-    return accounts[_account].connected;
+  function getAccount(
+    address _account
+  ) public view returns (bool _connected, uint256 _nonce) {
+    _connected = accounts[_account].connected;
+    _nonce = accounts[_account].nonce;
   }
 
-  function accountDeviceExists(
+  function getAccountVirtualDevice(
     address _account,
     address _device
-  ) public view returns (bool) {
-    return (
-    accountConnected(_account) &&
-    accounts[_account].devices[_device].exists
-    );
+  ) public view returns (address _purpose, uint256 _limit, bool _unlimited) {
+    _purpose = accounts[_account].virtualDevices[_device].purpose;
+    _limit = accounts[_account].virtualDevices[_device].limit;
+    _unlimited = accounts[_account].virtualDevices[_device].unlimited;
   }
 
-  function accountDevicePurposeExists(
-    address _account,
-    address _device,
-    address _purpose
-  ) public view returns (bool) {
-    return (
-    accountDeviceExists(_account, _device) &&
-    accounts[_account].devices[_device].purposes[_purpose].exists
-    );
-  }
-
-  function getAccountDeviceNonce(
-    address _account,
-    address _device
-  ) public view returns (uint256) {
-    return accounts[_account].devices[_device].nonce;
-  }
-
-  function verifyAccountDevicePurposeLimit(
-    address _account,
-    address _device,
-    address _purpose,
-    uint256 _limit
-  ) public view returns (bool) {
-    return (
-    accountDevicePurposeExists(_account, _device, _purpose) &&
-    (
-    accounts[_account].devices[_device].purposes[_purpose].unlimited ||
-    accounts[_account].devices[_device].purposes[_purpose].limit >= _limit
-    )
-    );
-  }
-
-  function connectAccount(AbstractAccount _account) public {
+  function connectAccount(address _account) public onlyAccountOwner(_account, address(this)) {
     require(
-      !accountConnected(address(_account)),
+      !accounts[_account].connected,
       "account already connected"
     );
 
-    _verifyAccountOwnerDevice(
-      _account,
-      address(this)
+    accounts[_account].connected = true;
+  }
+
+  function disconnectAccount(address _account) public onlyAccountOwner(_account, msg.sender) {
+    require(
+      accounts[_account].connected,
+      "account already disconnected"
     );
 
-    accounts[address(_account)].connected = true;
+    delete accounts[_account];
   }
 
   function addAccountDevice(
-    AbstractAccount _account,
+    address _account,
+    uint256 _nonce,
+    address _device,
+    AbstractAccount.AccessType _accessType,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public {
+    uint _refundStartGas = gasleft();
+
+    address _sender = _signature.recoverAddress(
+      abi.encodePacked(
+        address(this),
+        msg.sig,
+        _account,
+        _nonce,
+        _device,
+        _accessType,
+        _refundGasBase,
+        tx.gasprice
+      )
+    );
+
+    _addAccountDevice(
+      _sender,
+      _account,
+      _nonce,
+      _device,
+      _accessType
+    );
+
+    _refundGas(_account, _refundStartGas, _refundGasBase);
+  }
+
+  function addAccountVirtualDevice(
+    address _account,
     uint256 _nonce,
     address _device,
     address _purpose,
     uint256 _limit,
     bool _unlimited,
     uint256 _refundGasBase,
-    bytes memory _messageSignature
+    bytes memory _signature
   ) public {
-    uint _startGas = gasleft();
+    uint _refundStartGas = gasleft();
 
-    address _signingDevice = _messageSignature.recoverAddress(
+    address _sender = _signature.recoverAddress(
       abi.encodePacked(
         address(this),
         msg.sig,
-        address(_account),
+        _account,
         _nonce,
         _device,
         _purpose,
@@ -129,129 +154,102 @@ contract AccountProxyService {
       )
     );
 
-    _commonVerification(
+    _addAccountVirtualDevice(
+      _sender,
       _account,
-      _signingDevice,
-      _nonce
+      _nonce,
+      _device,
+      _purpose,
+      _limit,
+      _unlimited
     );
 
-    _verifyAccountOwnerDevice(
-      _account,
-      _signingDevice
-    );
+    _refundGas(_account, _refundStartGas, _refundGasBase);
+  }
 
-
+  function _addAccountDevice(
+    address _sender,
+    address _account,
+    uint256 _nonce,
+    address _device,
+    AbstractAccount.AccessType _accessType
+  ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
     require(
       _device != address(0),
       "invalid device"
     );
-
     require(
-      !_account.deviceExists(_device),
-      "account device already exists"
+      !AbstractAccount(_account).deviceExists(_device),
+      "device already exists"
     );
 
-
-    if (_purpose == address(_account) && _unlimited) {
-      _account.addDevice(
-        _device,
-        AbstractAccount.AccessType.OWNER
-      );
-    } else {
-      _account.addDevice(
-        _device,
-        AbstractAccount.AccessType.DELEGATE
-      );
-
-      if (_purpose != address(_purpose)) {
-        _verifyLimit(
-          _limit,
-          _unlimited
-        );
-
-        accounts[address(_account)].devices[_device].exists = true;
-        accounts[address(_account)].devices[_device].purposes[_purpose].exists = true;
-        accounts[address(_account)].devices[_device].purposes[_purpose].limit = _limit;
-        accounts[address(_account)].devices[_device].purposes[_purpose].unlimited = _unlimited;
-
-        emit AccountDevicePurposeUpdated(
-          address(_account),
-          _device,
-          _purpose,
-          _limit,
-          _unlimited
-        );
-      }
-    }
-
-    _refundGas(_account, _refundGasBase, _startGas);
+    AbstractAccount(_account).addDevice(_device, _accessType);
   }
 
-  function _commonVerification(
-    AbstractAccount _account,
+  function _addAccountVirtualDevice(
+    address _sender,
+    address _account,
+    uint256 _nonce,
     address _device,
-    uint256 _nonce
-  ) internal {
+    address _purpose,
+    uint256 _limit,
+    bool _unlimited
+  ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
     require(
-      address(_account) != address(0),
-      "invalid account"
+      _device != address(0),
+      "invalid device"
+    );
+    require(
+      _verifyPurpose(_account, _purpose),
+      "invalid purpose"
+    );
+    require(
+      _verifyLimit(_limit, _unlimited),
+      "invalid limit"
+    );
+    require(
+      !AbstractAccount(_account).deviceExists(_device),
+      "device already exists"
     );
 
-    require(
-      accountConnected(address(_account)),
-      "account not connected"
-    );
+    AbstractAccount(_account).addDevice(_device, AbstractAccount.AccessType.DELEGATE);
 
-    require(
-      (
-      _device != address(0) &&
-      _account.deviceExists(_device)
-      ),
-      "invalid account device"
-    );
+    accounts[_account].virtualDevices[_device].purpose = _purpose;
+    accounts[_account].virtualDevices[_device].limit = _limit;
+    accounts[_account].virtualDevices[_device].unlimited = _unlimited;
 
-    require(
-      accounts[address(_account)].devices[_device].nonce == _nonce,
-      "invalid nonce"
-    );
-
-    ++accounts[address(_account)].devices[_device].nonce;
+    emit AccountVirtualDeviceAdded(_account, _device, _purpose, _limit, _unlimited);
   }
 
-  function _verifyAccountOwnerDevice(
-    AbstractAccount _account,
-    address _device
-  ) internal view {
-    require(
-      _account.getDeviceAccessType(_device) == AbstractAccount.AccessType.OWNER,
-      "account device is not an owner"
+  function _verifyPurpose(
+    address _account,
+    address _purpose
+  ) internal view returns (bool) {
+    return (
+    _purpose != address(0) &&
+    _purpose != _account &&
+    _purpose != address(this)
     );
   }
 
   function _verifyLimit(
     uint256 _limit,
     bool _unlimited
-  ) internal pure {
-    require(
-      (_unlimited && _limit == 0) ||
-      (!_unlimited && _limit > 0),
-      "invalid limit"
+  ) internal pure returns (bool) {
+    return (
+    (_unlimited && _limit == 0) ||
+    (!_unlimited && _limit > 0)
     );
   }
 
-  function _refundGas(AbstractAccount _account, uint256 _gasBase, uint _startGas) internal {
+  function _refundGas(address _account, uint _startGas, uint256 _gasBase) internal {
     if (_gasBase > 0) {
       uint256 _gasTotal = _gasBase + _startGas - gasleft();
 
-      (bool _succeeded,) = _account.executeTransaction(
+      AbstractAccount(_account).executeTransaction(
         msg.sender,
         _gasTotal * tx.gasprice,
         new bytes(0)
-      );
-
-      require(
-        _succeeded,
-        "can't refund gas"
       );
     }
   }
