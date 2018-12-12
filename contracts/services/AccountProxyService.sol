@@ -13,8 +13,7 @@ import "../registry/AbstractRegistry.sol";
  */
 contract AccountProxyService {
 
-  event AccountDeviceAdded(address account, address device);
-  event AccountDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
+  event AccountDevicePurposeUpdated(address account, address device, address purpose, uint256 limit, bool unlimited);
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
@@ -141,10 +140,6 @@ contract AccountProxyService {
       _signingDevice
     );
 
-    _verifyLimit(
-      _limit,
-      _unlimited
-    );
 
     require(
       _device != address(0),
@@ -155,6 +150,7 @@ contract AccountProxyService {
       !_account.deviceExists(_device),
       "account device already exists"
     );
+
 
     if (_purpose == address(_account) && _unlimited) {
       _account.addDevice(
@@ -168,22 +164,22 @@ contract AccountProxyService {
       );
 
       if (_purpose != address(_purpose)) {
+        _verifyLimit(
+          _limit,
+          _unlimited
+        );
+
         accounts[address(_account)].devices[_device].exists = true;
         accounts[address(_account)].devices[_device].purposes[_purpose].exists = true;
         accounts[address(_account)].devices[_device].purposes[_purpose].limit = _limit;
         accounts[address(_account)].devices[_device].purposes[_purpose].unlimited = _unlimited;
 
-        emit AccountDeviceAdded(
+        emit AccountDevicePurposeUpdated(
           address(_account),
           _device,
           _purpose,
           _limit,
           _unlimited
-        );
-      } else {
-        emit AccountDeviceAdded(
-          address(_account),
-          _device
         );
       }
     }
