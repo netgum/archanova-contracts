@@ -1,8 +1,6 @@
 const expect = require('expect');
 const BN = require('bn.js');
 
-console.log('ready!');
-
 expect.extend({
   toEqualBN(received, expected) {
     let result;
