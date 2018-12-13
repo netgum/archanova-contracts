@@ -22,7 +22,7 @@ contract StateToken is AbstractStateToken {
     _;
   }
 
-  function selfDestruct(address payable _recipient) public onlyCreator {
-    selfdestruct(_recipient);
+  function burn(address payable _beneficiary) public onlyCreator {
+    selfdestruct(_beneficiary);
   }
 }

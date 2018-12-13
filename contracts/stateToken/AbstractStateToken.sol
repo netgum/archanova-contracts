@@ -6,5 +6,5 @@ pragma solidity >= 0.5.0 < 0.6.0;
  */
 contract AbstractStateToken {
 
-  function selfDestruct(address payable _recipient) public;
+  function burn(address payable _beneficiary) public;
 }
