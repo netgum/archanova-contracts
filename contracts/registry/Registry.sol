@@ -1,6 +1,5 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "../account/AccountLibrary.sol";
 import "../account/AbstractAccount.sol";
 import "./AbstractRegistry.sol";
 
@@ -9,9 +8,6 @@ import "./AbstractRegistry.sol";
  * @title Registry
  */
 contract Registry is AbstractRegistry {
-
-  using AccountLibrary for AbstractAccount;
-
   struct Service {
     bool exists;
     bool disabled;
@@ -29,6 +25,21 @@ contract Registry is AbstractRegistry {
       (
       address(guardian) == msg.sender ||
       guardian.deviceExists(msg.sender)
+      ),
+      "msg.sender is not a guardian device"
+    );
+    _;
+  }
+
+  modifier onlyGuardianOrAccountService() {
+    require(
+      (
+      address(guardian) == msg.sender ||
+      guardian.deviceExists(msg.sender) ||
+      (
+      serviceEnabled(msg.sender) &&
+      services[msg.sender].canRegisterAccounts
+      )
       ),
       "msg.sender is not a guardian device"
     );
@@ -55,32 +66,29 @@ contract Registry is AbstractRegistry {
     return accounts[_account];
   }
 
-  function registerService(
-    address _service,
-    bool _canRegisterAccounts
-  ) public onlyGuardian {
-    _registerService(msg.sender, _service, _canRegisterAccounts);
+  function deployService(bytes32 _salt, bytes memory _contractCode) public onlyGuardian {
+    address payable _service;
+    assembly {
+      _service := create2(0, add(_contractCode, 0x20), mload(_contractCode), _salt)
+      if iszero(extcodesize(_service)) {revert(0, 0)}
+    }
+
+    emit ServiceDeployed(msg.sender, _service);
   }
 
-  function registerService(
-    address _service,
-    bool _canRegisterAccounts,
-    bytes memory _guardianSignature
-  ) public {
-
-    address _guardianDevice = guardian.verifyDeviceSignature(
-      _guardianSignature,
-      abi.encodePacked(
-        address(this),
-        msg.sig,
-        _service,
-        _canRegisterAccounts
-      ),
-      true
+  function registerService(address _service, bool _canRegisterAccounts) public onlyGuardian {
+    require(
+      !services[_service].exists,
+      "service already registered"
     );
 
-    _registerService(_guardianDevice, _service, _canRegisterAccounts);
+    services[_service].exists = true;
+    services[_service].disabled = false;
+    services[_service].canRegisterAccounts = _canRegisterAccounts;
+
+    emit ServiceRegistered(msg.sender, _service);
   }
+
 
   function enableService(address _service) public onlyGuardian {
     require(
@@ -104,16 +112,7 @@ contract Registry is AbstractRegistry {
     emit ServiceDisabled(msg.sender, _service);
   }
 
-  function registerAccount(address _account) public {
-    require(
-      guardian.deviceExists(msg.sender) ||
-      (
-      serviceEnabled(msg.sender) &&
-      services[msg.sender].canRegisterAccounts
-      ),
-      "msg.sender is not guardian device or valid service"
-    );
-
+  function registerAccount(address _account) public onlyGuardianOrAccountService {
     require(
       !accounts[_account],
       "account already registered"
@@ -122,18 +121,5 @@ contract Registry is AbstractRegistry {
     accounts[_account] = true;
 
     emit AccountRegistered(msg.sender, _account);
-  }
-
-  function _registerService(address _sender, address _service, bool _canRegisterAccounts) internal {
-    require(
-      !services[_service].exists,
-      "service already registered"
-    );
-
-    services[_service].exists = true;
-    services[_service].disabled = false;
-    services[_service].canRegisterAccounts = _canRegisterAccounts;
-
-    emit ServiceRegistered(_sender, _service);
   }
 }

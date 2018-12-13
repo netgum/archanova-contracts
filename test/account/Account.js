@@ -1,24 +1,22 @@
 /* eslint-env mocha */
 
-require('../setup');
-
 const expect = require('expect');
 const BN = require('bn.js');
 const { ZERO_ADDRESS } = require('@netgum/utils');
-const { AccountAccessTypes } = require('../constants');
-const { getBalance } = require('../utils');
+const { AccountAccessTypes } = require('../../shared/constants');
+const { getBalance } = require('../../shared/utils');
 
 const Account = artifacts.require('Account');
 
-contract('Account', (accounts) => {
+contract('Account', (addresses) => {
   describe('views', () => {
     let account;
 
     const devices = {
-      owner: accounts[0],
-      delegate: accounts[2],
-      removed: accounts[3],
-      invalid: accounts[4],
+      owner: addresses[0],
+      delegate: addresses[2],
+      removed: addresses[3],
+      invalid: addresses[4],
     };
 
     before(async () => {
@@ -89,9 +87,9 @@ contract('Account', (accounts) => {
     let account;
 
     const devices = {
-      owners: [accounts[0], accounts[1]],
-      delegate: accounts[3],
-      invalid: accounts[4],
+      owners: [addresses[0], addresses[1]],
+      delegate: addresses[3],
+      invalid: addresses[4],
     };
 
     before(async () => {
@@ -119,7 +117,7 @@ contract('Account', (accounts) => {
 
     describe('addDevice()', () => {
       it('should add OWNER device by OWNER device', async () => {
-        const newOwnerDevice = accounts[2];
+        const newOwnerDevice = addresses[2];
         const { logs: [log] } = await account.addDevice(newOwnerDevice, AccountAccessTypes.OWNER, {
           from: devices.owners[1],
         });
@@ -152,7 +150,7 @@ contract('Account', (accounts) => {
       });
 
       it('expect to reject when msg.sender is DELEGATE device', async () => {
-        const newDevice = accounts[4];
+        const newDevice = addresses[4];
         await expect(account.addDevice(newDevice, AccountAccessTypes.DELEGATE, {
           from: devices.delegate,
         }))
@@ -161,7 +159,7 @@ contract('Account', (accounts) => {
       });
 
       it('expect to reject when msg.sender is not account device', async () => {
-        const newDevice = accounts[4];
+        const newDevice = addresses[4];
         await expect(account.addDevice(newDevice, AccountAccessTypes.DELEGATE, {
           from: devices.invalid,
         }))
@@ -182,7 +180,7 @@ contract('Account', (accounts) => {
       });
 
       it('expect to reject on INVALID access type', async () => {
-        const newDevice = accounts[4];
+        const newDevice = addresses[4];
         await expect(account.addDevice(newDevice, AccountAccessTypes.INVALID))
           .rejects
           .toThrow();
@@ -228,7 +226,7 @@ contract('Account', (accounts) => {
       });
 
       it('should send funds to address', async () => {
-        const to = accounts[5];
+        const to = addresses[5];
         const toBalance = await getBalance(to);
         const value = new BN(100);
         const data = '0x';
@@ -241,15 +239,13 @@ contract('Account', (accounts) => {
           .toEqualBN(value);
         expect(log.args.data)
           .toBeNull();
-        expect(log.args.succeeded)
-          .toBeTruthy();
 
         expect(await getBalance(to))
           .toEqualBN(toBalance.add(value));
       });
 
       it('expect to reject when msg.sender is DELEGATE device', async () => {
-        const to = accounts[5];
+        const to = addresses[5];
         const value = new BN(100);
         const data = '0x';
 
@@ -261,7 +257,7 @@ contract('Account', (accounts) => {
       });
 
       it('expect to reject when msg.sender is not account device', async () => {
-        const to = accounts[5];
+        const to = addresses[5];
         const value = new BN(100);
         const data = '0x';
 

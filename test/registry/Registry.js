@@ -1,22 +1,19 @@
 /* eslint-env mocha */
 
-require('../setup');
-
 const expect = require('expect');
-const { createAccount } = require('../helpers');
+const { createAccount } = require('../../shared/helpers');
 
 const Registry = artifacts.require('Registry');
-const ExampleService = artifacts.require('ExampleService');
+const RegistryServiceMock = artifacts.require('RegistryServiceMock');
 
-contract('Registry', (accounts) => {
+contract('Registry', (addresses) => {
   let registry;
   let registryGuardian;
 
-  const registryGuardianDevice = accounts[2];
+  const registryGuardianDevice = addresses[2];
 
   before(async () => {
-    // registry
-    registryGuardian = await createAccount(registryGuardianDevice, accounts[0]);
+    registryGuardian = await createAccount(addresses[0], registryGuardianDevice);
     registry = await Registry.new(registryGuardian.address);
   });
 
@@ -25,15 +22,15 @@ contract('Registry', (accounts) => {
       account: null,
       other: null,
       disabled: null,
-      invalid: accounts[3],
+      invalid: addresses[3],
     };
 
-    const account = accounts[4];
+    const account = addresses[4];
 
     before(async () => {
       // account service
       {
-        const service = await ExampleService.new(registry.address);
+        const service = await RegistryServiceMock.new(registry.address);
 
         await registry.registerService(service.address, true, {
           from: registryGuardianDevice,
@@ -46,7 +43,7 @@ contract('Registry', (accounts) => {
 
       // other service
       {
-        const service = await ExampleService.new(registry.address);
+        const service = await RegistryServiceMock.new(registry.address);
 
         await registry.registerService(service.address, false, {
           from: registryGuardianDevice,
@@ -57,7 +54,7 @@ contract('Registry', (accounts) => {
 
       // other service
       {
-        const service = await ExampleService.new(registry.address);
+        const service = await RegistryServiceMock.new(registry.address);
 
         await registry.registerService(service.address, false, {
           from: registryGuardianDevice,
@@ -133,5 +130,9 @@ contract('Registry', (accounts) => {
           .toBeFalsy();
       });
     });
+  });
+
+  describe('methods', () => {
+    // TODO
   });
 });

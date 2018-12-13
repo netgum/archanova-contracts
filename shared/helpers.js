@@ -5,14 +5,15 @@ const ENSRegistrarMock = artifacts.require('ENSRegistrarMock');
 const ENSResolverMock = artifacts.require('ENSResolverMock');
 const Account = artifacts.require('Account');
 
-
-async function createAccount(device, from) {
+async function createAccount(from, ...devices) {
   const account = await Account.new({
     from,
   });
-  await account.initialize([device], {
+
+  await account.initialize(devices, {
     from,
   });
+
   return account;
 }
 
@@ -20,9 +21,11 @@ async function createEnsContracts(from) {
   const ens = await ENSMock.new({
     from,
   });
+
   const ensRegistrar = await ENSRegistrarMock.new(ens.address, getEnsNameHash('test'), {
     from,
   });
+
   const ensResolver = await ENSResolverMock.new(ens.address, {
     from,
   });
