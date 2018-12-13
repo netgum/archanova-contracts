@@ -33,7 +33,7 @@ contract AccountProxyService is AbstractAccountProxyService {
 
   modifier verifyAccount(address _account, uint256 _nonce) {
     require(
-      accounts[_account].connected,
+      accountConnected(_account),
       "account is not connected"
     );
     require(
@@ -74,9 +74,17 @@ contract AccountProxyService is AbstractAccountProxyService {
     _unlimited = accounts[_account].virtualDevices[_device].unlimited;
   }
 
+  function accountConnected(address _account) public view returns(bool) {
+    return accounts[_account].connected;
+  }
+
+  function accountVirtualDeviceExists(address _account, address _device) public view returns(bool) {
+    return accounts[_account].virtualDevices[_device].purpose != address(0);
+  }
+
   function connectAccount(address _account) public onlyAccountOwner(_account, address(this)) {
     require(
-      !accounts[_account].connected,
+      !accountConnected(_account),
       "account already connected"
     );
 
@@ -85,7 +93,7 @@ contract AccountProxyService is AbstractAccountProxyService {
 
   function disconnectAccount(address _account) public onlyAccountOwner(_account, msg.sender) {
     require(
-      accounts[_account].connected,
+      accountConnected(_account),
       "account already disconnected"
     );
 
@@ -121,6 +129,37 @@ contract AccountProxyService is AbstractAccountProxyService {
       _nonce,
       _device,
       _accessType
+    );
+
+    _refundGas(_account, _refundStartGas, _refundGasBase);
+  }
+
+  function removeAccountDevice(
+    address _account,
+    uint256 _nonce,
+    address _device,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public {
+    uint _refundStartGas = gasleft();
+
+    address _sender = _signature.recoverAddress(
+      abi.encodePacked(
+        address(this),
+        msg.sig,
+        _account,
+        _nonce,
+        _device,
+        _refundGasBase,
+        tx.gasprice
+      )
+    );
+
+    _removeAccountDevice(
+      _sender,
+      _account,
+      _nonce,
+      _device
     );
 
     _refundGas(_account, _refundStartGas, _refundGasBase);
@@ -168,6 +207,39 @@ contract AccountProxyService is AbstractAccountProxyService {
     _refundGas(_account, _refundStartGas, _refundGasBase);
   }
 
+  function removeAccountVirtualDevice(
+    address _account,
+    uint256 _nonce,
+    address _device,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public {
+    uint _refundStartGas = gasleft();
+
+    address _sender = _refundGasBase == 0 && _signature.length == 0
+    ? msg.sender
+    : _signature.recoverAddress(
+      abi.encodePacked(
+        address(this),
+        msg.sig,
+        _account,
+        _nonce,
+        _device,
+        _refundGasBase,
+        tx.gasprice
+      )
+    );
+
+    _removeAccountVirtualDevice(
+      _sender,
+      _account,
+      _nonce,
+      _device
+    );
+
+    _refundGas(_account, _refundStartGas, _refundGasBase);
+  }
+
   function _addAccountDevice(
     address _sender,
     address _account,
@@ -175,16 +247,16 @@ contract AccountProxyService is AbstractAccountProxyService {
     address _device,
     AbstractAccount.AccessType _accessType
   ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
-    require(
-      _device != address(0),
-      "invalid device"
-    );
-    require(
-      !AbstractAccount(_account).deviceExists(_device),
-      "device already exists"
-    );
-
     AbstractAccount(_account).addDevice(_device, _accessType);
+  }
+
+  function _removeAccountDevice(
+    address _sender,
+    address _account,
+    uint256 _nonce,
+    address _device
+  ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
+    AbstractAccount(_account).removeDevice(_device);
   }
 
   function _addAccountVirtualDevice(
@@ -197,8 +269,8 @@ contract AccountProxyService is AbstractAccountProxyService {
     bool _unlimited
   ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
     require(
-      _device != address(0),
-      "invalid device"
+      !accountVirtualDeviceExists(_account, _device),
+      "device already exists"
     );
     require(
       _verifyPurpose(_account, _purpose),
@@ -208,10 +280,6 @@ contract AccountProxyService is AbstractAccountProxyService {
       _verifyLimit(_limit, _unlimited),
       "invalid limit"
     );
-    require(
-      !AbstractAccount(_account).deviceExists(_device),
-      "device already exists"
-    );
 
     AbstractAccount(_account).addDevice(_device, AbstractAccount.AccessType.DELEGATE);
 
@@ -220,6 +288,24 @@ contract AccountProxyService is AbstractAccountProxyService {
     accounts[_account].virtualDevices[_device].unlimited = _unlimited;
 
     emit AccountVirtualDeviceAdded(_account, _device, _purpose, _limit, _unlimited);
+  }
+
+  function _removeAccountVirtualDevice(
+    address _sender,
+    address _account,
+    uint256 _nonce,
+    address _device
+  ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
+    require(
+      accountVirtualDeviceExists(_account, _device),
+      "device doesn't exists"
+    );
+
+    AbstractAccount(_account).removeDevice(_device);
+
+    delete accounts[_account].virtualDevices[_device];
+
+    emit AccountVirtualDeviceRemoved(_account, _device);
   }
 
   function _verifyPurpose(

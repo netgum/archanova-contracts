@@ -9,6 +9,7 @@ import "./AbstractAccount.sol";
 contract AbstractAccountProxyService {
 
   event AccountVirtualDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
+  event AccountVirtualDeviceRemoved(address account, address device);
 
   function getAccount(
     address _account
@@ -28,6 +29,14 @@ contract AbstractAccountProxyService {
     uint256 _nonce,
     address _device,
     AbstractAccount.AccessType _accessType,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public;
+
+  function removeAccountDevice(
+    address _account,
+    uint256 _nonce,
+    address _device,
     uint256 _refundGasBase,
     bytes memory _signature
   ) public;
