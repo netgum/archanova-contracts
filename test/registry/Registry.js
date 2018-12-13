@@ -131,4 +131,8 @@ contract('Registry', (addresses) => {
       });
     });
   });
+
+  describe('methods', () => {
+    // TODO
+  });
 });
