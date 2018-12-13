@@ -9,8 +9,8 @@ const AccountProxyService = artifacts.require('AccountProxyService');
 
 contract('AccountProxyService', (addresses) => {
   describe('views', () => {
-    let accountProxyService;
     let account;
+    let accountProxyService;
 
     const accountDevice = addresses[1];
     const virtualDevice = addresses[2];

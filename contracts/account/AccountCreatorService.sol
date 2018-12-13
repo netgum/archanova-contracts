@@ -3,21 +3,20 @@ pragma solidity >= 0.5.0 < 0.6.0;
 import "@netgum/solidity/contracts/ens/AbstractENS.sol";
 import "@netgum/solidity/contracts/ens/AbstractENSResolver.sol";
 import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
-import "../account/AbstractAccount.sol";
-import "../account/AccountLibrary.sol";
 import "../registry/AbstractRegistry.sol";
-import "./AccountProxyService.sol";
+import "./AbstractAccount.sol";
+import "./AbstractAccountCreatorService.sol";
+import "./AbstractAccountProxyService.sol";
+import "./AccountLibrary.sol";
 
 
 /**
- * @title Account Service
+ * @title Account Creator Service
  */
-contract AccountService {
+contract AccountCreatorService is AbstractAccountCreatorService {
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
-
-  event AccountCreated(address account);
 
   AbstractRegistry private registry;
 
@@ -29,9 +28,9 @@ contract AccountService {
 
   bytes32 private ensRootNode;
 
-  AccountProxyService private proxyService;
+  AbstractAccountProxyService private accountProxyService;
 
-  bytes private contractCode;
+  bytes private accountContractCode;
 
   constructor(
     AbstractRegistry _registry,
@@ -39,16 +38,16 @@ contract AccountService {
     AbstractENS _ens,
     AbstractENSResolver _ensResolver,
     bytes32 _ensRootNode,
-    AccountProxyService _proxyService,
-    bytes memory _contractCode
+    AbstractAccountProxyService _accountProxyService,
+    bytes memory _accountContractCode
   ) public {
     registry = _registry;
     guardian = _guardian;
     ens = _ens;
     ensResolver = _ensResolver;
     ensRootNode = _ensRootNode;
-    proxyService = _proxyService;
-    contractCode = _contractCode;
+    accountProxyService = _accountProxyService;
+    accountContractCode = _accountContractCode;
   }
 
   function createAccount(
@@ -112,21 +111,21 @@ contract AccountService {
   }
 
   function _createAccount(bytes32 _salt, address _ownerDevice) internal returns (address payable _account) {
-    bytes memory _contractCode = contractCode;
+    bytes memory _accountContractCode = accountContractCode;
 
     assembly {
-      _account := create2(0, add(_contractCode, 0x20), mload(_contractCode), _salt)
+      _account := create2(0, add(_accountContractCode, 0x20), mload(_accountContractCode), _salt)
       if iszero(extcodesize(_account)) {revert(0, 0)}
     }
 
     address[] memory _devices = new address[](2);
     _devices[0] = _ownerDevice;
-    _devices[1] = address(proxyService);
+    _devices[1] = address(accountProxyService);
 
     AbstractAccount(_account).initialize(_devices);
 
     registry.registerAccount(_account);
-    proxyService.connectAccount(_account);
+    accountProxyService.connectAccount(_account);
 
     emit AccountCreated(_account);
   }

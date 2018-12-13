@@ -3,17 +3,16 @@ pragma solidity >= 0.5.0 < 0.6.0;
 import "@netgum/solidity/contracts/ens/AbstractENS.sol";
 import "@netgum/solidity/contracts/ens/AbstractENSResolver.sol";
 import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
-import "../account/AbstractAccount.sol";
-import "../account/AccountLibrary.sol";
 import "../registry/AbstractRegistry.sol";
+import "./AbstractAccount.sol";
+import "./AbstractAccountProxyService.sol";
+import "./AccountLibrary.sol";
 
 
 /**
  * @title Account Proxy Service
  */
-contract AccountProxyService {
-
-  event AccountVirtualDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
+contract AccountProxyService is AbstractAccountProxyService {
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;

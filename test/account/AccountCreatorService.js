@@ -14,24 +14,26 @@ const { createAccount, createEnsContracts } = require('../../shared/helpers');
 const { signMessage } = require('../../shared/utils');
 
 const Account = artifacts.require('Account');
-const AccountService = artifacts.require('AccountService');
+const AccountCreatorService = artifacts.require('AccountCreatorService');
 const AccountProxyService = artifacts.require('AccountProxyService');
 const Registry = artifacts.require('Registry');
 
-contract('AccountService', (addresses) => {
+contract('AccountCreatorService', (addresses) => {
   let ens;
   let ensRegistrar;
   let ensResolver;
+
   let registry;
   let registryGuardian;
-  let service;
-  let proxyService;
-  let serviceGuardian;
+
+  let accountCreatorService;
+  let accountCreatorServiceGuardian;
+  let accountProxyService;
   let counter = 1;
 
   const registryGuardianDevice = addresses[2];
-  const serviceGuardianDevice = addresses[1];
-  const serviceEnsRootNameInfo = getEnsNameInfo('account.test');
+  const accountCreatorServiceGuardianDevice = addresses[1];
+  const accountCreatorServiceEnsRootNameInfo = getEnsNameInfo('account.test');
 
   before(async () => {
     ({
@@ -40,31 +42,29 @@ contract('AccountService', (addresses) => {
       ensRegistrar,
     } = await createEnsContracts(addresses[0]));
 
-    proxyService = await AccountProxyService.new();
+    accountProxyService = await AccountProxyService.new();
 
-    // registry
     registryGuardian = await createAccount(addresses[0], registryGuardianDevice);
     registry = await Registry.new(registryGuardian.address);
 
-    // service
-    serviceGuardian = await createAccount(addresses[0], serviceGuardianDevice);
+    accountCreatorServiceGuardian = await createAccount(addresses[0], accountCreatorServiceGuardianDevice);
 
-    service = await AccountService.new(
+    accountCreatorService = await AccountCreatorService.new(
       registry.address,
-      serviceGuardian.address,
+      accountCreatorServiceGuardian.address,
       ens.address,
       ensResolver.address,
-      serviceEnsRootNameInfo.nameHash,
-      proxyService.address,
+      accountCreatorServiceEnsRootNameInfo.nameHash,
+      accountProxyService.address,
       Account.bytecode,
     );
 
     await ensRegistrar.register(
-      serviceEnsRootNameInfo.labelHash,
-      service.address,
+      accountCreatorServiceEnsRootNameInfo.labelHash,
+      accountCreatorService.address,
     );
 
-    await registry.registerService(service.address, true, {
+    await registry.registerService(accountCreatorService.address, true, {
       from: registryGuardianDevice,
     });
   });
@@ -75,7 +75,7 @@ contract('AccountService', (addresses) => {
         const ownerDevice = addresses[2];
         const salt = sha3(counter += 1);
         const accountAddress = computeCreate2Address(
-          service.address,
+          accountCreatorService.address,
           salt,
           Account.bytecode,
         );
@@ -85,15 +85,15 @@ contract('AccountService', (addresses) => {
           'bytes',
           'bytes32',
         )(
-          service.address,
+          accountCreatorService.address,
           getMethodSignature('createAccount', 'bytes32', 'bytes', 'bytes'),
           salt,
         );
 
         const deviceSignature = signMessage(message, ownerDevice);
-        const guardianSignature = signMessage(deviceSignature, serviceGuardianDevice);
+        const guardianSignature = signMessage(deviceSignature, accountCreatorServiceGuardianDevice);
 
-        const { logs: [log] } = await service.createAccount(
+        const { logs: [log] } = await accountCreatorService.createAccount(
           salt,
           deviceSignature,
           guardianSignature,
@@ -120,7 +120,7 @@ contract('AccountService', (addresses) => {
         const salt = sha3(counter += 1);
         const ensLabelHash = getEnsLabelHash('test1');
         const accountAddress = computeCreate2Address(
-          service.address,
+          accountCreatorService.address,
           salt,
           Account.bytecode,
         );
@@ -131,16 +131,16 @@ contract('AccountService', (addresses) => {
           'bytes32',
           'bytes32',
         )(
-          service.address,
+          accountCreatorService.address,
           getMethodSignature('createAccountWithEnsLabel', 'bytes32', 'bytes32', 'bytes', 'bytes'),
           salt,
           ensLabelHash,
         );
 
         const deviceSignature = signMessage(message, ownerDevice);
-        const guardianSignature = signMessage(deviceSignature, serviceGuardianDevice);
+        const guardianSignature = signMessage(deviceSignature, accountCreatorServiceGuardianDevice);
 
-        const { logs: [log] } = await service.createAccountWithEnsLabel(
+        const { logs: [log] } = await accountCreatorService.createAccountWithEnsLabel(
           salt,
           ensLabelHash,
           deviceSignature,

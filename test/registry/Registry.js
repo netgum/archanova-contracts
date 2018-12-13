@@ -4,7 +4,7 @@ const expect = require('expect');
 const { createAccount } = require('../../shared/helpers');
 
 const Registry = artifacts.require('Registry');
-const ExampleService = artifacts.require('ExampleService');
+const RegistryServiceMock = artifacts.require('RegistryServiceMock');
 
 contract('Registry', (addresses) => {
   let registry;
@@ -13,7 +13,6 @@ contract('Registry', (addresses) => {
   const registryGuardianDevice = addresses[2];
 
   before(async () => {
-    // registry
     registryGuardian = await createAccount(addresses[0], registryGuardianDevice);
     registry = await Registry.new(registryGuardian.address);
   });
@@ -31,7 +30,7 @@ contract('Registry', (addresses) => {
     before(async () => {
       // account service
       {
-        const service = await ExampleService.new(registry.address);
+        const service = await RegistryServiceMock.new(registry.address);
 
         await registry.registerService(service.address, true, {
           from: registryGuardianDevice,
@@ -44,7 +43,7 @@ contract('Registry', (addresses) => {
 
       // other service
       {
-        const service = await ExampleService.new(registry.address);
+        const service = await RegistryServiceMock.new(registry.address);
 
         await registry.registerService(service.address, false, {
           from: registryGuardianDevice,
@@ -55,7 +54,7 @@ contract('Registry', (addresses) => {
 
       // other service
       {
-        const service = await ExampleService.new(registry.address);
+        const service = await RegistryServiceMock.new(registry.address);
 
         await registry.registerService(service.address, false, {
           from: registryGuardianDevice,

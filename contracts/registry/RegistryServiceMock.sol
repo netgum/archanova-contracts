@@ -1,12 +1,12 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "../registry/AbstractRegistry.sol";
+import "./AbstractRegistry.sol";
 
 
 /**
- * @title Example Service
+ * @title Registry Service Mock
  */
-contract ExampleService {
+contract RegistryServiceMock {
 
   AbstractRegistry private registry;
 
