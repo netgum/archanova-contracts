@@ -9,6 +9,7 @@ import "./AbstractAccount.sol";
 contract AbstractAccountProxyService {
 
   event AccountVirtualDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
+  event AccountVirtualDeviceLimitUpdated(address account, address device, uint256 limit);
   event AccountVirtualDeviceRemoved(address account, address device);
 
   function getAccount(
@@ -19,6 +20,10 @@ contract AbstractAccountProxyService {
     address _account,
     address _device
   ) public view returns (address _purpose, uint256 _limit, bool _unlimited);
+
+  function accountConnected(address _account) public view returns (bool);
+
+  function accountVirtualDeviceExists(address _account, address _device) public view returns (bool);
 
   function connectAccount(address _account) public;
 
@@ -48,6 +53,33 @@ contract AbstractAccountProxyService {
     address _purpose,
     uint256 _limit,
     bool _unlimited,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public;
+
+  function setAccountVirtualDeviceLimit(
+    address _account,
+    uint256 _nonce,
+    address _device,
+    uint256 _limit,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public;
+
+  function removeAccountVirtualDevice(
+    address _account,
+    uint256 _nonce,
+    address _device,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public;
+
+  function executeTransaction(
+    address _account,
+    uint256 _nonce,
+    address payable _to,
+    uint256 _value,
+    bytes memory _data,
     uint256 _refundGasBase,
     bytes memory _signature
   ) public;

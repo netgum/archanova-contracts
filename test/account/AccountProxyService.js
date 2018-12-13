@@ -83,5 +83,39 @@ contract('AccountProxyService', (addresses) => {
           .toBeFalsy();
       });
     });
+
+    describe('accountConnected()', () => {
+      it('expect to return true when account is connected', async () => {
+        const response = await accountProxyService.accountConnected(account.address);
+
+        expect(response)
+          .toBeTruthy();
+      });
+
+      it('expect to return true false account is not connected', async () => {
+        const unknownAccount = addresses[5];
+        const response = await accountProxyService.accountConnected(unknownAccount);
+
+        expect(response)
+          .toBeFalsy();
+      });
+    });
+
+    describe('accountVirtualDeviceExists()', () => {
+      it('expect to return true when virtual device exists', async () => {
+        expect(await accountProxyService.accountVirtualDeviceExists(account.address, virtualDevice))
+          .toBeTruthy();
+      });
+
+      it('expect to return false when virtual device doesn\'t exists', async () => {
+        const unknownDevice = addresses[5];
+        expect(await accountProxyService.accountVirtualDeviceExists(account.address, unknownDevice))
+          .toBeFalsy();
+      });
+    });
+  });
+
+  describe('methods', () => {
+    // TODO
   });
 });

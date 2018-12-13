@@ -74,11 +74,11 @@ contract AccountProxyService is AbstractAccountProxyService {
     _unlimited = accounts[_account].virtualDevices[_device].unlimited;
   }
 
-  function accountConnected(address _account) public view returns(bool) {
+  function accountConnected(address _account) public view returns (bool) {
     return accounts[_account].connected;
   }
 
-  function accountVirtualDeviceExists(address _account, address _device) public view returns(bool) {
+  function accountVirtualDeviceExists(address _account, address _device) public view returns (bool) {
     return accounts[_account].virtualDevices[_device].purpose != address(0);
   }
 
@@ -207,6 +207,42 @@ contract AccountProxyService is AbstractAccountProxyService {
     _refundGas(_account, _refundStartGas, _refundGasBase);
   }
 
+  function setAccountVirtualDeviceLimit(
+    address _account,
+    uint256 _nonce,
+    address _device,
+    uint256 _limit,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public {
+    uint _refundStartGas = gasleft();
+
+    address _sender = _refundGasBase == 0 && _signature.length == 0
+    ? msg.sender
+    : _signature.recoverAddress(
+      abi.encodePacked(
+        address(this),
+        msg.sig,
+        _account,
+        _nonce,
+        _device,
+        _limit,
+        _refundGasBase,
+        tx.gasprice
+      )
+    );
+
+    _setAccountVirtualDeviceLimit(
+      _sender,
+      _account,
+      _nonce,
+      _device,
+      _limit
+    );
+
+    _refundGas(_account, _refundStartGas, _refundGasBase);
+  }
+
   function removeAccountVirtualDevice(
     address _account,
     uint256 _nonce,
@@ -235,6 +271,45 @@ contract AccountProxyService is AbstractAccountProxyService {
       _account,
       _nonce,
       _device
+    );
+
+    _refundGas(_account, _refundStartGas, _refundGasBase);
+  }
+
+  function executeTransaction(
+    address _account,
+    uint256 _nonce,
+    address payable _to,
+    uint256 _value,
+    bytes memory _data,
+    uint256 _refundGasBase,
+    bytes memory _signature
+  ) public {
+    uint _refundStartGas = gasleft();
+
+    address _sender = _refundGasBase == 0 && _signature.length == 0
+    ? msg.sender
+    : _signature.recoverAddress(
+      abi.encodePacked(
+        address(this),
+        msg.sig,
+        _account,
+        _nonce,
+        _to,
+        _value,
+        _data,
+        _refundGasBase,
+        tx.gasprice
+      )
+    );
+
+    _executeTransaction(
+      _sender,
+      _account,
+      _nonce,
+      _to,
+      _value,
+      _data
     );
 
     _refundGas(_account, _refundStartGas, _refundGasBase);
@@ -290,6 +365,27 @@ contract AccountProxyService is AbstractAccountProxyService {
     emit AccountVirtualDeviceAdded(_account, _device, _purpose, _limit, _unlimited);
   }
 
+  function _setAccountVirtualDeviceLimit(
+    address _sender,
+    address _account,
+    uint256 _nonce,
+    address _device,
+    uint256 _limit
+  ) public verifyAccount(_account, _nonce) onlyAccountOwner(_account, _sender) {
+    require(
+      accountVirtualDeviceExists(_account, _device),
+      "device doesn't exists"
+    );
+    require(
+      !accounts[_account].virtualDevices[_device].unlimited,
+      "device already unlimited"
+    );
+
+    accounts[_account].virtualDevices[_device].limit = _limit;
+
+    emit AccountVirtualDeviceLimitUpdated(_account, _device, _limit);
+  }
+
   function _removeAccountVirtualDevice(
     address _sender,
     address _account,
@@ -306,6 +402,48 @@ contract AccountProxyService is AbstractAccountProxyService {
     delete accounts[_account].virtualDevices[_device];
 
     emit AccountVirtualDeviceRemoved(_account, _device);
+  }
+
+  function _executeTransaction(
+    address _sender,
+    address _account,
+    uint256 _nonce,
+    address payable _to,
+    uint256 _value,
+    bytes memory _data
+  ) public verifyAccount(_account, _nonce) {
+    AbstractAccount.AccessType _accessType = AbstractAccount(_account).getDeviceAccessType(_sender);
+    require(
+      _accessType != AbstractAccount.AccessType.NONE,
+      "invalid sender access type"
+    );
+
+    if (_accessType != AbstractAccount.AccessType.OWNER) {
+      AccountVirtualDevice memory _virtualDevice = accounts[_account].virtualDevices[_sender];
+
+      require(
+        (
+        _virtualDevice.purpose != address(0) &&
+        _virtualDevice.purpose == _to
+        ),
+        "invalid sender purpose"
+      );
+
+      if (!_virtualDevice.unlimited) {
+        require(
+          _virtualDevice.limit >= (_value == 0 ? 1 : _value),
+          "invalid sender limit"
+        );
+
+        if (_value > 0) {
+          _virtualDevice.limit -= _value;
+
+          emit AccountVirtualDeviceLimitUpdated(_account, _sender, _virtualDevice.limit);
+        }
+      }
+    }
+
+    AbstractAccount(_account).executeTransaction(_to, _value, _data);
   }
 
   function _verifyPurpose(
