@@ -11,16 +11,16 @@ const {
 } = require('@netgum/utils');
 const {
   createAccount,
-} = require('../../shared/helpers');
+} = require('../helpers');
 const {
   signMessage,
   getBalance,
-} = require('../../shared/utils');
+} = require('../utils');
 
 const StateToken = artifacts.require('StateToken');
 const StateTokenService = artifacts.require('StateTokenService');
 
-contract.only('StateTokenService', (addresses) => {
+contract('StateTokenService', (addresses) => {
   describe('methods', () => {
     let stateTokenService;
 
@@ -28,12 +28,11 @@ contract.only('StateTokenService', (addresses) => {
     const from = addresses[5];
 
     before(async () => {
-      const stateTokenGuardian = await createAccount(
-        from,
-        stateTokenGuardianDevice,
-      );
+      const stateTokenGuardian = await createAccount(stateTokenGuardianDevice);
 
-      stateTokenService = await StateTokenService.new(
+      stateTokenService = await StateTokenService.new();
+
+      await stateTokenService.initialize(
         stateTokenGuardian.address,
         0,
         StateToken.bytecode,

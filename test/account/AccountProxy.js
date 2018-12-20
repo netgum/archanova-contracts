@@ -3,28 +3,26 @@
 const expect = require('expect');
 const BN = require('bn.js');
 const { ZERO_ADDRESS } = require('@netgum/utils');
-const { createAccount } = require('../../shared/helpers');
+const { createAccount } = require('../helpers');
 
-const AccountProxyService = artifacts.require('AccountProxyService');
+const AccountProxy = artifacts.require('AccountProxy');
 
-contract('AccountProxyService', (addresses) => {
+contract('AccountProxy', (addresses) => {
   describe('views', () => {
     let account;
-    let accountProxyService;
+    let accountProxy;
 
     const accountDevice = addresses[1];
     const virtualDevice = addresses[2];
     const virtualDevicePurpose = addresses[4];
     const virtualDeviceLimit = new BN(10);
 
-    const from = addresses[3];
-
     before(async () => {
-      accountProxyService = await AccountProxyService.new();
-      account = await createAccount(from, accountDevice, accountProxyService.address);
+      accountProxy = await AccountProxy.new();
+      account = await createAccount(accountDevice, accountProxy.address);
 
-      await accountProxyService.connectAccount(account.address);
-      await accountProxyService.addAccountVirtualDevice(
+      await accountProxy.connectAccount(account.address);
+      await accountProxy.addAccountVirtualDevice(
         account.address,
         0,
         virtualDevice,
@@ -40,7 +38,7 @@ contract('AccountProxyService', (addresses) => {
 
     describe('getAccount()', () => {
       it('expect to return connected account', async () => {
-        const response = await accountProxyService.getAccount(account.address);
+        const response = await accountProxy.getAccount(account.address);
 
         expect(response[0])
           .toBeTruthy();
@@ -50,7 +48,7 @@ contract('AccountProxyService', (addresses) => {
 
       it('expect to return empty struct when account is disconnected', async () => {
         const unknownAccount = addresses[5];
-        const response = await accountProxyService.getAccount(unknownAccount);
+        const response = await accountProxy.getAccount(unknownAccount);
 
         expect(response[0])
           .toBeFalsy();
@@ -61,7 +59,7 @@ contract('AccountProxyService', (addresses) => {
 
     describe('getAccountVirtualDevice()', () => {
       it('expect to return account virtual device', async () => {
-        const response = await accountProxyService.getAccountVirtualDevice(account.address, virtualDevice);
+        const response = await accountProxy.getAccountVirtualDevice(account.address, virtualDevice);
 
         expect(response[0])
           .toBe(virtualDevicePurpose);
@@ -73,7 +71,7 @@ contract('AccountProxyService', (addresses) => {
 
       it('expect to return empty struct when account virtual device doesn\'t exists', async () => {
         const unknownDevice = addresses[5];
-        const response = await accountProxyService.getAccountVirtualDevice(account.address, unknownDevice);
+        const response = await accountProxy.getAccountVirtualDevice(account.address, unknownDevice);
 
         expect(response[0])
           .toBe(ZERO_ADDRESS);
@@ -86,7 +84,7 @@ contract('AccountProxyService', (addresses) => {
 
     describe('accountConnected()', () => {
       it('expect to return true when account is connected', async () => {
-        const response = await accountProxyService.accountConnected(account.address);
+        const response = await accountProxy.accountConnected(account.address);
 
         expect(response)
           .toBeTruthy();
@@ -94,7 +92,7 @@ contract('AccountProxyService', (addresses) => {
 
       it('expect to return true false account is not connected', async () => {
         const unknownAccount = addresses[5];
-        const response = await accountProxyService.accountConnected(unknownAccount);
+        const response = await accountProxy.accountConnected(unknownAccount);
 
         expect(response)
           .toBeFalsy();
@@ -103,13 +101,13 @@ contract('AccountProxyService', (addresses) => {
 
     describe('accountVirtualDeviceExists()', () => {
       it('expect to return true when virtual device exists', async () => {
-        expect(await accountProxyService.accountVirtualDeviceExists(account.address, virtualDevice))
+        expect(await accountProxy.accountVirtualDeviceExists(account.address, virtualDevice))
           .toBeTruthy();
       });
 
       it('expect to return false when virtual device doesn\'t exists', async () => {
         const unknownDevice = addresses[5];
-        expect(await accountProxyService.accountVirtualDeviceExists(account.address, unknownDevice))
+        expect(await accountProxy.accountVirtualDeviceExists(account.address, unknownDevice))
           .toBeFalsy();
       });
     });

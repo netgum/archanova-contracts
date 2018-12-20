@@ -3,8 +3,8 @@
 const expect = require('expect');
 const BN = require('bn.js');
 const { ZERO_ADDRESS } = require('@netgum/utils');
-const { AccountAccessTypes } = require('../../shared/constants');
-const { getBalance } = require('../../shared/utils');
+const { AccountAccessTypes } = require('../constants');
+const { getBalance } = require('../utils');
 
 const Account = artifacts.require('Account');
 
