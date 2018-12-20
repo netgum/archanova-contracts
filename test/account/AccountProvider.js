@@ -111,7 +111,7 @@ contract('AccountProvider', (addresses) => {
 
         expect(log.event)
           .toBe('AccountCreated');
-        expect(log.args.account.toLowerCase())
+        expect(log.args.account)
           .toBe(accountAddress);
 
         expect(await account.getDeviceAccessType(ownerDevice))
@@ -159,7 +159,7 @@ contract('AccountProvider', (addresses) => {
 
         expect(log.event)
           .toBe('AccountCreated');
-        expect(log.args.account.toLowerCase())
+        expect(log.args.account)
           .toBe(accountAddress);
 
         expect(await account.getDeviceAccessType(ownerDevice))
