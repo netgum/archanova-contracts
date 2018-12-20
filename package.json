@@ -35,7 +35,6 @@
     "eslint-plugin-import": "^2.14.0",
     "ethereumjs-wallet": "^0.6.3",
     "expect": "^23.6.0",
-    "ganache-core": "trufflesuite/ganache-core#constantinople",
     "truffle": "^5.0.0",
     "truffle-hdwallet-provider": "^1.0.1"
   }
