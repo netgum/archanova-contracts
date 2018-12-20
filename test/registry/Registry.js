@@ -1,8 +1,10 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { createAccount } = require('../../shared/helpers');
+const { sha3 } = require('@netgum/utils');
+const { createAccount } = require('../helpers');
 
+const Account = artifacts.require('Account');
 const Registry = artifacts.require('Registry');
 const RegistryServiceMock = artifacts.require('RegistryServiceMock');
 
@@ -14,7 +16,10 @@ contract('Registry', (addresses) => {
 
   before(async () => {
     registryGuardian = await createAccount(addresses[0], registryGuardianDevice);
-    registry = await Registry.new(registryGuardian.address);
+    registry = await Registry.new(
+      registryGuardian.address,
+      Account.bytecode,
+    );
   });
 
   describe('views', () => {
@@ -25,46 +30,64 @@ contract('Registry', (addresses) => {
       invalid: addresses[3],
     };
 
-    const account = addresses[4];
+    let account;
 
     before(async () => {
       // account service
       {
-        const service = await RegistryServiceMock.new(registry.address);
+        const { logs } = await registry.deployService(
+          sha3('account'),
+          RegistryServiceMock.bytecode,
+          true, {
+            from: registryGuardianDevice,
+          },
+        );
 
-        await registry.registerService(service.address, true, {
+        const address = logs[0].args[1];
+        services.account = address;
+      }
+
+      // account mock
+      {
+        const { logs } = await registry.deployAccount(sha3('account'), [], {
           from: registryGuardianDevice,
         });
 
-        await service.registerAccount(account);
-
-        services.account = service.address;
+        const address = logs[0].args[1];
+        account = address;
       }
 
       // other service
       {
-        const service = await RegistryServiceMock.new(registry.address);
+        const { logs } = await registry.deployService(
+          sha3('other'),
+          RegistryServiceMock.bytecode,
+          false, {
+            from: registryGuardianDevice,
+          },
+        );
 
-        await registry.registerService(service.address, false, {
-          from: registryGuardianDevice,
-        });
-
-        services.other = service.address;
+        const address = logs[0].args[1];
+        services.other = address;
       }
 
       // other service
       {
-        const service = await RegistryServiceMock.new(registry.address);
+        const { logs } = await registry.deployService(
+          sha3('disabled'),
+          RegistryServiceMock.bytecode,
+          false, {
+            from: registryGuardianDevice,
+          },
+        );
 
-        await registry.registerService(service.address, false, {
+        const address = logs[0].args[1];
+
+        await registry.disableService(address, {
           from: registryGuardianDevice,
         });
 
-        await registry.disableService(service.address, {
-          from: registryGuardianDevice,
-        });
-
-        services.disabled = service.address;
+        services.disabled = address;
       }
     });
 

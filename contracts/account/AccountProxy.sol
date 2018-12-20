@@ -1,18 +1,17 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "@netgum/solidity/contracts/ens/AbstractENS.sol";
-import "@netgum/solidity/contracts/ens/AbstractENSResolver.sol";
 import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
 import "../registry/AbstractRegistry.sol";
+import "../registry/AbstractRegistryService.sol";
 import "./AbstractAccount.sol";
-import "./AbstractAccountProxyService.sol";
+import "./AbstractAccountProxy.sol";
 import "./AccountLibrary.sol";
 
 
 /**
- * @title Account Proxy Service
+ * @title Account Proxy
  */
-contract AccountProxyService is AbstractAccountProxyService {
+contract AccountProxy is AbstractRegistryService, AbstractAccountProxy {
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
@@ -52,10 +51,6 @@ contract AccountProxyService is AbstractAccountProxyService {
       "device is not an account owner"
     );
     _;
-  }
-
-  constructor() public {
-    //
   }
 
   function getAccount(

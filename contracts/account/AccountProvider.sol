@@ -3,22 +3,20 @@ pragma solidity >= 0.5.0 < 0.6.0;
 import "@netgum/solidity/contracts/ens/AbstractENS.sol";
 import "@netgum/solidity/contracts/ens/AbstractENSResolver.sol";
 import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
-import "../registry/AbstractRegistry.sol";
+import "../registry/AbstractRegistryService.sol";
 import "./AbstractAccount.sol";
-import "./AbstractAccountCreatorService.sol";
-import "./AbstractAccountProxyService.sol";
+import "./AbstractAccountProvider.sol";
+import "./AbstractAccountProxy.sol";
 import "./AccountLibrary.sol";
 
 
 /**
- * @title Account Creator Service
+ * @title Account Provider
  */
-contract AccountCreatorService is AbstractAccountCreatorService {
+contract AccountProvider is AbstractRegistryService, AbstractAccountProvider {
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
-
-  AbstractRegistry private registry;
 
   AbstractAccount private guardian;
 
@@ -26,28 +24,22 @@ contract AccountCreatorService is AbstractAccountCreatorService {
 
   AbstractENSResolver private ensResolver;
 
+  AbstractAccountProxy private accountProxy;
+
   bytes32 private ensRootNode;
 
-  AbstractAccountProxyService private accountProxyService;
-
-  bytes private accountContractCode;
-
-  constructor(
-    AbstractRegistry _registry,
-    AbstractAccount _guardian,
-    AbstractENS _ens,
-    AbstractENSResolver _ensResolver,
-    bytes32 _ensRootNode,
-    AbstractAccountProxyService _accountProxyService,
-    bytes memory _accountContractCode
-  ) public {
-    registry = _registry;
-    guardian = _guardian;
-    ens = _ens;
-    ensResolver = _ensResolver;
+  function initialize(
+    address _guardian,
+    address _ens,
+    address _ensResolver,
+    address _accountProxy,
+    bytes32 _ensRootNode
+  ) onlyInitializer() public {
+    guardian = AbstractAccount(_guardian);
+    ens = AbstractENS(_ens);
+    ensResolver = AbstractENSResolver(_ensResolver);
+    accountProxy = AbstractAccountProxy(_accountProxy);
     ensRootNode = _ensRootNode;
-    accountProxyService = _accountProxyService;
-    accountContractCode = _accountContractCode;
   }
 
   function createAccount(
@@ -70,7 +62,9 @@ contract AccountCreatorService is AbstractAccountCreatorService {
       true
     );
 
-    _createAccount(_salt, _device);
+    address payable _account = _createAccount(_salt, _device);
+
+    emit AccountCreated(_account);
   }
 
   function createAccountWithEnsLabel(
@@ -108,25 +102,17 @@ contract AccountCreatorService is AbstractAccountCreatorService {
     ens.setResolver(_ensNode, address(ensResolver));
 
     ensResolver.setAddr(_ensNode, address(_account));
+
+    emit AccountCreated(_account);
   }
 
   function _createAccount(bytes32 _salt, address _ownerDevice) internal returns (address payable _account) {
-    bytes memory _accountContractCode = accountContractCode;
-
-    assembly {
-      _account := create2(0, add(_accountContractCode, 0x20), mload(_accountContractCode), _salt)
-      if iszero(extcodesize(_account)) {revert(0, 0)}
-    }
-
     address[] memory _devices = new address[](2);
     _devices[0] = _ownerDevice;
-    _devices[1] = address(accountProxyService);
+    _devices[1] = address(accountProxy);
 
-    AbstractAccount(_account).initialize(_devices);
+    _account = registry.deployAccount(_salt, _devices);
 
-    registry.registerAccount(_account);
-    accountProxyService.connectAccount(_account);
-
-    emit AccountCreated(_account);
+    accountProxy.connectAccount(_account);
   }
 }

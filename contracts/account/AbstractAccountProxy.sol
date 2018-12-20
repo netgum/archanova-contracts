@@ -4,9 +4,9 @@ import "./AbstractAccount.sol";
 
 
 /**
- * @title Abstract Account Proxy Service
+ * @title Abstract Account Proxy
  */
-contract AbstractAccountProxyService {
+contract AbstractAccountProxy {
 
   event AccountVirtualDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
   event AccountVirtualDeviceLimitUpdated(address account, address device, uint256 limit);
