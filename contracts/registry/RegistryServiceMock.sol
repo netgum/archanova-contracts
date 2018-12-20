@@ -1,19 +1,15 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "./AbstractRegistry.sol";
+import "./AbstractRegistryService.sol";
 
 
 /**
  * @title Registry Service Mock
  */
-contract RegistryServiceMock {
+contract RegistryServiceMock is AbstractRegistryService {
 
-  AbstractRegistry private registry;
-
-  constructor(AbstractRegistry _registry) public {
-    registry = _registry;
-  }
-  function registerAccount(address _account) public {
-    registry.registerAccount(_account);
+  function deployAccount(bytes32 _salt) public {
+    address[] memory _devices = new address[](0);
+    registry.deployAccount(_salt, _devices);
   }
 }

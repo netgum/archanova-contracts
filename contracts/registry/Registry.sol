@@ -2,12 +2,14 @@ pragma solidity >= 0.5.0 < 0.6.0;
 
 import "../account/AbstractAccount.sol";
 import "./AbstractRegistry.sol";
+import "./AbstractRegistryService.sol";
 
 
 /**
  * @title Registry
  */
 contract Registry is AbstractRegistry {
+
   struct Service {
     bool exists;
     bool disabled;
@@ -16,9 +18,11 @@ contract Registry is AbstractRegistry {
 
   AbstractAccount private guardian;
 
-  mapping(address => Service) private services;
+  bytes private accountCode;
 
   mapping(address => bool) private accounts;
+
+  mapping(address => Service) private services;
 
   modifier onlyGuardian() {
     require(
@@ -41,13 +45,20 @@ contract Registry is AbstractRegistry {
       services[msg.sender].canRegisterAccounts
       )
       ),
-      "msg.sender is not a guardian device"
+      "msg.sender is not a guardian device or account service"
     );
     _;
   }
 
-  constructor(AbstractAccount _guardian) public {
+  constructor(AbstractAccount _guardian, bytes memory _accountCode) public {
     guardian = _guardian;
+    accountCode = _accountCode;
+
+    accounts[address(guardian)] = true;
+  }
+
+  function accountExists(address _account) public view returns (bool) {
+    return accounts[_account];
   }
 
   function serviceExists(address _service) public view returns (bool) {
@@ -62,33 +73,27 @@ contract Registry is AbstractRegistry {
     return serviceExists(_service) && services[_service].disabled;
   }
 
-  function accountExists(address _account) public view returns (bool) {
-    return accounts[_account];
+  function deployAccount(bytes32 _salt, address[] memory _devices) public onlyGuardianOrAccountService returns (address payable _account) {
+    _account = _deployContract(_salt, accountCode);
+
+    accounts[_account] = true;
+
+    AbstractAccount(_account).initialize(_devices);
+
+    emit AccountDeployed(msg.sender, _account);
   }
 
-  function deployService(bytes32 _salt, bytes memory _contractCode) public onlyGuardian {
-    address payable _service;
-    assembly {
-      _service := create2(0, add(_contractCode, 0x20), mload(_contractCode), _salt)
-      if iszero(extcodesize(_service)) {revert(0, 0)}
-    }
-
-    emit ServiceDeployed(msg.sender, _service);
-  }
-
-  function registerService(address _service, bool _canRegisterAccounts) public onlyGuardian {
-    require(
-      !services[_service].exists,
-      "service already registered"
-    );
+  function deployService(bytes32 _salt, bytes memory _code, bool _canRegisterAccounts) public onlyGuardian returns (address payable _service) {
+    _service = _deployContract(_salt, _code);
 
     services[_service].exists = true;
     services[_service].disabled = false;
     services[_service].canRegisterAccounts = _canRegisterAccounts;
 
-    emit ServiceRegistered(msg.sender, _service);
-  }
+    AbstractRegistryService(_service).transferInitializer(msg.sender);
 
+    emit ServiceDeployed(msg.sender, _service);
+  }
 
   function enableService(address _service) public onlyGuardian {
     require(
@@ -112,14 +117,10 @@ contract Registry is AbstractRegistry {
     emit ServiceDisabled(msg.sender, _service);
   }
 
-  function registerAccount(address _account) public onlyGuardianOrAccountService {
-    require(
-      !accounts[_account],
-      "account already registered"
-    );
-
-    accounts[_account] = true;
-
-    emit AccountRegistered(msg.sender, _account);
+  function _deployContract(bytes32 _salt, bytes memory _code) internal returns (address payable _deployed) {
+    assembly {
+      _deployed := create2(0, add(_code, 0x20), mload(_code), _salt)
+      if iszero(extcodesize(_deployed)) {revert(0, 0)}
+    }
   }
 }

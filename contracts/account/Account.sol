@@ -1,11 +1,12 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
+import "../initializer/AbstractInitializer.sol";
 import "./AbstractAccount.sol";
 
 /**
  * @title Account
  */
-contract Account is AbstractAccount {
+contract Account is AbstractInitializer, AbstractAccount {
 
   mapping(address => AccessType) internal devicesAccessType;
   mapping(address => bool) private devicesLog;
@@ -19,28 +20,17 @@ contract Account is AbstractAccount {
     _;
   }
 
-  constructor() public {
-    //
-  }
-
   function() external payable {
     //
   }
 
-  function initialize(address[] memory _devices) public {
-    require(
-      !initialized,
-      "account already initialized"
-    );
-
+  function initialize(address[] memory _devices) onlyInitializer() public {
     for (uint i = 0; i < _devices.length; i++) {
       if (_devices[i] != address(0)) {
         devicesAccessType[_devices[i]] = AccessType.OWNER;
         devicesLog[_devices[i]] = true;
       }
     }
-
-    initialized = true;
   }
 
   function deviceExists(address _device) public view returns (bool) {

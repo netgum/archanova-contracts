@@ -5,28 +5,24 @@ pragma solidity >= 0.5.0 < 0.6.0;
  */
 contract AbstractInitializer {
 
-  bool public initialized;
+  address internal initializer;
 
-  address initializer;
-
-  modifier canInitialize() {
-    require(
-      !initialized,
-      "already initialized"
-    );
+  modifier onlyInitializer() {
     require(
       initializer == msg.sender,
       "msg.sender is not a initializer"
     );
 
-    _;
+    initializer = address(0);
 
-    initialized = true;
+    _;
   }
 
   constructor() public {
     initializer = msg.sender;
   }
 
-  function initialize(bytes memory data) public;
+  function initialized() view public returns (bool) {
+    return initializer == address(0);
+  }
 }

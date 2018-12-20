@@ -1,9 +1,9 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
 /**
- * @title Abstract Account Creator Service
+ * @title Abstract Account Provider
  */
-contract AbstractAccountCreatorService {
+contract AbstractAccountProvider {
 
   event AccountCreated(address account);
 
