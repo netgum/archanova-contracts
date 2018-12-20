@@ -17,8 +17,6 @@ contract AbstractAccount {
 
   event TransactionExecuted(address payable to, uint256 value, bytes data, bytes response);
 
-  bool public initialized;
-
   function initialize(address[] memory _devices) public;
 
   function deviceExists(address _device) public view returns (bool);

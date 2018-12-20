@@ -9,16 +9,16 @@ const {
   computeCreate2Address,
   getMethodSignature,
 } = require('@netgum/utils');
-const { AccountAccessTypes } = require('../../shared/constants');
-const { createAccount, createEnsContracts } = require('../../shared/helpers');
-const { signMessage } = require('../../shared/utils');
+const { AccountAccessTypes } = require('../constants');
+const { createAccount, createEnsContracts } = require('../helpers');
+const { signMessage } = require('../utils');
 
 const Account = artifacts.require('Account');
-const AccountCreatorService = artifacts.require('AccountCreatorService');
-const AccountProxyService = artifacts.require('AccountProxyService');
+const AccountProvider = artifacts.require('AccountProvider');
+const AccountProxy = artifacts.require('AccountProxy');
 const Registry = artifacts.require('Registry');
 
-contract('AccountCreatorService', (addresses) => {
+contract('AccountProvider', (addresses) => {
   let ens;
   let ensRegistrar;
   let ensResolver;
@@ -26,47 +26,55 @@ contract('AccountCreatorService', (addresses) => {
   let registry;
   let registryGuardian;
 
-  let accountCreatorService;
-  let accountCreatorServiceGuardian;
-  let accountProxyService;
+  let accountProvider;
+  let accountProviderGuardian;
+  let accountProxy;
   let counter = 1;
 
   const registryGuardianDevice = addresses[2];
-  const accountCreatorServiceGuardianDevice = addresses[1];
-  const accountCreatorServiceEnsRootNameInfo = getEnsNameInfo('account.test');
+  const accountProviderGuardianDevice = addresses[1];
+  const accountProviderEnsRootNameInfo = getEnsNameInfo('account.test');
 
   before(async () => {
     ({
       ens,
       ensResolver,
       ensRegistrar,
-    } = await createEnsContracts(addresses[0]));
+    } = await createEnsContracts());
 
-    accountProxyService = await AccountProxyService.new();
-
-    registryGuardian = await createAccount(addresses[0], registryGuardianDevice);
-    registry = await Registry.new(registryGuardian.address);
-
-    accountCreatorServiceGuardian = await createAccount(addresses[0], accountCreatorServiceGuardianDevice);
-
-    accountCreatorService = await AccountCreatorService.new(
-      registry.address,
-      accountCreatorServiceGuardian.address,
-      ens.address,
-      ensResolver.address,
-      accountCreatorServiceEnsRootNameInfo.nameHash,
-      accountProxyService.address,
+    registryGuardian = await createAccount(registryGuardianDevice);
+    registry = await Registry.new(
+      registryGuardian.address,
       Account.bytecode,
     );
 
-    await ensRegistrar.register(
-      accountCreatorServiceEnsRootNameInfo.labelHash,
-      accountCreatorService.address,
-    );
+    accountProxy = await AccountProxy.new();
+    accountProviderGuardian = await createAccount(accountProviderGuardianDevice);
 
-    await registry.registerService(accountCreatorService.address, true, {
-      from: registryGuardianDevice,
-    });
+    {
+      const seed = sha3('AccountProvider');
+      const code = AccountProvider.binary;
+
+      const { logs: [log] } = await registry.deployService(seed, code, true, {
+        from: registryGuardianDevice,
+      });
+      accountProvider = await AccountProvider.at(log.args.service);
+
+      await accountProvider.initialize(
+        accountProviderGuardian.address,
+        ens.address,
+        ensResolver.address,
+        accountProxy.address,
+        accountProviderEnsRootNameInfo.nameHash, {
+          from: registryGuardianDevice,
+        },
+      );
+    }
+
+    await ensRegistrar.register(
+      accountProviderEnsRootNameInfo.labelHash,
+      accountProvider.address,
+    );
   });
 
   describe('methods', () => {
@@ -75,7 +83,7 @@ contract('AccountCreatorService', (addresses) => {
         const ownerDevice = addresses[2];
         const salt = sha3(counter += 1);
         const accountAddress = computeCreate2Address(
-          accountCreatorService.address,
+          registry.address,
           salt,
           Account.bytecode,
         );
@@ -85,15 +93,15 @@ contract('AccountCreatorService', (addresses) => {
           'bytes',
           'bytes32',
         )(
-          accountCreatorService.address,
+          accountProvider.address,
           getMethodSignature('createAccount', 'bytes32', 'bytes', 'bytes'),
           salt,
         );
 
         const deviceSignature = signMessage(message, ownerDevice);
-        const guardianSignature = signMessage(deviceSignature, accountCreatorServiceGuardianDevice);
+        const guardianSignature = signMessage(deviceSignature, accountProviderGuardianDevice);
 
-        const { logs: [log] } = await accountCreatorService.createAccount(
+        const { logs: [log] } = await accountProvider.createAccount(
           salt,
           deviceSignature,
           guardianSignature,
@@ -120,7 +128,7 @@ contract('AccountCreatorService', (addresses) => {
         const salt = sha3(counter += 1);
         const ensLabelHash = getEnsLabelHash('test1');
         const accountAddress = computeCreate2Address(
-          accountCreatorService.address,
+          registry.address,
           salt,
           Account.bytecode,
         );
@@ -131,16 +139,16 @@ contract('AccountCreatorService', (addresses) => {
           'bytes32',
           'bytes32',
         )(
-          accountCreatorService.address,
+          accountProvider.address,
           getMethodSignature('createAccountWithEnsLabel', 'bytes32', 'bytes32', 'bytes', 'bytes'),
           salt,
           ensLabelHash,
         );
 
         const deviceSignature = signMessage(message, ownerDevice);
-        const guardianSignature = signMessage(deviceSignature, accountCreatorServiceGuardianDevice);
+        const guardianSignature = signMessage(deviceSignature, accountProviderGuardianDevice);
 
-        const { logs: [log] } = await accountCreatorService.createAccountWithEnsLabel(
+        const { logs: [log] } = await accountProvider.createAccountWithEnsLabel(
           salt,
           ensLabelHash,
           deviceSignature,

@@ -2,6 +2,7 @@ pragma solidity >= 0.5.0 < 0.6.0;
 
 import "../account/AbstractAccount.sol";
 import "../account/AccountLibrary.sol";
+import "../registry/AbstractRegistryService.sol";
 import "./AbstractStateToken.sol";
 import "./AbstractStateTokenService.sol";
 
@@ -9,7 +10,7 @@ import "./AbstractStateTokenService.sol";
 /**
  * @title State Token Service
  */
-contract StateTokenService is AbstractStateTokenService {
+contract StateTokenService is AbstractRegistryService, AbstractStateTokenService {
 
   using AccountLibrary for AbstractAccount;
 
@@ -21,12 +22,13 @@ contract StateTokenService is AbstractStateTokenService {
 
   bytes private tokenContractCode;
 
-  constructor(
-    AbstractAccount _guardian,
+  function initialize(
+    address _guardian,
     uint _tokenReleaseTime,
     bytes memory _tokenContractCode
-  ) public {
-    guardian = _guardian;
+  ) onlyInitializer() public {
+
+    guardian = AbstractAccount(_guardian);
     tokenReleaseTime = _tokenReleaseTime;
     tokenContractCode = _tokenContractCode;
   }
