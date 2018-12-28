@@ -13,7 +13,7 @@ contract Registry is AbstractRegistry {
   bytes32 constant ACCOUNT_CONTRACT_ALIAS = keccak256("io.archanova.Account");
 
   struct DeployedService {
-    bytes32 contractCodeAlias;
+    bool exists;
     bool enabled;
     bool isAccountProvider;
   }
@@ -64,7 +64,7 @@ contract Registry is AbstractRegistry {
   }
 
   function serviceDeployed(address _service) public view returns (bool) {
-    return deployedServices[_service].contractCodeAlias != bytes32(0);
+    return deployedServices[_service].exists;
   }
 
   function serviceEnabled(address _service) public view returns (bool) {
@@ -110,13 +110,17 @@ contract Registry is AbstractRegistry {
     emit AccountDeployed(msg.sender, _account);
   }
 
-  function deployService(bytes32 _contractCodeAlias, bytes32 _salt, bool _isAccountProvider) public onlyGuardian returns (address payable _service) {
+  function deployService(bytes32 _codeAlias, bytes32 _salt, bool _isAccountProvider) public onlyGuardian returns (address payable _service) {
+    require(
+      _codeAlias != ACCOUNT_CONTRACT_ALIAS,
+      "invalid service code alias"
+    );
     _service = _deployContract(
-      _contractCodeAlias,
+      _codeAlias,
       _salt
     );
 
-    deployedServices[_service].contractCodeAlias = _contractCodeAlias;
+    deployedServices[_service].exists = true;
     deployedServices[_service].enabled = true;
     deployedServices[_service].isAccountProvider = _isAccountProvider;
 

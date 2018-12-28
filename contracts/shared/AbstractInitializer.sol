@@ -22,7 +22,7 @@ contract AbstractInitializer {
     initializer = msg.sender;
   }
 
-  function isInitialized() view public returns (bool) {
+  function initialized() view public returns (bool) {
     return initializer == address(0);
   }
 }

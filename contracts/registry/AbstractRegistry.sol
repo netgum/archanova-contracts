@@ -25,7 +25,7 @@ contract AbstractRegistry {
 
   function deployAccount(bytes32 _salt, address[] memory _devices) public returns (address payable _account);
 
-  function deployService(bytes32 _contractCodeAlias, bytes32 _salt, bool _isAccountProvider) public returns (address payable _service);
+  function deployService(bytes32 _codeAlias, bytes32 _salt, bool _isAccountProvider) public returns (address payable _service);
 
   function enableService(address _service) public;
 
