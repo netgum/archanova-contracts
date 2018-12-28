@@ -11,19 +11,25 @@ contract AbstractRegistry {
   event ServiceEnabled(address sender, address service);
   event ServiceDisabled(address sender, address service);
 
-  function accountExists(address _account) public view returns (bool);
+  function accountDeployed(address _account) public view returns (bool);
 
-  function serviceExists(address _service) public view returns (bool);
+  function serviceDeployed(address _service) public view returns (bool);
 
   function serviceEnabled(address _service) public view returns (bool);
 
-  function serviceDisabled(address _service) public view returns (bool);
+  function serviceIsAccountProvider(address _service) public view returns (bool);
 
-  function deployAccount(bytes32 _salt, address[] memory _devices) public returns (address payable);
+  function contractCodeRegistered(bytes32 _codeAlias) public view returns (bool);
 
-  function deployService(bytes32 _salt, bytes memory _code, bool _canRegisterAccounts) public returns (address payable);
+  function computeContractAddress(bytes32 _codeAlias, bytes32 _salt) public view returns (address _address);
+
+  function deployAccount(bytes32 _salt, address[] memory _devices) public returns (address payable _account);
+
+  function deployService(bytes32 _codeAlias, bytes32 _salt, bool _isAccountProvider) public returns (address payable _service);
 
   function enableService(address _service) public;
 
   function disableService(address _service) public;
+
+  function registerContractCode(bytes32 _alias, bytes memory _code) public;
 }

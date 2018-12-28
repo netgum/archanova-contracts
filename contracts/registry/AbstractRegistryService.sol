@@ -1,6 +1,6 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "../initializer/AbstractInitializer.sol";
+import "../shared/AbstractInitializer.sol";
 import "./AbstractRegistry.sol";
 
 
