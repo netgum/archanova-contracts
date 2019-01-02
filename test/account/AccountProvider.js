@@ -53,12 +53,11 @@ contract('AccountProvider', (addresses) => {
 
     {
       const seed = sha3('AccountProvider');
-      const code = AccountProvider.binary;
 
-      const { logs: [log] } = await registry.deployService(seed, code, true, {
+      const { logs: [{ args: { service } }] } = await registry.deployService(seed, AccountProvider.binary, true, {
         from: registryGuardianDevice,
       });
-      accountProvider = await AccountProvider.at(log.args.service);
+      accountProvider = await AccountProvider.at(service);
 
       await accountProvider.initialize(
         accountProviderGuardian.address,
@@ -111,7 +110,7 @@ contract('AccountProvider', (addresses) => {
 
         expect(log.event)
           .toBe('AccountCreated');
-        expect(log.args.account.toLowerCase())
+        expect(log.args.account)
           .toBe(accountAddress);
 
         expect(await account.getDeviceAccessType(ownerDevice))
@@ -159,7 +158,7 @@ contract('AccountProvider', (addresses) => {
 
         expect(log.event)
           .toBe('AccountCreated');
-        expect(log.args.account.toLowerCase())
+        expect(log.args.account)
           .toBe(accountAddress);
 
         expect(await account.getDeviceAccessType(ownerDevice))

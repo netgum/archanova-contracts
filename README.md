@@ -9,6 +9,30 @@ Archanova [solidity](http://solidity.readthedocs.io) contracts
 $ npm i @archanova/solidity -S
 ```
 
+## Development
+
+Configuration via environment variables:
+
+| Name 	| Default Value 	|
+| --- | ---|
+| TRUFFLE_ACCOUNTS_MNEMONIC 	| `false myself sadness rebuild shallow powder outdoor thank basket light fun tip` 	|
+| TRUFFLE_ACCOUNTS_COUNT 	| `10` 	|
+| TRUFFLE_NETWORK_ENDPOINT 	| `http://localhost:8545` 	|
+| TRUFFLE_ENS_ADDRESS 	| `archanova.test` 	|
+| TRUFFLE_ENS_ROOT_NODE 	| `null` 	|
+
+Running tests on `development` network
+
+```bash
+$ npm test
+```
+
+Running migration on `production` network
+
+```bash
+$ npm run truffle:migrate
+```
+
 ## License
 
 The MIT License
