@@ -9,11 +9,6 @@ const Registry = artifacts.require('Registry');
 const RegistryServiceExample = artifacts.require('RegistryServiceExample');
 
 contract('Registry', (addresses) => {
-  const codeAliases = {
-    account: sha3('io.archanova.Account'),
-    example: sha3('io.archanova.Example'),
-  };
-
   describe('views', () => {
     const registryGuardianDevice = addresses[2];
 
@@ -36,11 +31,6 @@ contract('Registry', (addresses) => {
         Account.bytecode,
       );
 
-      await registry.registerContractCode(
-        codeAliases.example,
-        RegistryServiceExample.bytecode,
-      );
-
       // account mock
       ({ logs: [{ args: { account } }] } = await registry.deployAccount(sha3('account'), [], {
         from: registryGuardianDevice,
@@ -49,8 +39,8 @@ contract('Registry', (addresses) => {
       // account service
       {
         const { logs: [{ args: { service } }] } = await registry.deployService(
-          codeAliases.example,
           sha3('account'),
+          RegistryServiceExample.bytecode,
           true, {
             from: registryGuardianDevice,
           },
@@ -62,8 +52,8 @@ contract('Registry', (addresses) => {
       // other service
       {
         const { logs: [{ args: { service } }] } = await registry.deployService(
-          codeAliases.example,
           sha3('other'),
+          RegistryServiceExample.bytecode,
           false, {
             from: registryGuardianDevice,
           },
@@ -75,8 +65,8 @@ contract('Registry', (addresses) => {
       // disabled service
       {
         const { logs: [{ args: { service } }] } = await registry.deployService(
-          codeAliases.example,
           sha3('disabled'),
+          RegistryServiceExample.bytecode,
           false, {
             from: registryGuardianDevice,
           },
@@ -90,31 +80,31 @@ contract('Registry', (addresses) => {
       }
     });
 
-    describe('accountDeployed()', () => {
+    describe('accountExists()', () => {
       it('expect to return true when account exists', async () => {
-        expect(await registry.accountDeployed(account))
+        expect(await registry.accountExists(account))
           .toBeTruthy();
       });
 
       it('expect to return false when account doesn\'t exist', async () => {
-        expect(await registry.accountDeployed(services.invalid)) // some random address
+        expect(await registry.accountExists(services.invalid)) // some random address
           .toBeFalsy();
       });
     });
 
-    describe('serviceDeployed()', () => {
+    describe('serviceExists()', () => {
       it('expect to return true when service exists', async () => {
-        expect(await registry.serviceDeployed(services.account))
+        expect(await registry.serviceExists(services.account))
           .toBeTruthy();
       });
 
       it('expect to return true when service is disabled', async () => {
-        expect(await registry.serviceDeployed(services.disabled))
+        expect(await registry.serviceExists(services.disabled))
           .toBeTruthy();
       });
 
       it('expect to return false when service doesn\'t exist', async () => {
-        expect(await registry.serviceDeployed(services.invalid))
+        expect(await registry.serviceExists(services.invalid))
           .toBeFalsy();
       });
     });

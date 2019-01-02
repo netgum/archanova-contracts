@@ -6,13 +6,13 @@ const {
   anyToHex,
   signPersonalMessage,
 } = require('@netgum/utils');
-const { accounts } = require('../config');
+const config = require('../config');
 
 const privateKeys = (() => {
   const result = new Map();
-  const hdWallet = hdKey.fromMasterSeed(bip39.mnemonicToSeed(accounts.mnemonic));
+  const hdWallet = hdKey.fromMasterSeed(bip39.mnemonicToSeed(config.accounts.mnemonic));
 
-  for (let i = 0; i < accounts.count; i += 1) {
+  for (let i = 0; i < config.accounts.count; i += 1) {
     const wallet = hdWallet.derivePath(`m/44'/60'/0'/0/${i}`)
       .getWallet();
     const privateKey = anyToBuffer(wallet.getPrivateKey(), {
