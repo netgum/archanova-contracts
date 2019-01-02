@@ -1,9 +1,23 @@
-const { TEST_MNEMONIC, TEST_ENDPOINT } = process.env;
+const { getEnsNameInfo } = require('@netgum/utils');
+
+const {
+  TRUFFLE_ACCOUNTS_MNEMONIC,
+  TRUFFLE_ACCOUNTS_COUNT,
+  TRUFFLE_NETWORK_ENDPOINT,
+  TRUFFLE_ENS_ADDRESS,
+  TRUFFLE_ENS_ROOT_NODE,
+} = process.env;
 
 module.exports = {
   accounts: {
-    mnemonic: TEST_MNEMONIC || 'false myself sadness rebuild shallow powder outdoor thank basket light fun tip',
-    count: 10,
+    mnemonic: TRUFFLE_ACCOUNTS_MNEMONIC || 'false myself sadness rebuild shallow powder outdoor thank basket light fun tip',
+    count: parseInt(TRUFFLE_ACCOUNTS_COUNT, 10) || 10,
   },
-  endpoint: TEST_ENDPOINT || 'http://localhost:8545',
+  network: {
+    endpoint: TRUFFLE_NETWORK_ENDPOINT || 'http://localhost:8545',
+  },
+  ens: {
+    address: TRUFFLE_ENS_ADDRESS || null,
+    nameInfo: getEnsNameInfo(TRUFFLE_ENS_ROOT_NODE || 'archanova.test'),
+  },
 };

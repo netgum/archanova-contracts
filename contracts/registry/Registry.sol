@@ -10,9 +10,7 @@ import "./AbstractRegistryService.sol";
  */
 contract Registry is AbstractRegistry {
 
-  bytes32 constant ACCOUNT_CONTRACT_ALIAS = keccak256("io.archanova.Account");
-
-  struct DeployedService {
+  struct Service {
     bool exists;
     bool enabled;
     bool isAccountProvider;
@@ -20,11 +18,11 @@ contract Registry is AbstractRegistry {
 
   AbstractAccount private guardian;
 
-  mapping(address => bool) private deployedAccounts;
+  mapping(address => bool) private accounts;
 
-  mapping(address => DeployedService) private deployedServices;
+  mapping(address => Service) private services;
 
-  mapping(bytes32 => bytes) private registeredContractCodes;
+  bytes private accountContractCode;
 
   modifier onlyGuardian() {
     require(
@@ -54,84 +52,80 @@ contract Registry is AbstractRegistry {
   constructor(AbstractAccount _guardian, bytes memory _accountContractCode) public {
     guardian = _guardian;
 
-    registeredContractCodes[ACCOUNT_CONTRACT_ALIAS] = _accountContractCode;
+    accountContractCode = _accountContractCode;
 
-    deployedAccounts[address(guardian)] = true;
+    accounts[address(guardian)] = true;
   }
 
-  function accountDeployed(address _account) public view returns (bool) {
-    return deployedAccounts[_account];
+  function accountExists(address _account) public view returns (bool) {
+    return accounts[_account];
   }
 
-  function serviceDeployed(address _service) public view returns (bool) {
-    return deployedServices[_service].exists;
+  function serviceExists(address _service) public view returns (bool) {
+    return services[_service].exists;
   }
 
   function serviceEnabled(address _service) public view returns (bool) {
-    return deployedServices[_service].enabled;
+    return services[_service].enabled;
   }
 
   function serviceIsAccountProvider(address _service) public view returns (bool) {
-    return deployedServices[_service].isAccountProvider;
+    return services[_service].isAccountProvider;
   }
 
-  function contractCodeRegistered(bytes32 _codeAlias) public view returns (bool) {
-    return registeredContractCodes[_codeAlias].length > 0;
-  }
+  function registerAccount(address _account) public onlyGuardianOrAccountProvider {
+    require(
+      !accountExists(_account),
+      "account already exist"
+    );
 
-  function computeContractAddress(bytes32 _codeAlias, bytes32 _salt) public view returns (address _address) {
-    if (contractCodeRegistered(_codeAlias)) {
-      bytes32 _hash = keccak256(
-        abi.encodePacked(
-          byte(0xff),
-          address(this),
-          _salt,
-          keccak256(registeredContractCodes[_codeAlias])
-        )
-      );
+    accounts[_account] = true;
 
-      assembly {
-        mstore(0, _hash)
-        _address := mload(0)
-      }
-    }
+    emit AccountRegistered(msg.sender, _account);
   }
 
   function deployAccount(bytes32 _salt, address[] memory _devices) public onlyGuardianOrAccountProvider returns (address payable _account) {
     _account = _deployContract(
-      ACCOUNT_CONTRACT_ALIAS,
-      _salt
+      _salt,
+      accountContractCode
     );
-
-    deployedAccounts[_account] = true;
 
     AbstractAccount(_account).initialize(_devices);
 
     emit AccountDeployed(msg.sender, _account);
+
+    registerAccount(_account);
   }
 
-  function deployService(bytes32 _codeAlias, bytes32 _salt, bool _isAccountProvider) public onlyGuardian returns (address payable _service) {
+  function registerService(address _service, bool _isAccountProvider) public onlyGuardian {
     require(
-      _codeAlias != ACCOUNT_CONTRACT_ALIAS,
-      "invalid service code alias"
-    );
-    _service = _deployContract(
-      _codeAlias,
-      _salt
+      !serviceExists(_service),
+      "service already exist"
     );
 
-    deployedServices[_service].exists = true;
-    deployedServices[_service].enabled = true;
-    deployedServices[_service].isAccountProvider = _isAccountProvider;
+    services[_service].exists = true;
+    services[_service].enabled = true;
+    services[_service].isAccountProvider = _isAccountProvider;
+
+    emit ServiceRegistered(msg.sender, _service);
+  }
+
+  function deployService(bytes32 _salt, bytes memory _code, bool _isAccountProvider) public onlyGuardian returns (address payable _service) {
+    _service = _deployContract(
+      _salt,
+      _code
+    );
 
     AbstractRegistryService(_service).transferInitializer(msg.sender);
 
     emit ServiceDeployed(msg.sender, _service);
+
+    registerService(_service, _isAccountProvider);
   }
 
   function enableService(address _service) public onlyGuardian {
     require(
-      serviceDeployed(_service),
+      serviceExists(_service),
       "service doesn't exist"
     );
     require(
@@ -139,14 +133,14 @@ contract Registry is AbstractRegistry {
       "service already enabled"
     );
 
-    deployedServices[_service].enabled = true;
+    services[_service].enabled = true;
 
     emit ServiceEnabled(msg.sender, _service);
   }
 
   function disableService(address _service) public onlyGuardian {
     require(
-      serviceDeployed(_service),
+      serviceExists(_service),
       "service doesn't exist"
     );
     require(
@@ -154,29 +148,12 @@ contract Registry is AbstractRegistry {
       "service already disabled"
     );
 
-    deployedServices[_service].enabled = false;
+    services[_service].enabled = false;
 
     emit ServiceDisabled(msg.sender, _service);
   }
 
-
-  function registerContractCode(bytes32 _alias, bytes memory _code) public onlyGuardian {
-    require(
-      !contractCodeRegistered(_alias),
-      "contract code already registered"
-    );
-
-    registeredContractCodes[_alias] = _code;
-  }
-
-  function _deployContract(bytes32 _codeAlias, bytes32 _salt) internal returns (address payable _address) {
-    require(
-      contractCodeRegistered(_codeAlias),
-      "contract code alias not registered"
-    );
-
-    bytes memory _code = registeredContractCodes[_codeAlias];
-
+  function _deployContract(bytes32 _salt, bytes memory _code) internal returns (address payable _address) {
     assembly {
       _address := create2(0, add(_code, 0x20), mload(_code), _salt)
       if iszero(extcodesize(_address)) {revert(0, 0)}
