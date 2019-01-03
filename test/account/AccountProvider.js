@@ -21,7 +21,6 @@ const Registry = artifacts.require('Registry');
 contract('AccountProvider', (addresses) => {
   let ens;
   let ensRegistrar;
-  let ensResolver;
 
   let registry;
   let registryGuardian;
@@ -38,7 +37,6 @@ contract('AccountProvider', (addresses) => {
   before(async () => {
     ({
       ens,
-      ensResolver,
       ensRegistrar,
     } = await createEnsContracts());
 
@@ -62,9 +60,8 @@ contract('AccountProvider', (addresses) => {
       await accountProvider.initialize(
         accountProviderGuardian.address,
         ens.address,
-        ensResolver.address,
-        accountProxy.address,
-        accountProviderEnsRootNameInfo.nameHash, {
+        accountProviderEnsRootNameInfo.nameHash,
+        accountProxy.address, {
           from: registryGuardianDevice,
         },
       );
