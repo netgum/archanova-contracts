@@ -1,9 +1,12 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
+import "@netgum/solidity/contracts/ens/AbstractENSResolver.sol";
+
+
 /**
  * @title Abstract Account Provider
  */
-contract AbstractAccountProvider {
+contract AbstractAccountProvider is AbstractENSResolver {
 
   event AccountCreated(address account);
 

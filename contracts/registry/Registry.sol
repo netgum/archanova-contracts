@@ -27,6 +27,7 @@ contract Registry is AbstractRegistry {
   modifier onlyGuardian() {
     require(
       (
+      address(this) == msg.sender ||
       address(guardian) == msg.sender ||
       guardian.deviceExists(msg.sender)
       ),
@@ -38,6 +39,7 @@ contract Registry is AbstractRegistry {
   modifier onlyGuardianOrAccountProvider() {
     require(
       (
+      address(this) == msg.sender ||
       address(guardian) == msg.sender ||
       guardian.deviceExists(msg.sender) ||
       (
