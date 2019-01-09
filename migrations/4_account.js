@@ -7,7 +7,6 @@ const AccountProxy = artifacts.require('AccountProxy');
 const Registry = artifacts.require('Registry');
 const ENSMock = artifacts.require('ENSMock');
 const ENSRegistrarMock = artifacts.require('ENSRegistrarMock');
-const ENSResolverMock = artifacts.require('ENSResolverMock');
 
 module.exports = async (deployer, network, [guardianDevice]) => {
   if (network === 'production') {
@@ -28,10 +27,8 @@ module.exports = async (deployer, network, [guardianDevice]) => {
       const ens = await ENSMock.at(ENSMock.address);
 
       await deployer.deploy(ENSRegistrarMock, ens.address, config.ens.nameInfo.rootNode.nameHash);
-      await deployer.deploy(ENSResolverMock, ens.address);
 
       const ensRegistrar = await ENSRegistrarMock.at(ENSRegistrarMock.address);
-      const ensResolver = await ENSRegistrarMock.at(ENSRegistrarMock.address);
 
       await ens.setSubnodeOwner('0x00', getEnsLabelHash(config.ens.nameInfo.rootNode.name), ensRegistrar.address);
 
@@ -46,9 +43,8 @@ module.exports = async (deployer, network, [guardianDevice]) => {
       await accountProvider.initialize(
         guardian.address,
         ens.address,
-        ensResolver.address,
-        accountProxy.address,
         config.ens.nameInfo.nameHash,
+        accountProxy.address,
       );
     }
   }

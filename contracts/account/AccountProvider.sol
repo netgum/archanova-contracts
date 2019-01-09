@@ -1,7 +1,7 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
 import "@netgum/solidity/contracts/ens/AbstractENS.sol";
-import "@netgum/solidity/contracts/ens/AbstractENSResolver.sol";
+import "@netgum/solidity/contracts/ens/ENSOwnable.sol";
 import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
 import "../registry/AbstractRegistryService.sol";
 import "./AbstractAccount.sol";
@@ -13,33 +13,47 @@ import "./AccountLibrary.sol";
 /**
  * @title Account Provider
  */
-contract AccountProvider is AbstractRegistryService, AbstractAccountProvider {
+contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccountProvider {
 
   using BytesSignatureLibrary for bytes;
   using AccountLibrary for AbstractAccount;
+
+  bytes4 private constant INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
+  bytes4 private constant ADDR_INTERFACE_ID = bytes4(keccak256("addr(bytes32)"));
 
   AbstractAccount private guardian;
 
   AbstractENS private ens;
 
-  AbstractENSResolver private ensResolver;
+  bytes32 private ensRootNode;
 
   AbstractAccountProxy private accountProxy;
 
-  bytes32 private ensRootNode;
+  mapping(bytes32 => address) private ensAccounts;
 
   function initialize(
     address _guardian,
     address _ens,
-    address _ensResolver,
-    address _accountProxy,
-    bytes32 _ensRootNode
+    bytes32 _ensRootNode,
+    address _accountProxy
   ) onlyInitializer() public {
     guardian = AbstractAccount(_guardian);
     ens = AbstractENS(_ens);
-    ensResolver = AbstractENSResolver(_ensResolver);
-    accountProxy = AbstractAccountProxy(_accountProxy);
     ensRootNode = _ensRootNode;
+    accountProxy = AbstractAccountProxy(_accountProxy);
+  }
+
+  function supportsInterface(bytes4 _id) public pure returns (bool) {
+    return _id == INTERFACE_META_ID || _id == ADDR_INTERFACE_ID;
+  }
+
+  function addr(bytes32 _node) public view returns (address) {
+    return ensAccounts[_node];
+  }
+
+  function setAddr(bytes32 _node, address _addr) public onlyENSNodeOwner(_node) {
+    ensAccounts[_node] = _addr;
+    emit AddrChanged(_node, _addr);
   }
 
   function createAccount(
@@ -77,7 +91,7 @@ contract AccountProvider is AbstractRegistryService, AbstractAccountProvider {
     bytes32 _ensNode = keccak256(abi.encodePacked(ensRootNode, _ensLabel));
 
     require(
-      ensResolver.addr(_ensNode) == address(0),
+      addr(_ensNode) == address(0),
       "ens label already taken"
     );
 
@@ -99,9 +113,9 @@ contract AccountProvider is AbstractRegistryService, AbstractAccountProvider {
     address payable _account = _createAccount(_salt, _device);
 
     ens.setSubnodeOwner(ensRootNode, _ensLabel, address(this));
-    ens.setResolver(_ensNode, address(ensResolver));
+    ens.setResolver(_ensNode, address(this));
 
-    ensResolver.setAddr(_ensNode, address(_account));
+    ensAccounts[_ensNode] = _account;
 
     emit AccountCreated(_account);
   }
