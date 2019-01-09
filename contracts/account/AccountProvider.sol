@@ -25,21 +25,30 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
 
   AbstractENS private ens;
 
-  bytes32 private ensRootNode;
-
   AbstractAccountProxy private accountProxy;
 
   mapping(bytes32 => address) private ensAccounts;
+  mapping(bytes32 => bool) private ensRootNodes;
+
+  modifier onlyGuardian() {
+    require(
+      (
+      address(this) == msg.sender ||
+      address(guardian) == msg.sender ||
+      guardian.deviceExists(msg.sender)
+      ),
+      "msg.sender is not a guardian device"
+    );
+    _;
+  }
 
   function initialize(
     address _guardian,
     address _ens,
-    bytes32 _ensRootNode,
     address _accountProxy
   ) onlyInitializer() public {
     guardian = AbstractAccount(_guardian);
     ens = AbstractENS(_ens);
-    ensRootNode = _ensRootNode;
     accountProxy = AbstractAccountProxy(_accountProxy);
   }
 
@@ -54,6 +63,26 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
   function setAddr(bytes32 _node, address _addr) public onlyENSNodeOwner(_node) {
     ensAccounts[_node] = _addr;
     emit AddrChanged(_node, _addr);
+  }
+
+  function addEnsRootNode(bytes32 _ensRootNode) public onlyGuardian {
+    require(
+      !ensRootNodes[_ensRootNode],
+      "ens root node already exists"
+    );
+
+    ensRootNodes[_ensRootNode] = true;
+    emit EnsRootNodeAdded(_ensRootNode);
+  }
+
+  function removeEnsRootNode(bytes32 _ensRootNode) public onlyGuardian {
+    require(
+      ensRootNodes[_ensRootNode],
+      "ens root node doesn't exists"
+    );
+
+    delete ensRootNodes[_ensRootNode];
+    emit EnsRootNodeRemoved(_ensRootNode);
   }
 
   function createAccount(
@@ -84,11 +113,16 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
   function createAccountWithEnsLabel(
     bytes32 _salt,
     bytes32 _ensLabel,
+    bytes32 _ensRootNode,
     bytes memory _deviceSignature,
     bytes memory _guardianSignature
   ) public {
+    require(
+      ensRootNodes[_ensRootNode],
+      "ens root node doesn't exists"
+    );
 
-    bytes32 _ensNode = keccak256(abi.encodePacked(ensRootNode, _ensLabel));
+    bytes32 _ensNode = keccak256(abi.encodePacked(_ensRootNode, _ensLabel));
 
     require(
       addr(_ensNode) == address(0),
@@ -100,7 +134,8 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
         address(this),
         msg.sig,
         _salt,
-        _ensLabel
+        _ensLabel,
+        _ensRootNode
       )
     );
 
@@ -112,7 +147,7 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
 
     address payable _account = _createAccount(_salt, _device);
 
-    ens.setSubnodeOwner(ensRootNode, _ensLabel, address(this));
+    ens.setSubnodeOwner(_ensRootNode, _ensLabel, address(this));
     ens.setResolver(_ensNode, address(this));
 
     ensAccounts[_ensNode] = _account;
