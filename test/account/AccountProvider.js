@@ -60,9 +60,14 @@ contract('AccountProvider', (addresses) => {
       await accountProvider.initialize(
         accountProviderGuardian.address,
         ens.address,
-        accountProviderEnsRootNameInfo.nameHash,
         accountProxy.address, {
           from: registryGuardianDevice,
+        },
+      );
+
+      await accountProvider.addEnsRootNode(
+        accountProviderEnsRootNameInfo.nameHash, {
+          from: accountProviderGuardianDevice,
         },
       );
     }
@@ -134,11 +139,13 @@ contract('AccountProvider', (addresses) => {
           'bytes',
           'bytes32',
           'bytes32',
+          'bytes32',
         )(
           accountProvider.address,
-          getMethodSignature('createAccountWithEnsLabel', 'bytes32', 'bytes32', 'bytes', 'bytes'),
+          getMethodSignature('createAccountWithEnsLabel', 'bytes32', 'bytes32', 'bytes32', 'bytes', 'bytes'),
           salt,
           ensLabelHash,
+          accountProviderEnsRootNameInfo.nameHash,
         );
 
         const deviceSignature = signMessage(message, ownerDevice);
@@ -147,6 +154,7 @@ contract('AccountProvider', (addresses) => {
         const { logs: [log] } = await accountProvider.createAccountWithEnsLabel(
           salt,
           ensLabelHash,
+          accountProviderEnsRootNameInfo.nameHash,
           deviceSignature,
           guardianSignature,
         );

@@ -43,9 +43,10 @@ module.exports = async (deployer, network, [guardianDevice]) => {
       await accountProvider.initialize(
         guardian.address,
         ens.address,
-        config.ens.nameInfo.nameHash,
         accountProxy.address,
       );
+
+      await accountProvider.addEnsRootNode(config.ens.nameInfo.nameHash);
     }
   }
 };
