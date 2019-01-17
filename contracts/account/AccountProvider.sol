@@ -87,6 +87,7 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
 
   function createAccount(
     bytes32 _salt,
+    uint256 _refundAmount,
     bytes memory _deviceSignature,
     bytes memory _guardianSignature
   ) public {
@@ -95,7 +96,8 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
       abi.encodePacked(
         address(this),
         msg.sig,
-        _salt
+        _salt,
+        _refundAmount
       )
     );
 
@@ -105,13 +107,14 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
       true
     );
 
-    address payable _account = _createAccount(_salt, _device);
+    address payable _account = _createAccount(_salt, _device, _refundAmount);
 
     emit AccountCreated(_account);
   }
 
   function createAccountWithEnsLabel(
     bytes32 _salt,
+    uint256 _refundAmount,
     bytes32 _ensLabel,
     bytes32 _ensRootNode,
     bytes memory _deviceSignature,
@@ -134,6 +137,7 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
         address(this),
         msg.sig,
         _salt,
+        _refundAmount,
         _ensLabel,
         _ensRootNode
       )
@@ -145,7 +149,7 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
       true
     );
 
-    address payable _account = _createAccount(_salt, _device);
+    address payable _account = _createAccount(_salt, _device, _refundAmount);
 
     ens.setSubnodeOwner(_ensRootNode, _ensLabel, address(this));
     ens.setResolver(_ensNode, address(this));
@@ -155,13 +159,28 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
     emit AccountCreated(_account);
   }
 
-  function _createAccount(bytes32 _salt, address _ownerDevice) internal returns (address payable _account) {
+  function _createAccount(bytes32 _salt, address _ownerDevice, uint256 _refundAmount) internal returns (address payable _account) {
     address[] memory _devices = new address[](2);
-    _devices[0] = _ownerDevice;
-    _devices[1] = address(accountProxy);
+    _devices[0] = address(accountProxy);
+    if (_refundAmount > 0) {
+      _devices[1] = address(this);
+    } else {
+      _devices[1] = _ownerDevice;
+    }
 
     _account = registry.deployAccount(_salt, _devices);
 
     accountProxy.connectAccount(_account);
+
+    if (_refundAmount > 0) {
+      AbstractAccount(_account).executeTransaction(
+        msg.sender,
+        _refundAmount,
+        new bytes(0)
+      );
+
+      AbstractAccount(_account).addDevice(_ownerDevice, AbstractAccount.AccessType.OWNER);
+      AbstractAccount(_account).removeDevice(address(this));
+    }
   }
 }
