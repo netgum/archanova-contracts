@@ -18,12 +18,14 @@ contract AbstractAccountProvider is AbstractENSResolver {
 
   function createAccount(
     bytes32 _salt,
+    uint256 _refundAmount,
     bytes memory _deviceSignature,
     bytes memory _guardianSignature
   ) public;
 
   function createAccountWithEnsLabel(
     bytes32 _salt,
+    uint256 _refundAmount,
     bytes32 _ensLabel,
     bytes32 _ensRootNode,
     bytes memory _deviceSignature,
