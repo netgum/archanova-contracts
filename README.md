@@ -18,16 +18,15 @@ Configuration via environment variables:
 | TRUFFLE_ACCOUNTS_MNEMONIC 	| `false myself sadness rebuild shallow powder outdoor thank basket light fun tip` 	|
 | TRUFFLE_ACCOUNTS_COUNT 	| `10` 	|
 | TRUFFLE_NETWORK_ENDPOINT 	| `http://localhost:8545` 	|
-| TRUFFLE_ENS_ADDRESS 	| `archanova.test` 	|
-| TRUFFLE_ENS_ROOT_NODE 	| `null` 	|
+| TRUFFLE_ENS_ROOT_NODE 	| `smartsafe.test` 	|
 
-Running tests on `development` network
+Running tests on `testing` network
 
 ```bash
 $ npm test
 ```
 
-Running migration on `production` network
+Running migration on `development` network
 
 ```bash
 $ npm run truffle:migrate

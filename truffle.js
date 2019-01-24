@@ -13,8 +13,8 @@ const network = {
 
 module.exports = {
   networks: {
-    production: network,
     development: network,
+    testing: network,
   },
   compilers: {
     solc: {
