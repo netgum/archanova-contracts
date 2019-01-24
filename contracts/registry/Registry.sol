@@ -112,19 +112,6 @@ contract Registry is AbstractRegistry {
     emit ServiceRegistered(msg.sender, _service);
   }
 
-  function deployService(bytes32 _salt, bytes memory _code, bool _isAccountProvider) public onlyGuardian returns (address payable _service) {
-    _service = _deployContract(
-      _salt,
-      _code
-    );
-
-    AbstractRegistryService(_service).transferInitializer(msg.sender);
-
-    emit ServiceDeployed(msg.sender, _service);
-
-    registerService(_service, _isAccountProvider);
-  }
-
   function enableService(address _service) public onlyGuardian {
     require(
       serviceExists(_service),
