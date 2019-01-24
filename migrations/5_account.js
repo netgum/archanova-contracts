@@ -1,27 +1,29 @@
+/* eslint-disable no-console */
 const { getEnsLabelHash } = require('@netgum/utils');
 const config = require('../config');
 
-const Account = artifacts.require('Account');
+const Guardian = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
 const AccountProxy = artifacts.require('AccountProxy');
 const Registry = artifacts.require('Registry');
 const ENSMock = artifacts.require('ENSMock');
 const ENSRegistrarMock = artifacts.require('ENSRegistrarMock');
 
-module.exports = async (deployer, network, [guardianDevice]) => {
-  if (network === 'production') {
-    const registry = await Registry.at(Registry.address);
+module.exports = async (deployer, network) => {
+  switch (network) {
+    case 'development': {
+      const registry = await Registry.at(Registry.address);
+      const guardian = await Guardian.at(Guardian.address);
 
-    await deployer.deploy(AccountProvider);
-    await deployer.deploy(AccountProxy);
+      await deployer.deploy(AccountProvider);
+      await deployer.deploy(AccountProxy);
 
-    const accountProvider = await AccountProvider.at(AccountProvider.address);
-    const accountProxy = await AccountProxy.at(AccountProxy.address);
+      const accountProvider = await AccountProvider.at(AccountProvider.address);
+      const accountProxy = await AccountProxy.at(AccountProxy.address);
 
-    await registry.registerService(accountProvider.address, true);
-    await registry.registerService(accountProxy.address, false);
+      await registry.registerService(accountProvider.address, true);
+      await registry.registerService(accountProxy.address, false);
 
-    if (!config.ens.address) {
       await deployer.deploy(ENSMock);
 
       const ens = await ENSMock.at(ENSMock.address);
@@ -37,9 +39,6 @@ module.exports = async (deployer, network, [guardianDevice]) => {
         accountProvider.address,
       );
 
-      const guardian = await Account.new();
-      await guardian.initialize([guardianDevice]);
-
       await accountProvider.initialize(
         guardian.address,
         ens.address,
@@ -47,6 +46,15 @@ module.exports = async (deployer, network, [guardianDevice]) => {
       );
 
       await accountProvider.addEnsRootNode(config.ens.nameInfo.nameHash);
+
+      // info
+      console.info('ENS_CONTRACT_ADDRESS', ENSMock.address);
+      console.info('ACCOUNT_PROVIDER_CONTRACT_ADDRESS', AccountProvider.address);
+      console.info('ACCOUNT_PROXY_CONTRACT_ADDRESS', AccountProxy.address);
+      console.info();
+      break;
     }
+
+    default:
   }
 };
