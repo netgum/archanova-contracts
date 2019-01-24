@@ -49,29 +49,24 @@ contract('AccountProvider', (addresses) => {
 
     accountProxy = await AccountProxy.new();
     accountProviderGuardian = await createAccount(accountProviderGuardianDevice);
+    accountProvider = await AccountProvider.new();
 
-    {
-      const seed = sha3('AccountProvider');
+    await accountProvider.initialize(
+      registry.address,
+      accountProviderGuardian.address,
+      ens.address,
+      accountProxy.address,
+    );
 
-      const { logs: [{ args: { service } }] } = await registry.deployService(seed, AccountProvider.binary, true, {
-        from: registryGuardianDevice,
-      });
-      accountProvider = await AccountProvider.at(service);
+    await registry.registerService(accountProvider.address, true, {
+      from: registryGuardianDevice,
+    });
 
-      await accountProvider.initialize(
-        accountProviderGuardian.address,
-        ens.address,
-        accountProxy.address, {
-          from: registryGuardianDevice,
-        },
-      );
-
-      await accountProvider.addEnsRootNode(
-        accountProviderEnsRootNameInfo.nameHash, {
-          from: accountProviderGuardianDevice,
-        },
-      );
-    }
+    await accountProvider.addEnsRootNode(
+      accountProviderEnsRootNameInfo.nameHash, {
+        from: accountProviderGuardianDevice,
+      },
+    );
 
     await ensRegistrar.register(
       accountProviderEnsRootNameInfo.labelHash,
