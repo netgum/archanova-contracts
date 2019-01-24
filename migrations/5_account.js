@@ -40,6 +40,7 @@ module.exports = async (deployer, network) => {
       );
 
       await accountProvider.initialize(
+        registry.address,
         guardian.address,
         ens.address,
         accountProxy.address,

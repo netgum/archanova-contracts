@@ -9,7 +9,6 @@ contract AbstractRegistry {
   event AccountRegistered(address sender, address account);
   event AccountDeployed(address sender, address account);
   event ServiceRegistered(address sender, address service);
-  event ServiceDeployed(address sender, address service);
   event ServiceEnabled(address sender, address service);
   event ServiceDisabled(address sender, address service);
 
@@ -26,8 +25,6 @@ contract AbstractRegistry {
   function deployAccount(bytes32 _salt, address[] memory _devices) public returns (address payable _account);
 
   function registerService(address _service, bool _isAccountProvider) public;
-
-  function deployService(bytes32 _salt, bytes memory _code, bool _isAccountProvider) public returns (address payable _service);
 
   function enableService(address _service) public;
 

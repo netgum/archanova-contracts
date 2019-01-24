@@ -3,6 +3,7 @@ pragma solidity >= 0.5.0 < 0.6.0;
 import "@netgum/solidity/contracts/ens/AbstractENS.sol";
 import "@netgum/solidity/contracts/ens/ENSOwnable.sol";
 import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
+import "../registry/AbstractRegistry.sol";
 import "../registry/AbstractRegistryService.sol";
 import "./AbstractAccount.sol";
 import "./AbstractAccountProvider.sol";
@@ -43,10 +44,12 @@ contract AccountProvider is ENSOwnable, AbstractRegistryService, AbstractAccount
   }
 
   function initialize(
+    address _registry,
     address _guardian,
     address _ens,
     address _accountProxy
   ) onlyInitializer() public {
+    registry = AbstractRegistry(_registry);
     guardian = AbstractAccount(_guardian);
     ens = AbstractENS(_ens);
     accountProxy = AbstractAccountProxy(_accountProxy);

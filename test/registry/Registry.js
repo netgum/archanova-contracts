@@ -19,7 +19,6 @@ contract('Registry', (addresses) => {
       invalid: addresses[3],
     };
 
-
     let registry;
     let registryGuardian;
     let account;
@@ -38,45 +37,36 @@ contract('Registry', (addresses) => {
 
       // account service
       {
-        const { logs: [{ args: { service } }] } = await registry.deployService(
-          sha3('account'),
-          RegistryServiceExample.bytecode,
-          true, {
-            from: registryGuardianDevice,
-          },
-        );
+        const service = await RegistryServiceExample.new();
+        await service.initialize(registry.address);
 
-        services.account = service;
+        services.account = service.address;
+
+        await registry.registerService(service.address, true);
       }
 
       // other service
       {
-        const { logs: [{ args: { service } }] } = await registry.deployService(
-          sha3('other'),
-          RegistryServiceExample.bytecode,
-          false, {
-            from: registryGuardianDevice,
-          },
-        );
+        const service = await RegistryServiceExample.new();
+        await service.initialize(registry.address);
 
-        services.other = service;
+        services.other = service.address;
+
+        await registry.registerService(service.address, false);
       }
 
       // disabled service
       {
-        const { logs: [{ args: { service } }] } = await registry.deployService(
-          sha3('disabled'),
-          RegistryServiceExample.bytecode,
-          false, {
-            from: registryGuardianDevice,
-          },
-        );
+        const service = await RegistryServiceExample.new();
+        await service.initialize(registry.address);
 
-        await registry.disableService(service, {
+        await registry.registerService(service.address, false);
+
+        await registry.disableService(service.address, {
           from: registryGuardianDevice,
         });
 
-        services.disabled = service;
+        services.disabled = service.address;
       }
     });
 
