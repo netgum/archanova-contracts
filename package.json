@@ -15,9 +15,9 @@
     "url": "https://github.com/archanova/solidity/issues"
   },
   "scripts": {
-    "truffle:compile": "truffle compile --network=production",
-    "truffle:migrate": "truffle migrate --network=production",
-    "truffle:test": "truffle test --network=development",
+    "truffle:compile": "truffle compile --network=development",
+    "truffle:migrate": "truffle migrate --network=development",
+    "truffle:test": "truffle test --network=testing",
     "eslint": "eslint .",
     "pretest": "npm run eslint",
     "test": "npm run truffle:test"

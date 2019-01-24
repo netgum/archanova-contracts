@@ -4,7 +4,6 @@ const {
   TRUFFLE_ACCOUNTS_MNEMONIC,
   TRUFFLE_ACCOUNTS_COUNT,
   TRUFFLE_NETWORK_ENDPOINT,
-  TRUFFLE_ENS_ADDRESS,
   TRUFFLE_ENS_ROOT_NODE,
 } = process.env;
 
@@ -17,7 +16,6 @@ module.exports = {
     endpoint: TRUFFLE_NETWORK_ENDPOINT || 'http://localhost:8545',
   },
   ens: {
-    address: TRUFFLE_ENS_ADDRESS || null,
-    nameInfo: getEnsNameInfo(TRUFFLE_ENS_ROOT_NODE || 'archanova.test'),
+    nameInfo: getEnsNameInfo(TRUFFLE_ENS_ROOT_NODE || 'smartsafe.test'),
   },
 };
