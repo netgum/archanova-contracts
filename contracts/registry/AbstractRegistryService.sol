@@ -13,7 +13,6 @@ contract AbstractRegistryService is AbstractInitializer {
 
   constructor() public {
     initializer = msg.sender;
-    registry = AbstractRegistry(msg.sender);
   }
 
   function transferInitializer(address _initializer) onlyInitializer() public {
