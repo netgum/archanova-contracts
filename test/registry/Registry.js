@@ -8,7 +8,7 @@ const Account = artifacts.require('Account');
 const Registry = artifacts.require('Registry');
 const RegistryServiceExample = artifacts.require('RegistryServiceExample');
 
-contract.only('Registry', (addresses) => {
+contract('Registry', (addresses) => {
   describe('views', () => {
     const registryGuardianDevice = addresses[2];
 
