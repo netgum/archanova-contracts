@@ -15,7 +15,7 @@
     "url": "https://github.com/archanova/solidity/issues"
   },
   "scripts": {
-    "truffle:compile": "truffle compile --network=development",
+    "truffle:compile": "truffle compile",
     "truffle:migrate": "truffle migrate --network=development",
     "truffle:test": "truffle test --network=testing",
     "eslint": "eslint .",
@@ -30,12 +30,12 @@
     "@types/mocha": "^5.2.5",
     "bip39": "^2.5.0",
     "bn.js": "^4.11.8",
-    "eslint": "^5.10.0",
+    "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "^2.16.0",
     "ethereumjs-wallet": "^0.6.3",
-    "expect": "^23.6.0",
-    "truffle": "^5.0.0",
-    "truffle-hdwallet-provider": "^1.0.1"
+    "expect": "^24.0.0",
+    "truffle": "^5.0.3",
+    "truffle-hdwallet-provider": "^1.0.3"
   }
 }
