@@ -1,40 +1,44 @@
 pragma solidity >= 0.5.0 < 0.6.0;
 
-import "./AbstractAccount.sol";
+import "../shared/AbstractAccount.sol";
 
 
 /**
- * @title Abstract Account Proxy
+ * @title Abstract Platform Account Proxy
  */
-contract AbstractAccountProxy {
+contract AbstractPlatformAccountProxy {
 
-  event AccountVirtualDeviceAdded(address account, address device, address purpose, uint256 limit, bool unlimited);
-  event AccountVirtualDeviceLimitUpdated(address account, address device, uint256 limit);
-  event AccountVirtualDeviceRemoved(address account, address device);
+  event AccountVirtualDeviceAdded(
+    address accountAddress,
+    address deviceAddress,
+    address purposeAddress,
+    uint256 limit,
+    bool unlimited
+  );
 
-  function getAccount(
-    address _account
-  ) public view returns (bool _connected, uint256 _nonce);
+  event AccountVirtualDeviceLimitUpdated(
+    address accountAddress,
+    address deviceAddress,
+    uint256 limit
+  );
 
-  function getAccountVirtualDevice(
-    address _account,
-    address _device
-  ) public view returns (address _purpose, uint256 _limit, bool _unlimited);
+  event AccountVirtualDeviceRemoved(
+    address accountAddress,
+    address deviceAddress
+  );
 
-  function accountConnected(address _account) public view returns (bool);
+  function getAccountNonce(address _account) public view returns (uint256);
+
+  function getAccountVirtualDevice(address _account, address _device) public view returns (address _purpose, uint256 _limit, bool _unlimited);
 
   function accountVirtualDeviceExists(address _account, address _device) public view returns (bool);
-
-  function connectAccount(address _account) public;
-
-  function disconnectAccount(address _account) public;
 
   function addAccountDevice(
     address _account,
     uint256 _nonce,
     address _device,
-    AbstractAccount.AccessType _accessType,
-    uint256 _refundGasBase,
+    AbstractAccount.AccessTypes _accessType,
+    uint256 _fixedGas,
     bytes memory _signature
   ) public;
 
@@ -42,7 +46,7 @@ contract AbstractAccountProxy {
     address _account,
     uint256 _nonce,
     address _device,
-    uint256 _refundGasBase,
+    uint256 _fixedGas,
     bytes memory _signature
   ) public;
 
@@ -53,7 +57,7 @@ contract AbstractAccountProxy {
     address _purpose,
     uint256 _limit,
     bool _unlimited,
-    uint256 _refundGasBase,
+    uint256 _fixedGas,
     bytes memory _signature
   ) public;
 
@@ -62,7 +66,7 @@ contract AbstractAccountProxy {
     uint256 _nonce,
     address _device,
     uint256 _limit,
-    uint256 _refundGasBase,
+    uint256 _fixedGas,
     bytes memory _signature
   ) public;
 
@@ -70,7 +74,7 @@ contract AbstractAccountProxy {
     address _account,
     uint256 _nonce,
     address _device,
-    uint256 _refundGasBase,
+    uint256 _fixedGas,
     bytes memory _signature
   ) public;
 
@@ -80,7 +84,7 @@ contract AbstractAccountProxy {
     address payable _to,
     uint256 _value,
     bytes memory _data,
-    uint256 _refundGasBase,
+    uint256 _fixedGas,
     bytes memory _signature
   ) public;
 }
