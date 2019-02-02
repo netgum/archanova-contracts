@@ -4,7 +4,7 @@ const config = require('./config');
 const network = {
   provider: () => new HDWalletProvider(
     config.accounts.mnemonic,
-    config.network.endpoint,
+    config.network.providerEndpoint,
     0,
     config.accounts.count,
   ),

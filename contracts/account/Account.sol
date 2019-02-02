@@ -1,58 +1,56 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
 
-import "../shared/AbstractInitializer.sol";
 import "./AbstractAccount.sol";
+
 
 /**
  * @title Account
  */
-contract Account is AbstractInitializer, AbstractAccount {
+contract Account is AbstractAccount {
 
-  mapping(address => AccessType) internal devicesAccessType;
-  mapping(address => bool) private devicesLog;
+  mapping(address => AccessTypes) internal devicesAccessType;
+  mapping(address => bool) internal devicesLog;
 
   modifier onlyOwner() {
     require(
-      getDeviceAccessType(msg.sender) == AccessType.OWNER,
+      getDeviceAccessType(msg.sender) == AccessTypes.OWNER,
       "msg.sender is not owner"
     );
 
     _;
   }
 
+  constructor(address _device) public {
+    if (_device != address(0)) {
+      devicesAccessType[_device] = AccessTypes.OWNER;
+      devicesLog[_device] = true;
+    }
+  }
+
   function() external payable {
     //
   }
 
-  function initialize(address[] memory _devices) onlyInitializer() public {
-    for (uint i = 0; i < _devices.length; i++) {
-      if (_devices[i] != address(0)) {
-        devicesAccessType[_devices[i]] = AccessType.OWNER;
-        devicesLog[_devices[i]] = true;
-      }
-    }
-  }
-
   function deviceExists(address _device) public view returns (bool) {
-    return devicesAccessType[_device] != AccessType.NONE;
+    return devicesAccessType[_device] != AccessTypes.NONE;
   }
 
   function deviceExisted(address _device) public view returns (bool) {
     return devicesLog[_device];
   }
 
-  function getDeviceAccessType(address _device) public view returns (AccessType) {
+  function getDeviceAccessType(address _device) public view returns (AccessTypes) {
     return devicesAccessType[_device];
   }
 
-  function addDevice(address _device, AccessType _accessType) onlyOwner public {
+  function addDevice(address _device, AccessTypes _accessType) onlyOwner public {
     require(
-      _accessType != AccessType.NONE,
-      "invalid device type"
+      _accessType != AccessTypes.NONE,
+      "invalid device access type"
     );
     require(
       _device != address(0),
-      "invalid device"
+      "invalid device address"
     );
     require(
       !deviceExists(_device),
@@ -76,15 +74,11 @@ contract Account is AbstractInitializer, AbstractAccount {
     emit DeviceRemoved(_device);
   }
 
-  function executeTransaction(
-    address payable _to,
-    uint256 _value,
-    bytes memory _data
-  ) onlyOwner public returns (bytes memory _response) {
+  function executeTransaction(address payable _to, uint256 _value, bytes memory _data) onlyOwner public returns (bytes memory _response) {
     require(
       _to != address(0) &&
       _to != address(this),
-      "invalid recipient"
+      "invalid address"
     );
 
     bool _succeeded;

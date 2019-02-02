@@ -4,6 +4,7 @@ const hdKey = require('ethereumjs-wallet/hdkey');
 const {
   anyToBuffer,
   anyToHex,
+  targetToAddress,
   signPersonalMessage,
 } = require('@netgum/utils');
 const config = require('../config');
@@ -29,8 +30,10 @@ const privateKeys = (() => {
   return result;
 })();
 
-async function getBalance(address) {
-  const value = await web3.eth.getBalance(address);
+async function getBalance(target) {
+  const value = await web3.eth.getBalance(
+    targetToAddress(target),
+  );
   return new BN(value, 10);
 }
 
