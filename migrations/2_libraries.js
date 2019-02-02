@@ -1,4 +1,5 @@
 const ECDSA = artifacts.require('ECDSA');
+const SafeMath = artifacts.require('SafeMath');
 
 const AccountLibrary = artifacts.require('AccountLibrary');
 const AccountLibraryExample = artifacts.require('AccountLibraryExample');
@@ -8,6 +9,7 @@ const PlatformAccountProxy = artifacts.require('PlatformAccountProxy');
 
 module.exports = async (deployer) => {
   await deployer.deploy(ECDSA);
+  await deployer.deploy(SafeMath);
 
   deployer.link(ECDSA, AccountLibrary);
 
@@ -19,4 +21,6 @@ module.exports = async (deployer) => {
 
   deployer.link(ECDSA, PlatformAccountProvider);
   deployer.link(ECDSA, PlatformAccountProxy);
+
+  deployer.link(SafeMath, PlatformAccountProxy);
 };

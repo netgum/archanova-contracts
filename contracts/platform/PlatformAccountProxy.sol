@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../account/AbstractAccount.sol";
 import "./AbstractPlatformAccountProxy.sol";
 
@@ -11,6 +12,7 @@ import "./AbstractPlatformAccountProxy.sol";
 contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
   using ECDSA for bytes32;
+  using SafeMath for uint256;
 
   struct AccountVirtualDevice {
     address purpose;
@@ -31,7 +33,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
       "invalid account nonce"
     );
 
-    ++accounts[_account].nonce;
+    accounts[_account].nonce = accounts[_account].nonce.add(1);
 
     _;
   }
@@ -412,7 +414,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         );
 
         if (_value > 0) {
-          _virtualDevice.limit -= _value;
+          _virtualDevice.limit = _virtualDevice.limit.sub(_value);
 
           emit AccountVirtualDeviceLimitUpdated(_account, _sender, _virtualDevice.limit);
         }
@@ -447,11 +449,11 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
   function _refundGas(address _account, uint _startGas, uint256 _fixedGas) internal {
     if (_fixedGas > 0) {
-      uint256 _gasTotal = _fixedGas + _startGas - gasleft();
+      uint256 _gasTotal = _fixedGas.add(_startGas).sub(gasleft());
 
       AbstractAccount(_account).executeTransaction(
         msg.sender,
-        _gasTotal * tx.gasprice,
+        _gasTotal.mul(tx.gasprice),
         new bytes(0)
       );
     }
