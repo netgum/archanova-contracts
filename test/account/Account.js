@@ -61,7 +61,7 @@ contract('Account', (addresses) => {
           .toBeFalsy();
       });
 
-      it('expect to  return true when device was removed', async () => {
+      it('expect to return true when device was removed', async () => {
         expect(await account.deviceExisted(DEVICES.removed))
           .toBeTruthy();
       });
