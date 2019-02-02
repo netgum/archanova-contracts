@@ -24,13 +24,16 @@ contract('ContractCreatorExample', () => {
     });
 
     describe('createContract()', () => {
-      it('should create contract with computed address', async () => {
+      it('should create contract on computed address', async () => {
         const { logs: [log] } = await contractCreatorExample.createContract(salt);
+        const contract = await Mock.at(computedAddress);
 
         expect(log.event)
           .toBe('ContractCreated');
         expect(log.args.contractAddress)
           .toBe(computedAddress);
+        expect(await contract.ping())
+          .toBe('pong');
       });
 
       it('should fail when salt was used', async () => {

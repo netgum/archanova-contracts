@@ -5,7 +5,7 @@ pragma solidity ^0.5.0;
  */
 contract Mock {
 
-  function foo() public pure returns (string memory) {
-    return "bar";
+  function ping() public pure returns (string memory) {
+    return "pong";
   }
 }
