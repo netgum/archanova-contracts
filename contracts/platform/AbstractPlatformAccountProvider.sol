@@ -11,7 +11,7 @@ contract AbstractPlatformAccountProvider is AbstractENSResolver {
 
   function releaseENSNode() public;
 
-  function createAccount(
+  function createAccountWithGuardianSignature(
     bytes32 _ensLabel,
     uint256 _refundAmount,
     bytes memory _deviceSignature,

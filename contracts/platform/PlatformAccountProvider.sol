@@ -17,9 +17,6 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
 
   using ECDSA for bytes32;
 
-  bytes4 private constant INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
-  bytes4 private constant ADDR_INTERFACE_ID = bytes4(keccak256("addr(bytes32)"));
-
   ENS private ens;
 
   mapping(bytes32 => address) private ensResolverAddresses;
@@ -42,10 +39,6 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     contractCode = _contractCode;
   }
 
-  function supportsInterface(bytes4 _id) public pure returns (bool) {
-    return _id == INTERFACE_META_ID || _id == ADDR_INTERFACE_ID;
-  }
-
   function addr(bytes32 _node) public view returns (address) {
     return ensResolverAddresses[_node];
   }
@@ -59,7 +52,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     ens.setOwner(ensNode, msg.sender);
   }
 
-  function createAccount(
+  function createAccountWithGuardianSignature(
     bytes32 _ensLabel,
     uint256 _refundAmount,
     bytes memory _deviceSignature,
@@ -165,6 +158,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     ens.setSubnodeOwner(ensNode, _ensLabel, address(this));
     ens.setResolver(_accountEnsNode, address(this));
     ens.setOwner(_accountEnsNode, _accountAddress);
-    setAddr(_accountEnsNode, _accountAddress);
+
+    ensResolverAddresses[_accountEnsNode] = _accountAddress;
   }
 }
