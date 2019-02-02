@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+
 const Guardian = artifacts.require('Guardian');
 
 module.exports = async (deployer, network, addresses) => {

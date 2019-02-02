@@ -6,7 +6,7 @@ const { sha3, computeCreate2Address } = require('@netgum/utils');
 const ContractCreatorExample = artifacts.require('ContractCreatorExample');
 const Mock = artifacts.require('Mock');
 
-contract.only('ContractCreatorExample', () => {
+contract('ContractCreatorExample', () => {
   describe('methods', () => {
     const contractCode = Mock.binary;
     const salt = sha3(Date.now());

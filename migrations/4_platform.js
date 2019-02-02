@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+
 const { getEnsLabelHash } = require('@netgum/utils');
 const config = require('../config');
 
