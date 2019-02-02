@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
 
-const Guardian = artifacts.require('Guardian');
+const Account = artifacts.require('Account');
 
 module.exports = async (deployer, network, addresses) => {
   switch (network) {
     case 'development': {
       const guardianDevice = addresses[1];
-      await deployer.deploy(Guardian, guardianDevice);
+      await deployer.deploy(Account, guardianDevice);
 
       // info
-      console.info('   GLOBAL_GUARDIAN_CONTRACT', Guardian.address);
+      console.info('   GLOBAL_GUARDIAN_CONTRACT', Account.address);
       console.info('   GLOBAL_GUARDIAN_DEVICE', guardianDevice);
       console.info();
       break;

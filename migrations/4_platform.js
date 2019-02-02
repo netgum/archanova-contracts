@@ -5,7 +5,7 @@ const config = require('../config');
 
 const ENSRegistry = artifacts.require('ENSRegistry');
 const FIFSRegistrar = artifacts.require('FIFSRegistrar');
-const Guardian = artifacts.require('Guardian');
+const Account = artifacts.require('Account');
 const PlatformAccount = artifacts.require('PlatformAccount');
 const PlatformAccountProvider = artifacts.require('PlatformAccountProvider');
 const PlatformAccountProxy = artifacts.require('PlatformAccountProxy');
@@ -23,7 +23,7 @@ module.exports = async (deployer, network) => {
         PlatformAccountProvider,
         ENSRegistry.address,
         ensNode.nameHash,
-        Guardian.address,
+        Account.address,
         PlatformAccountProxy.address,
         PlatformAccount.binary,
       );

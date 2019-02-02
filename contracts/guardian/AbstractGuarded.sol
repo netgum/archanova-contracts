@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "./AbstractGuardian.sol";
+import "../account/AbstractAccount.sol";
+import "../account/AccountLibrary.sol";
 
 
 /**
@@ -8,7 +9,9 @@ import "./AbstractGuardian.sol";
  */
 contract AbstractGuarded {
 
-  AbstractGuardian public guardian;
+  using AccountLibrary for AbstractAccount;
+
+  AbstractAccount public guardian;
 
   modifier onlyGuardian() {
     require(
@@ -23,5 +26,13 @@ contract AbstractGuarded {
 
   constructor() internal {
     //
+  }
+
+  function verifyGuardianSignature(bytes memory _signature, bytes memory _message) public view returns (address _device) {
+    _device = guardian.verifyDeviceSignature(
+      _signature,
+      _message,
+      true
+    );
   }
 }

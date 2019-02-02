@@ -2,13 +2,14 @@
 
 const expect = require('expect');
 const { randomBytes } = require('crypto');
+const { anyToHex } = require('@netgum/utils');
 const { AccountAccessTypes } = require('../constants');
 const { signMessage } = require('../utils');
 
 const Account = artifacts.require('Account');
 const AccountLibraryExample = artifacts.require('AccountLibraryExample');
 
-contract.only('AccountLibraryExample', (addresses) => {
+contract('AccountLibraryExample', (addresses) => {
   describe('views', () => {
     const DEVICES = {
       owner: addresses[1],
@@ -17,7 +18,7 @@ contract.only('AccountLibraryExample', (addresses) => {
       invalid: addresses[4],
     };
 
-    const MESSAGE = randomBytes(32);
+    const MESSAGE = anyToHex(randomBytes(32), { add0x: true });
 
     let account;
     let accountLibraryExample;
@@ -41,26 +42,26 @@ contract.only('AccountLibraryExample', (addresses) => {
 
     describe('verifyDeviceSignature()', () => {
       describe('strict mode ON', () => {
-        it('expect to return signer when signature was signed by OWNER device', async () => {
+        it('expect to return signer when signature was signed by account OWNER device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.owner);
           expect(await accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, true))
             .toBe(DEVICES.owner);
         });
 
-        it('expect to return signer when signature was signed by DELEGATE device', async () => {
+        it('expect to return signer when signature was signed by account DELEGATE device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.delegate);
           expect(await accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, true))
             .toBe(DEVICES.delegate);
         });
 
-        it('expect to reject when signer was guardian device', async () => {
+        it('expect to reject when signer was account device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.removed);
           await expect(accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, true))
             .rejects
             .toThrow();
         });
 
-        it('expect to reject when signer wasn\'t guardian device', async () => {
+        it('expect to reject when signer wasn\'t account device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.invalid);
           await expect(accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, true))
             .rejects
@@ -69,25 +70,25 @@ contract.only('AccountLibraryExample', (addresses) => {
       });
 
       describe('strict mode OFF', () => {
-        it('expect to return signer when signature was signed by OWNER device', async () => {
+        it('expect to return signer when signature was signed by account OWNER device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.owner);
           expect(await accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, false))
             .toBe(DEVICES.owner);
         });
 
-        it('expect to return signer when signature was signed by DELEGATE device', async () => {
+        it('expect to return signer when signature was signed by account DELEGATE device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.delegate);
           expect(await accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, false))
             .toBe(DEVICES.delegate);
         });
 
-        it('expect to return signer when signer was guardian device', async () => {
+        it('expect to return signer when signer was account device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.removed);
           expect(await accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, false))
             .toBe(DEVICES.removed);
         });
 
-        it('expect to reject when signer wasn\'t guardian device', async () => {
+        it('expect to reject when signer wasn\'t account device', async () => {
           const signature = signMessage(MESSAGE, DEVICES.invalid);
           await expect(accountLibraryExample.verifyDeviceSignature(signature, MESSAGE, false))
             .rejects

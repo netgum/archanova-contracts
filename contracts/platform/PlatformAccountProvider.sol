@@ -2,8 +2,9 @@ pragma solidity ^0.5.0;
 
 import "@ensdomains/ens/contracts/ENS.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
-import "../ens/ENSOwnable.sol";
+import "../account/AbstractAccount.sol";
 import "../contractCreator/AbstractContractCreator.sol";
+import "../ens/ENSOwnable.sol";
 import "../guardian/AbstractGuarded.sol";
 import "./AbstractPlatformAccount.sol";
 import "./AbstractPlatformAccountProvider.sol";
@@ -36,7 +37,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
   ) public {
     ens = ENS(_ens);
     ensNode = _ensNode;
-    guardian = AbstractGuardian(_guardian);
+    guardian = AbstractAccount(_guardian);
     accountProxy = _accountProxy;
     contractCode = _contractCode;
   }
@@ -74,10 +75,9 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
       )
     ).toEthSignedMessageHash().recover(_deviceSignature);
 
-    guardian.verifyDeviceSignature(
+    verifyGuardianSignature(
       _guardianSignature,
-      _deviceSignature,
-      true
+      _deviceSignature
     );
 
     bytes32 _salt = keccak256(abi.encodePacked(_device));
