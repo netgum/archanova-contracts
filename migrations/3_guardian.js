@@ -5,9 +5,7 @@ module.exports = async (deployer, network, addresses) => {
   switch (network) {
     case 'development': {
       const guardianDevice = addresses[1];
-      await deployer.deploy(Guardian, {
-        from: guardianDevice,
-      });
+      await deployer.deploy(Guardian, guardianDevice);
 
       // info
       console.info('   GLOBAL_GUARDIAN_CONTRACT', Guardian.address);

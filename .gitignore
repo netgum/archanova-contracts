@@ -8,4 +8,5 @@
 build/
 node_modules/
 *.log
+bak
 test.js

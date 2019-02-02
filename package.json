@@ -23,7 +23,8 @@
     "test": "npm run truffle:test"
   },
   "dependencies": {
-    "@netgum/solidity": "^0.0.17"
+    "@ensdomains/ens": "^0.3.3",
+    "openzeppelin-solidity": "^2.1.2"
   },
   "devDependencies": {
     "@netgum/utils": "^0.0.5",
