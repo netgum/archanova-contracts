@@ -43,6 +43,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
       AbstractAccount(_account).getDeviceAccessType(_device) == AbstractAccount.AccessTypes.OWNER,
       "device is not an account owner"
     );
+
     _;
   }
 
@@ -64,11 +65,10 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     return accounts[_account].virtualDevices[_device].purpose != address(0);
   }
 
-  function addAccountDevice(
+  function forwardAccountOwnerCall(
     address _account,
     uint256 _nonce,
-    address _device,
-    AbstractAccount.AccessTypes _accessType,
+    bytes memory _data,
     uint256 _fixedGas,
     bytes memory _signature
   ) public {
@@ -81,51 +81,17 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         msg.sig,
         _account,
         _nonce,
-        _device,
-        _accessType,
+        _data,
         _fixedGas,
         tx.gasprice
       )
     ).toEthSignedMessageHash().recover(_signature);
 
-    _addAccountDevice(
+    _forwardAccountOwnerCall(
       _sender,
       _account,
       _nonce,
-      _device,
-      _accessType
-    );
-
-    _refundGas(_account, _refundStartGas, _fixedGas);
-  }
-
-  function removeAccountDevice(
-    address _account,
-    uint256 _nonce,
-    address _device,
-    uint256 _fixedGas,
-    bytes memory _signature
-  ) public {
-
-    uint _refundStartGas = gasleft();
-
-    address _sender = keccak256(
-      abi.encodePacked(
-        address(this),
-        msg.sig,
-        _account,
-        _nonce,
-        _device,
-        _fixedGas,
-        tx.gasprice
-      )
-    ).toEthSignedMessageHash().recover(_signature);
-
-    _removeAccountDevice(
-      _sender,
-      _account,
-      _nonce,
-      _device
+      _data
     );
 
     _refundGas(_account, _refundStartGas, _fixedGas);
@@ -160,7 +126,6 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         tx.gasprice
       )
     ).toEthSignedMessageHash().recover(_signature);
-
 
     _addAccountVirtualDevice(
       _sender,
@@ -274,7 +239,6 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
       )
     ).toEthSignedMessageHash().recover(_signature);
 
-
     _executeTransaction(
       _sender,
       _account,
@@ -287,25 +251,19 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     _refundGas(_account, _refundStartGas, _fixedGas);
   }
 
-  function _addAccountDevice(
+  function _forwardAccountOwnerCall(
     address _sender,
     address _account,
     uint256 _nonce,
-    address _device,
-    AbstractAccount.AccessTypes _accessType
+    bytes memory _data
   ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+    bool _succeeded;
+    (_succeeded,) = _account.call(_data);
 
-    AbstractAccount(_account).addDevice(_device, _accessType);
-  }
-
-  function _removeAccountDevice(
-    address _sender,
-    address _account,
-    uint256 _nonce,
-    address _device
-  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
-
-    AbstractAccount(_account).removeDevice(_device);
+    require(
+      _succeeded,
+      "call failed"
+    );
   }
 
   function _addAccountVirtualDevice(

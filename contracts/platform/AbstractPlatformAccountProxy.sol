@@ -33,19 +33,10 @@ contract AbstractPlatformAccountProxy {
 
   function accountVirtualDeviceExists(address _account, address _device) public view returns (bool);
 
-  function addAccountDevice(
+  function forwardAccountOwnerCall(
     address _account,
     uint256 _nonce,
-    address _device,
-    AbstractAccount.AccessTypes _accessType,
-    uint256 _fixedGas,
-    bytes memory _signature
-  ) public;
-
-  function removeAccountDevice(
-    address _account,
-    uint256 _nonce,
-    address _device,
+    bytes memory _data,
     uint256 _fixedGas,
     bytes memory _signature
   ) public;
