@@ -1,10 +1,10 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
 
-import "@netgum/solidity/contracts/ens/AbstractENS.sol";
-import "@netgum/solidity/contracts/ens/ENSOwnable.sol";
-import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
-import "../shared/AbstractContractCreator.sol";
-import "../shared/AbstractGuarded.sol";
+import "@ensdomains/ens/contracts/ENS.sol";
+import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "../ens/ENSOwnable.sol";
+import "../contractCreator/AbstractContractCreator.sol";
+import "../guardian/AbstractGuarded.sol";
 import "./AbstractPlatformAccount.sol";
 import "./AbstractPlatformAccountProvider.sol";
 
@@ -14,12 +14,12 @@ import "./AbstractPlatformAccountProvider.sol";
  */
 contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, AbstractGuarded, AbstractPlatformAccountProvider {
 
-  using BytesSignatureLibrary for bytes;
+  using ECDSA for bytes32;
 
   bytes4 private constant INTERFACE_META_ID = bytes4(keccak256("supportsInterface(bytes4)"));
   bytes4 private constant ADDR_INTERFACE_ID = bytes4(keccak256("addr(bytes32)"));
 
-  AbstractENS private ens;
+  ENS private ens;
 
   mapping(bytes32 => address) private ensResolverAddresses;
 
@@ -34,7 +34,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     address _accountProxy,
     bytes memory _contractCode
   ) public {
-    ens = AbstractENS(_ens);
+    ens = ENS(_ens);
     ensNode = _ensNode;
     guardian = AbstractGuardian(_guardian);
     accountProxy = _accountProxy;
@@ -65,14 +65,14 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     bytes memory _guardianSignature
   ) public {
 
-    address _device = _deviceSignature.recoverAddress(
+    address _device = keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
         _ensLabel,
         _refundAmount
       )
-    );
+    ).toEthSignedMessageHash().recover(_deviceSignature);
 
     guardian.verifyDeviceSignature(
       _guardianSignature,
@@ -96,14 +96,14 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     bytes memory _deviceSignature
   ) onlyGuardian public {
 
-    address _device = _deviceSignature.recoverAddress(
+    address _device = keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
         _ensLabel,
         _refundAmount
       )
-    );
+    ).toEthSignedMessageHash().recover(_deviceSignature);
 
     bytes32 _salt = keccak256(abi.encodePacked(_device));
 

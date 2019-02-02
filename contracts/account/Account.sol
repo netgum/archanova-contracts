@@ -1,21 +1,12 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
+
+import "./AbstractAccount.sol";
+
 
 /**
- * @title Abstract Account
+ * @title Account
  */
-contract AbstractAccount {
-
-  enum AccessTypes {
-    NONE,
-    OWNER,
-    DELEGATE
-  }
-
-  event DeviceAdded(address deviceAddress, AccessTypes deviceAccessType);
-
-  event DeviceRemoved(address deviceAddress);
-
-  event TransactionExecuted(address payable to, uint256 value, bytes data, bytes response);
+contract Account is AbstractAccount {
 
   mapping(address => AccessTypes) internal devicesAccessType;
   mapping(address => bool) internal devicesLog;
@@ -29,7 +20,14 @@ contract AbstractAccount {
     _;
   }
 
-  constructor() internal {
+  constructor(address _device) public {
+    if (_device != address(0)) {
+      devicesAccessType[_device] = AccessTypes.OWNER;
+      devicesLog[_device] = true;
+    }
+  }
+
+  function() external payable {
     //
   }
 

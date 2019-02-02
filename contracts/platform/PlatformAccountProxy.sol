@@ -1,7 +1,7 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
 
-import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
-import "../shared/AbstractAccount.sol";
+import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "../account/AbstractAccount.sol";
 import "./AbstractPlatformAccountProxy.sol";
 
 
@@ -10,7 +10,7 @@ import "./AbstractPlatformAccountProxy.sol";
  */
 contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
-  using BytesSignatureLibrary for bytes;
+  using ECDSA for bytes32;
 
   struct AccountVirtualDevice {
     address purpose;
@@ -31,9 +31,9 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
       "invalid account nonce"
     );
 
-    _;
-
     ++accounts[_account].nonce;
+
+    _;
   }
 
   modifier onlyAccountOwner(address _account, address _device) {
@@ -73,7 +73,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
     uint _refundStartGas = gasleft();
 
-    address _sender = _signature.recoverAddress(
+    address _sender = keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
@@ -84,7 +84,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         _fixedGas,
         tx.gasprice
       )
-    );
+    ).toEthSignedMessageHash().recover(_signature);
 
     _addAccountDevice(
       _sender,
@@ -107,7 +107,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
     uint _refundStartGas = gasleft();
 
-    address _sender = _signature.recoverAddress(
+    address _sender = keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
@@ -117,7 +117,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         _fixedGas,
         tx.gasprice
       )
-    );
+    ).toEthSignedMessageHash().recover(_signature);
 
     _removeAccountDevice(
       _sender,
@@ -144,7 +144,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
     address _sender = _fixedGas == 0 && _signature.length == 0
     ? msg.sender
-    : _signature.recoverAddress(
+    : keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
@@ -157,7 +157,8 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         _fixedGas,
         tx.gasprice
       )
-    );
+    ).toEthSignedMessageHash().recover(_signature);
+
 
     _addAccountVirtualDevice(
       _sender,
@@ -185,7 +186,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
     address _sender = _fixedGas == 0 && _signature.length == 0
     ? msg.sender
-    : _signature.recoverAddress(
+    : keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
@@ -196,7 +197,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         _fixedGas,
         tx.gasprice
       )
-    );
+    ).toEthSignedMessageHash().recover(_signature);
 
     _setAccountVirtualDeviceLimit(
       _sender,
@@ -221,7 +222,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
     address _sender = _fixedGas == 0 && _signature.length == 0
     ? msg.sender
-    : _signature.recoverAddress(
+    : keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
@@ -231,7 +232,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         _fixedGas,
         tx.gasprice
       )
-    );
+    ).toEthSignedMessageHash().recover(_signature);
 
     _removeAccountVirtualDevice(
       _sender,
@@ -257,7 +258,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
 
     address _sender = _fixedGas == 0 && _signature.length == 0
     ? msg.sender
-    : _signature.recoverAddress(
+    : keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
@@ -269,7 +270,8 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
         _fixedGas,
         tx.gasprice
       )
-    );
+    ).toEthSignedMessageHash().recover(_signature);
+
 
     _executeTransaction(
       _sender,
@@ -289,7 +291,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     uint256 _nonce,
     address _device,
     AbstractAccount.AccessTypes _accessType
-  ) public verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     AbstractAccount(_account).addDevice(_device, _accessType);
   }
@@ -299,7 +301,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address _account,
     uint256 _nonce,
     address _device
-  ) public verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     AbstractAccount(_account).removeDevice(_device);
   }
@@ -312,7 +314,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address _purpose,
     uint256 _limit,
     bool _unlimited
-  ) public verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     require(
       !accountVirtualDeviceExists(_account, _device),
@@ -342,7 +344,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     uint256 _nonce,
     address _device,
     uint256 _limit
-  ) public verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     require(
       accountVirtualDeviceExists(_account, _device),
@@ -363,7 +365,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address _account,
     uint256 _nonce,
     address _device
-  ) public verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     require(
       accountVirtualDeviceExists(_account, _device),
@@ -384,7 +386,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address payable _to,
     uint256 _value,
     bytes memory _data
-  ) public verifyAccountNonce(_account, _nonce) {
+  ) internal verifyAccountNonce(_account, _nonce) {
 
     AbstractAccount.AccessTypes _accessType = AbstractAccount(_account).getDeviceAccessType(_sender);
     require(
