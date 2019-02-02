@@ -1,8 +1,5 @@
 pragma solidity ^0.5.0;
 
-import "../account/AbstractAccount.sol";
-
-
 /**
  * @title Abstract Platform Account Proxy
  */
