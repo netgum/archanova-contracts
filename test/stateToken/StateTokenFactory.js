@@ -22,7 +22,7 @@ const Account = artifacts.require('Account');
 const StateToken = artifacts.require('StateToken');
 const StateTokenFactory = artifacts.require('StateTokenFactory');
 
-contract.only('StateTokenFactory', (addresses) => {
+contract('StateTokenFactory', (addresses) => {
   describe('methods', () => {
     const TOKEN_RELEASE_IN = new BN(1); // 1 second
     let stateTokenFactory;
