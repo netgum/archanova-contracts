@@ -13,13 +13,17 @@ contract StateTokenFactory is AbstractStateTokenFactory {
 
   using AccountLibrary for AbstractAccount;
 
-  uint private tokenReleaseTime;
+  uint private tokenReleaseIn;
 
   mapping(bytes32 => uint) private tokensReleaseDueTime;
 
-  constructor(uint _tokenReleaseTime, bytes memory _contractCode) public {
-    tokenReleaseTime = _tokenReleaseTime;
+  constructor(uint _tokenReleaseIn, bytes memory _contractCode) public {
+    tokenReleaseIn = _tokenReleaseIn;
     contractCode = _contractCode;
+  }
+
+  function fundToken(address payable _tokenAddress) payable public {
+    _tokenAddress.transfer(msg.value);
   }
 
   function releaseToken(uint256 _tokenId) public {
@@ -29,13 +33,13 @@ contract StateTokenFactory is AbstractStateTokenFactory {
       ));
 
     if (tokensReleaseDueTime[_tokenHash] == 0) {
-      tokensReleaseDueTime[_tokenHash] = now + tokenReleaseTime;
+      tokensReleaseDueTime[_tokenHash] = now + tokenReleaseIn;
 
       emit TokenReleaseRequested(_tokenHash, tokensReleaseDueTime[_tokenHash]);
 
     } else {
       require(
-        tokensReleaseDueTime[_tokenHash] >= now,
+        tokensReleaseDueTime[_tokenHash] <= now,
         "invalid token release due time"
       );
 

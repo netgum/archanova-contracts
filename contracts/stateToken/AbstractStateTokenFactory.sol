@@ -16,6 +16,8 @@ contract AbstractStateTokenFactory is AbstractContractCreator {
 
   event TokenBurned(bytes32 tokenHash, address beneficiaryAddress);
 
+  function fundToken(address payable _tokenAddress) payable public;
+
   function releaseToken(uint256 _tokenId) public;
 
   function burnToken(

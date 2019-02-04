@@ -6,6 +6,7 @@ const AccountLibraryExample = artifacts.require('AccountLibraryExample');
 const GuardedExample = artifacts.require('GuardedExample');
 const PlatformAccountProvider = artifacts.require('PlatformAccountProvider');
 const PlatformAccountProxy = artifacts.require('PlatformAccountProxy');
+const StateTokenFactory = artifacts.require('StateTokenFactory');
 
 module.exports = async (deployer) => {
   await deployer.deploy(ECDSA);
@@ -18,6 +19,7 @@ module.exports = async (deployer) => {
   deployer.link(AccountLibrary, AccountLibraryExample);
   deployer.link(AccountLibrary, GuardedExample);
   deployer.link(AccountLibrary, PlatformAccountProvider);
+  deployer.link(AccountLibrary, StateTokenFactory);
 
   deployer.link(ECDSA, PlatformAccountProvider);
   deployer.link(ECDSA, PlatformAccountProxy);
