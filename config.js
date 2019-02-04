@@ -4,6 +4,7 @@ const {
   ACCOUNTS_MNEMONIC,
   ACCOUNTS_COUNT,
   NETWORK_PROVIDER_ENDPOINT,
+  NETWORK_USE_GANACHE_FOR_TESTING,
   PLATFORM_ACCOUNT_PROVIDER_ENS_ROOT_NODE_NAME,
 } = process.env;
 
@@ -14,6 +15,7 @@ module.exports = {
   },
   network: {
     providerEndpoint: NETWORK_PROVIDER_ENDPOINT || 'http://localhost:8545',
+    useGanacheForTesting: !!NETWORK_USE_GANACHE_FOR_TESTING,
   },
   platform: {
     accountProvider: {
