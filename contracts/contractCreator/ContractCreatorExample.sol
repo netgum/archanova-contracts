@@ -12,6 +12,6 @@ contract ContractCreatorExample is AbstractContractCreator {
   }
 
   function createContract(bytes32 _salt) public {
-    _createContract(_salt);
+    _createContract(_salt, true);
   }
 }

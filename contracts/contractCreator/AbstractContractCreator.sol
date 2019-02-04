@@ -13,7 +13,7 @@ contract AbstractContractCreator {
     //
   }
 
-  function _createContract(bytes32 _salt) internal returns (address _contract) {
+  function _createContract(bytes32 _salt, bool _verbose) internal returns (address _contract) {
     bytes memory _contractCode = contractCode;
 
     assembly {
@@ -21,6 +21,8 @@ contract AbstractContractCreator {
       if iszero(extcodesize(_contract)) {revert(0, 0)}
     }
 
-    emit ContractCreated(_contract);
+    if (_verbose) {
+      emit ContractCreated(_contract);
+    }
   }
 }
