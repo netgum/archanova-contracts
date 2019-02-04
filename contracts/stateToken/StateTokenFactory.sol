@@ -2,6 +2,7 @@ pragma solidity ^0.5.0;
 
 import "../account/AbstractAccount.sol";
 import "../account/AccountLibrary.sol";
+import "../contractCreator/ContractCreator.sol";
 import "./AbstractStateToken.sol";
 import "./AbstractStateTokenFactory.sol";
 
@@ -9,7 +10,7 @@ import "./AbstractStateTokenFactory.sol";
 /**
  * @title State Token Factory
  */
-contract StateTokenFactory is AbstractStateTokenFactory {
+contract StateTokenFactory is AbstractStateTokenFactory, ContractCreator {
 
   using AccountLibrary for AbstractAccount;
 
@@ -17,13 +18,8 @@ contract StateTokenFactory is AbstractStateTokenFactory {
 
   mapping(bytes32 => uint) private tokensReleaseDueTime;
 
-  constructor(uint _tokenReleaseIn, bytes memory _contractCode) public {
+  constructor(uint _tokenReleaseIn, bytes memory _contractCode) ContractCreator(_contractCode) public {
     tokenReleaseIn = _tokenReleaseIn;
-    contractCode = _contractCode;
-  }
-
-  function fundToken(address payable _tokenAddress) payable public {
-    _tokenAddress.transfer(msg.value);
   }
 
   function releaseToken(uint256 _tokenId) public {
@@ -96,7 +92,7 @@ contract StateTokenFactory is AbstractStateTokenFactory {
     emit TokenBurned(_tokenHash, msg.sender);
   }
 
-  function _burnToken(bytes32 _tokenHash) internal {
+  function _burnToken(bytes32 _tokenHash) private {
     address _tokenAddress = _createContract(_tokenHash);
 
     AbstractStateToken(_tokenAddress).burn(msg.sender);

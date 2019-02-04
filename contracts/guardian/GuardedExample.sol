@@ -1,18 +1,17 @@
 pragma solidity ^0.5.0;
 
-import "../account/AbstractAccount.sol";
-import "./AbstractGuarded.sol";
+import "./Guarded.sol";
 
 
 /**
  * @title Guarded Example
  */
-contract GuardedExample is AbstractGuarded {
+contract GuardedExample is Guarded {
 
-  bytes state;
+  bytes private state;
 
-  constructor(address _guardian) public {
-    guardian = AbstractAccount(_guardian);
+  constructor(address _guardian) Guarded(_guardian) public {
+    //
   }
 
   function foo() onlyGuardian public {

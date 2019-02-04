@@ -1,30 +1,43 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { sha3, computeCreate2Address } = require('@netgum/utils');
+const { sha3, computeCreate2Address, anyToHex } = require('@netgum/utils');
 
 const ContractCreatorExample = artifacts.require('ContractCreatorExample');
 const PingPongMock = artifacts.require('PingPongMock');
 
 contract('ContractCreatorExample', () => {
-  describe('methods', () => {
-    const contractCode = PingPongMock.binary;
-    const salt = sha3(Date.now());
+  const contractCode = PingPongMock.binary;
+  const salt = sha3(Date.now());
 
-    let contractCreatorExample;
-    let computedAddress;
+  let contractCreatorExample;
+  let computedAddress;
 
-    before(async () => {
-      contractCreatorExample = await ContractCreatorExample.new(contractCode);
-      computedAddress = computeCreate2Address(
-        contractCreatorExample.address,
-        salt,
-        contractCode,
-      );
-    });
+  before(async () => {
+    contractCreatorExample = await ContractCreatorExample.new(contractCode);
+    computedAddress = computeCreate2Address(
+      contractCreatorExample.address,
+      salt,
+      contractCode,
+    );
+  });
 
+  describe('view', () => {
     describe('createContract()', () => {
-      it('should create contract on computed address', async () => {
+      it('expect to compute valid contract address', async () => {
+        const contractAddress = await contractCreatorExample.computeContractAddress(
+          anyToHex(salt, { add0x: true }),
+        );
+
+        expect(contractAddress)
+          .toBe(computedAddress);
+      });
+    });
+  });
+
+  describe('methods', () => {
+    describe('createContract()', () => {
+      it('expect to create contract on computed address', async () => {
         const { logs: [log] } = await contractCreatorExample.createContract(salt);
         const contract = await PingPongMock.at(computedAddress);
 
