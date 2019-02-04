@@ -37,22 +37,6 @@ contract('StateTokenFactory', (addresses) => {
       gasPrice = await getGasPrice();
     });
 
-    describe('fundToken()', () => {
-      it('expect to fund token', async () => {
-        const TOKEN_BALANCE = new BN(1000);
-        const TOKEN_ADDRESS = addresses[1];
-
-        const initialBalance = await getBalance(TOKEN_ADDRESS);
-
-        await stateTokenFactory.fundToken(TOKEN_ADDRESS, {
-          value: TOKEN_BALANCE,
-        });
-
-        expect(await getBalance(TOKEN_ADDRESS))
-          .toEqualBN(initialBalance.add(TOKEN_BALANCE));
-      });
-    });
-
     describe('releaseToken()', () => {
       const TOKEN_FOUNDER = addresses[1];
       const TOKEN_ID = 1;
