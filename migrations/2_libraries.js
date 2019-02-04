@@ -1,23 +1,28 @@
-const BytesSignatureLibrary = artifacts.require('BytesSignatureLibrary');
+const ECDSA = artifacts.require('ECDSA');
+const SafeMath = artifacts.require('SafeMath');
+
 const AccountLibrary = artifacts.require('AccountLibrary');
-const AccountProvider = artifacts.require('AccountProvider');
-const AccountProxy = artifacts.require('AccountProxy');
-const StateTokenService = artifacts.require('StateTokenService');
+const AccountLibraryExample = artifacts.require('AccountLibraryExample');
+const GuardedExample = artifacts.require('GuardedExample');
+const PlatformAccountProvider = artifacts.require('PlatformAccountProvider');
+const PlatformAccountProxy = artifacts.require('PlatformAccountProxy');
+const StateTokenFactory = artifacts.require('StateTokenFactory');
 
 module.exports = async (deployer) => {
-  await deployer.deploy(BytesSignatureLibrary);
+  await deployer.deploy(ECDSA);
+  await deployer.deploy(SafeMath);
 
-  deployer.link(BytesSignatureLibrary, AccountLibrary);
+  deployer.link(ECDSA, AccountLibrary);
 
   await deployer.deploy(AccountLibrary);
 
-  // account
-  deployer.link(BytesSignatureLibrary, AccountProvider);
-  deployer.link(AccountLibrary, AccountProvider);
+  deployer.link(AccountLibrary, AccountLibraryExample);
+  deployer.link(AccountLibrary, GuardedExample);
+  deployer.link(AccountLibrary, PlatformAccountProvider);
+  deployer.link(AccountLibrary, StateTokenFactory);
 
-  deployer.link(BytesSignatureLibrary, AccountProxy);
-  deployer.link(AccountLibrary, AccountProxy);
+  deployer.link(ECDSA, PlatformAccountProvider);
+  deployer.link(ECDSA, PlatformAccountProxy);
 
-  // state token
-  deployer.link(AccountLibrary, StateTokenService);
+  deployer.link(SafeMath, PlatformAccountProxy);
 };

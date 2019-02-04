@@ -1,6 +1,6 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
 
-import "@netgum/solidity/contracts/libraries/BytesSignatureLibrary.sol";
+import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "./AbstractAccount.sol";
 
 
@@ -9,7 +9,7 @@ import "./AbstractAccount.sol";
  */
 library AccountLibrary {
 
-  using BytesSignatureLibrary for bytes;
+  using ECDSA for bytes32;
 
   function verifyDeviceSignature(
     AbstractAccount _account,
@@ -17,7 +17,7 @@ library AccountLibrary {
     bytes memory _message,
     bool _strict
   ) public view returns (address _device) {
-    _device = _signature.recoverAddress(_message);
+    _device = keccak256(_message).toEthSignedMessageHash().recover(_signature);
 
     require(
       _device != address(0),

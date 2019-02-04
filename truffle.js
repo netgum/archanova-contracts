@@ -1,20 +1,32 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
+const ganache = require('ganache-core');
 const config = require('./config');
 
-const network = {
+const defaultNetwork = {
   provider: () => new HDWalletProvider(
     config.accounts.mnemonic,
-    config.network.endpoint,
+    config.network.providerEndpoint,
     0,
     config.accounts.count,
   ),
   network_id: '*',
 };
 
+const ganacheNetwork = {
+  provider: () => ganache.provider({
+    mnemonic: config.accounts.mnemonic,
+    hardfork: 'constantinople',
+    total_accounts: config.accounts.count,
+  }),
+  network_id: '*',
+};
+
 module.exports = {
   networks: {
-    development: network,
-    testing: network,
+    development: defaultNetwork,
+    testing: config.network.useGanacheForTesting
+      ? ganacheNetwork
+      : defaultNetwork,
   },
   compilers: {
     solc: {

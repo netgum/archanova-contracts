@@ -1,4 +1,4 @@
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.5.0;
 
 import "./AbstractStateToken.sol";
 
@@ -13,16 +13,12 @@ contract StateToken is AbstractStateToken {
     creator = msg.sender;
   }
 
-  modifier onlyCreator() {
+  function burn(address payable _beneficiary) public {
     require(
       msg.sender == creator,
       "msg.sender is not a creator"
     );
 
-    _;
-  }
-
-  function burn(address payable _beneficiary) public onlyCreator {
     selfdestruct(_beneficiary);
   }
 }
