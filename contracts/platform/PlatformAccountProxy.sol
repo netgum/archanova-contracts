@@ -25,7 +25,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     mapping(address => AccountVirtualDevice) virtualDevices;
   }
 
-  mapping(address => Account) accounts;
+  mapping(address => Account) private accounts;
 
   modifier verifyAccountNonce(address _account, uint256 _nonce) {
     require(
@@ -256,7 +256,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address _account,
     uint256 _nonce,
     bytes memory _data
-  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) private verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
     bool _succeeded;
     (_succeeded,) = _account.call(_data);
 
@@ -274,7 +274,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address _purpose,
     uint256 _limit,
     bool _unlimited
-  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) private verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     require(
       !accountVirtualDeviceExists(_account, _device),
@@ -304,7 +304,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     uint256 _nonce,
     address _device,
     uint256 _limit
-  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) private verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     require(
       accountVirtualDeviceExists(_account, _device),
@@ -325,7 +325,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address _account,
     uint256 _nonce,
     address _device
-  ) internal verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
+  ) private verifyAccountNonce(_account, _nonce) onlyAccountOwner(_account, _sender) {
 
     require(
       accountVirtualDeviceExists(_account, _device),
@@ -346,7 +346,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     address payable _to,
     uint256 _value,
     bytes memory _data
-  ) internal verifyAccountNonce(_account, _nonce) {
+  ) private verifyAccountNonce(_account, _nonce) {
 
     AbstractAccount.AccessTypes _accessType = AbstractAccount(_account).getDeviceAccessType(_sender);
     require(
@@ -385,7 +385,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
   function _verifyPurpose(
     address _account,
     address _purpose
-  ) internal view returns (bool) {
+  ) private view returns (bool) {
 
     return (
     _purpose != address(0) &&
@@ -397,7 +397,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
   function _verifyLimit(
     uint256 _limit,
     bool _unlimited
-  ) internal pure returns (bool) {
+  ) private pure returns (bool) {
 
     return (
     (_unlimited && _limit == 0) ||
@@ -405,7 +405,7 @@ contract PlatformAccountProxy is AbstractPlatformAccountProxy {
     );
   }
 
-  function _refundGas(address _account, uint _startGas, uint256 _fixedGas) internal {
+  function _refundGas(address _account, uint _startGas, uint256 _fixedGas) private {
     if (_fixedGas > 0) {
       uint256 _gasTotal = _fixedGas.add(_startGas).sub(gasleft());
 

@@ -1,12 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "../contractCreator/AbstractContractCreator.sol";
-
-
 /**
  * @title Abstract State Token Factory
  */
-contract AbstractStateTokenFactory is AbstractContractCreator {
+contract AbstractStateTokenFactory {
 
   event TokenReleaseRequested(bytes32 tokenHash, uint tokenReleaseDueTime);
 
@@ -15,8 +12,6 @@ contract AbstractStateTokenFactory is AbstractContractCreator {
   event TokenReleased(bytes32 tokenHash);
 
   event TokenBurned(bytes32 tokenHash, address beneficiaryAddress);
-
-  function fundToken(address payable _tokenAddress) payable public;
 
   function releaseToken(uint256 _tokenId) public;
 

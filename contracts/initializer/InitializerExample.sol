@@ -1,12 +1,12 @@
 pragma solidity ^0.5.0;
 
-import "./AbstractInitializer.sol";
+import "./Initializer.sol";
 
 
 /**
  * @title Initializer Example
  */
-contract InitializerExample is AbstractInitializer {
+contract InitializerExample is Initializer {
 
   function initialize() onlyInitializer public {
     //

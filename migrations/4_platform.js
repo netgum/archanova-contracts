@@ -9,6 +9,8 @@ const Account = artifacts.require('Account');
 const PlatformAccount = artifacts.require('PlatformAccount');
 const PlatformAccountProvider = artifacts.require('PlatformAccountProvider');
 const PlatformAccountProxy = artifacts.require('PlatformAccountProxy');
+const PlatformStateTokenFactory = artifacts.require('PlatformStateTokenFactory');
+const StateToken = artifacts.require('StateToken');
 
 module.exports = async (deployer, network) => {
   switch (network) {
@@ -26,6 +28,12 @@ module.exports = async (deployer, network) => {
         Account.address,
         PlatformAccountProxy.address,
         PlatformAccount.binary,
+      );
+
+      await deployer.deploy(
+        PlatformStateTokenFactory,
+        30 * 24 * 60 * 60, // 30 days
+        StateToken.binary,
       );
 
       await deployer.deploy(
@@ -48,6 +56,7 @@ module.exports = async (deployer, network) => {
       console.info('   ENS_REGISTRY_CONTRACT', ENSRegistry.address);
       console.info('   PLATFORM_ACCOUNT_PROVIDER_CONTRACT', PlatformAccountProvider.address);
       console.info('   PLATFORM_ACCOUNT_PROXY_CONTRACT', PlatformAccountProxy.address);
+      console.info('   PLATFORM_STATE_TOKEN_FACTORY', PlatformStateTokenFactory.address);
       console.info();
       break;
     }
