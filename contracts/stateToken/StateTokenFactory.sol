@@ -93,7 +93,7 @@ contract StateTokenFactory is AbstractStateTokenFactory {
   }
 
   function _burnToken(bytes32 _tokenHash) internal {
-    address _tokenAddress = _createContract(_tokenHash, false);
+    address _tokenAddress = _createContract(_tokenHash);
 
     AbstractStateToken(_tokenAddress).burn(msg.sender);
   }

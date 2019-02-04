@@ -145,7 +145,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     );
 
     // create account
-    address _accountAddress = _createContract(_salt, true);
+    address _accountAddress = _createContract(_salt);
 
     // initialize account
     AbstractPlatformAccount _account = AbstractPlatformAccount(_accountAddress);
@@ -160,5 +160,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     ens.setOwner(_accountEnsNode, _accountAddress);
 
     ensResolverAddresses[_accountEnsNode] = _accountAddress;
+
+    emit AccountCreated(_accountAddress);
   }
 }

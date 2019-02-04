@@ -9,6 +9,8 @@ import "./AbstractPlatformAccount.sol";
  */
 contract AbstractPlatformAccountProvider is AbstractENSResolver {
 
+  event AccountCreated(address accountAddress);
+
   function releaseENSNode() public;
 
   function createAccountWithGuardianSignature(

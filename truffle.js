@@ -1,7 +1,13 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
+const ganache = require('ganache-core');
 const config = require('./config');
 
-const network = {
+/**
+ * It looks like `ganache-core` is still not ready for constantinople hard fork
+ */
+const USE_GANACHE_FOR_TESTING = false;
+
+const defaultNetwork = {
   provider: () => new HDWalletProvider(
     config.accounts.mnemonic,
     config.network.providerEndpoint,
@@ -11,10 +17,19 @@ const network = {
   network_id: '*',
 };
 
+const ganacheNetwork = {
+  provider: () => ganache.provider({
+    mnemonic: config.accounts.mnemonic,
+    hardfork: 'constantinople',
+    total_accounts: config.accounts.count,
+  }),
+  network_id: '*',
+};
+
 module.exports = {
   networks: {
-    development: network,
-    testing: network,
+    development: defaultNetwork,
+    testing: USE_GANACHE_FOR_TESTING ? ganacheNetwork : defaultNetwork,
   },
   compilers: {
     solc: {
