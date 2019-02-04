@@ -6,8 +6,4 @@ pragma solidity ^0.5.0;
 contract AbstractAccountProvider {
 
   event AccountCreated(address accountAddress);
-
-  constructor() internal {
-    //
-  }
 }

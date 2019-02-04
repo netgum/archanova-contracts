@@ -3,9 +3,9 @@ pragma solidity ^0.5.0;
 import "@ensdomains/ens/contracts/ENS.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "../account/AbstractAccount.sol";
-import "../contractCreator/AbstractContractCreator.sol";
+import "../contractCreator/ContractCreator.sol";
 import "../ens/ENSOwnable.sol";
-import "../guardian/AbstractGuarded.sol";
+import "../guardian/Guarded.sol";
 import "./AbstractPlatformAccount.sol";
 import "./AbstractPlatformAccountProvider.sol";
 
@@ -13,7 +13,7 @@ import "./AbstractPlatformAccountProvider.sol";
 /**
  * @title Platform Account Provider
  */
-contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, AbstractGuarded, AbstractPlatformAccountProvider {
+contract PlatformAccountProvider is ENSOwnable, ContractCreator, Guarded, AbstractPlatformAccountProvider {
 
   using ECDSA for bytes32;
 
@@ -31,12 +31,10 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     address _guardian,
     address _accountProxy,
     bytes memory _contractCode
-  ) public {
+  ) ContractCreator(_contractCode) Guarded(_guardian) public {
     ens = ENS(_ens);
     ensNode = _ensNode;
-    guardian = AbstractAccount(_guardian);
     accountProxy = _accountProxy;
-    contractCode = _contractCode;
   }
 
   function addr(bytes32 _node) public view returns (address) {
@@ -135,7 +133,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     address _device,
     bytes32 _ensLabel,
     uint256 _refundAmount
-  ) internal {
+  ) private {
 
     bytes32 _accountEnsNode = keccak256(abi.encodePacked(ensNode, _ensLabel));
 
