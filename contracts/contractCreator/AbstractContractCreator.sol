@@ -5,8 +5,6 @@ pragma solidity ^0.5.0;
  */
 contract AbstractContractCreator {
 
-  event ContractCreated(address contractAddress);
-
   bytes internal contractCode;
 
   constructor() internal {
@@ -20,7 +18,5 @@ contract AbstractContractCreator {
       _contract := create2(0, add(_contractCode, 0x20), mload(_contractCode), _salt)
       if iszero(extcodesize(_contract)) {revert(0, 0)}
     }
-
-    emit ContractCreated(_contract);
   }
 }

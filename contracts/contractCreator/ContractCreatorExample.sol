@@ -7,11 +7,15 @@ import "./AbstractContractCreator.sol";
  */
 contract ContractCreatorExample is AbstractContractCreator {
 
+  event ContractCreated(address contractAddress);
+
   constructor(bytes memory _contractCode) public {
     contractCode = _contractCode;
   }
 
   function createContract(bytes32 _salt) public {
-    _createContract(_salt);
+    address _contractAddress = _createContract(_salt);
+
+    emit ContractCreated(_contractAddress);
   }
 }

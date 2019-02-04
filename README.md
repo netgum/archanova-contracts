@@ -18,7 +18,10 @@ Configuration via environment variables:
 | ACCOUNTS_MNEMONIC 	| `false myself sadness rebuild shallow powder outdoor thank basket light fun tip` 	|
 | ACCOUNTS_COUNT 	| `10` 	|
 | NETWORK_PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
+| NETWORK_USE_GANACHE_FOR_TESTING 	| `` 	|
 | PLATFORM_ACCOUNT_PROVIDER_ENS_ROOT_NODE_NAME 	| `smartsafe.test` 	|
+
+**NOTE: It looks like `ganache-core@2.4.0` is still not ready for constantinople hard fork**
 
 Running tests on `testing` network
 

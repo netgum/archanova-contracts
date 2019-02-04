@@ -30,6 +30,14 @@ const privateKeys = (() => {
   return result;
 })();
 
+async function sendWei(from, to, value) {
+  await web3.eth.sendTransaction({
+    from,
+    to,
+    value,
+  });
+}
+
 async function getBalance(target) {
   const value = await web3.eth.getBalance(
     targetToAddress(target),
@@ -67,8 +75,20 @@ function signMessage(message, address) {
   return result;
 }
 
+function now() {
+  return new BN(Math.floor(Date.now() / 1000), 10);
+}
+
+async function sleep(seconds) {
+  const ms = (BN.isBN(seconds) ? seconds.toNumber() : seconds) * 1000;
+  await new Promise(resolve => setTimeout(resolve, ms));
+}
+
 module.exports = {
+  sendWei,
   getBalance,
   getGasPrice,
   signMessage,
+  now,
+  sleep,
 };

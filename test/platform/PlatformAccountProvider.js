@@ -60,7 +60,7 @@ contract('PlatformAccountProvider', (addresses) => {
         },
       );
 
-      accountAddress = log.args.contractAddress;
+      ({ accountAddress } = log.args);
     });
 
     describe('addr()', () => {
@@ -105,11 +105,11 @@ contract('PlatformAccountProvider', (addresses) => {
         );
 
         expect(log.event)
-          .toBe('ContractCreated');
-        expect(log.args.contractAddress)
+          .toBe('AccountCreated');
+        expect(log.args.accountAddress)
           .toBe(computedAddress);
 
-        const account = await PlatformAccount.at(log.args.contractAddress);
+        const account = await PlatformAccount.at(log.args.accountAddress);
 
         expect(await account.getDeviceAccessType(DEVICES.unsafeOwner))
           .toEqualBN(AccountAccessTypes.OWNER);
@@ -153,8 +153,8 @@ contract('PlatformAccountProvider', (addresses) => {
         );
 
         expect(log.event)
-          .toBe('ContractCreated');
-        expect(log.args.contractAddress)
+          .toBe('AccountCreated');
+        expect(log.args.accountAddress)
           .toBe(computedAddress);
       });
     });
@@ -193,8 +193,8 @@ contract('PlatformAccountProvider', (addresses) => {
         );
 
         expect(log.event)
-          .toBe('ContractCreated');
-        expect(log.args.contractAddress)
+          .toBe('AccountCreated');
+        expect(log.args.accountAddress)
           .toBe(computedAddress);
       });
     });

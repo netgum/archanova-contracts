@@ -160,5 +160,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     ens.setOwner(_accountEnsNode, _accountAddress);
 
     ensResolverAddresses[_accountEnsNode] = _accountAddress;
+
+    emit AccountCreated(_accountAddress);
   }
 }
