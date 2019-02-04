@@ -145,7 +145,7 @@ contract PlatformAccountProvider is ENSOwnable, AbstractContractCreator, Abstrac
     );
 
     // create account
-    address _accountAddress = _createContract(_salt);
+    address _accountAddress = _createContract(_salt, true);
 
     // initialize account
     AbstractPlatformAccount _account = AbstractPlatformAccount(_accountAddress);
