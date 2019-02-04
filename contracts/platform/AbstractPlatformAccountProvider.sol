@@ -1,5 +1,6 @@
 pragma solidity ^0.5.0;
 
+import "../account/AbstractAccountProvider.sol";
 import "../ens/AbstractENSResolver.sol";
 import "./AbstractPlatformAccount.sol";
 
@@ -7,9 +8,7 @@ import "./AbstractPlatformAccount.sol";
 /**
  * @title Abstract Platform Account Provider
  */
-contract AbstractPlatformAccountProvider is AbstractENSResolver {
-
-  event AccountCreated(address accountAddress);
+contract AbstractPlatformAccountProvider is AbstractAccountProvider, AbstractENSResolver {
 
   function releaseENSNode() public;
 
