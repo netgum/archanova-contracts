@@ -9,5 +9,5 @@ import "../initializer/AbstractInitializer.sol";
  */
 contract AbstractPlatformAccount is AbstractAccount, AbstractInitializer {
 
-  function initialize(address[] memory _devices, uint256 _refundAmount) public;
+  function initialize(address[] memory _devices, uint256 _refundAmount, address payable _refundBeneficiary) public;
 }

@@ -10,7 +10,7 @@ import "./AbstractPlatformAccount.sol";
  */
 contract PlatformAccount is AbstractPlatformAccount, Account(address(0)), Initializer {
 
-  function initialize(address[] memory _devices, uint256 _refundAmount) onlyInitializer() public {
+  function initialize(address[] memory _devices, uint256 _refundAmount, address payable _refundBeneficiary) onlyInitializer() public {
     for (uint i = 0; i < _devices.length; i++) {
       if (_devices[i] != address(0)) {
         devicesAccessType[_devices[i]] = AccessTypes.OWNER;
@@ -19,7 +19,11 @@ contract PlatformAccount is AbstractPlatformAccount, Account(address(0)), Initia
     }
 
     if (_refundAmount > 0) {
-      msg.sender.transfer(_refundAmount);
+      if (_refundBeneficiary == address(0)) {
+        msg.sender.transfer(_refundAmount);
+      } else {
+        _refundBeneficiary.transfer(_refundAmount);
+      }
     }
   }
 }

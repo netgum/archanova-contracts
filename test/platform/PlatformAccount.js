@@ -2,6 +2,7 @@
 
 const expect = require('expect');
 const BN = require('bn.js');
+const { ZERO_ADDRESS } = require('@netgum/utils');
 const { AccountAccessTypes } = require('../constants');
 const { getBalance, getGasPrice } = require('../utils');
 
@@ -17,7 +18,7 @@ contract('PlatformAccount', (addresses) => {
     describe('initialize()', () => {
       it('expect to initialize with OWNER devices', async () => {
         const platformAccount = await PlatformAccount.new();
-        await platformAccount.initialize(DEVICES, 0);
+        await platformAccount.initialize(DEVICES, 0, ZERO_ADDRESS);
 
         expect(await platformAccount.getDeviceAccessType(DEVICES[0]))
           .toEqualBN(AccountAccessTypes.OWNER);
@@ -41,7 +42,7 @@ contract('PlatformAccount', (addresses) => {
 
         const initializerBalance = await getBalance(initializer);
 
-        const { receipt: { gasUsed } } = await platformAccount.initialize(DEVICES, refundAmount, {
+        const { receipt: { gasUsed } } = await platformAccount.initialize(DEVICES, refundAmount, ZERO_ADDRESS, {
           from: initializer,
           gasPrice,
         });
