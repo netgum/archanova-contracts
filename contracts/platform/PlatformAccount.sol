@@ -26,4 +26,8 @@ contract PlatformAccount is AbstractPlatformAccount, Account(address(0)), Initia
       }
     }
   }
+
+  function() external payable {
+    //
+  }
 }
