@@ -52,25 +52,24 @@ module.exports = async (deployer, network) => {
         PlatformAccountProvider.address,
       );
 
-      // ethdenver.test
-
-      const ethDenverAccountProvider = await PlatformAccountProvider.new(
+      // ethparis account provider
+      const customAccountProvider = await PlatformAccountProvider.new(
         ENSRegistry.address,
-        getEnsNameHash('ethdenver.test'),
+        getEnsNameHash('ethparis.test'),
         Account.address,
         PlatformAccountProxy.address,
         PlatformAccount.binary,
       );
 
       await ensRegistrar.register(
-        getEnsLabelHash('ethdenver.test'),
-        ethDenverAccountProvider.address,
+        getEnsLabelHash('ethparis.test'),
+        customAccountProvider.address,
       );
 
       // info
       console.info('   ENS_REGISTRY_CONTRACT', ENSRegistry.address);
-      console.info('   PLATFORM_ACCOUNT_PROVIDER_CONTRACT_1', PlatformAccountProvider.address);
-      console.info('   PLATFORM_ACCOUNT_PROVIDER_CONTRACT_2', ethDenverAccountProvider.address);
+      console.info('   PLATFORM_ACCOUNT_PROVIDER_CONTRACT_ROOT', PlatformAccountProvider.address);
+      console.info('   PLATFORM_ACCOUNT_PROVIDER_CONTRACT_CUSTOM', customAccountProvider.address);
       console.info('   PLATFORM_ACCOUNT_PROXY_CONTRACT', PlatformAccountProxy.address);
       console.info('   PLATFORM_STATE_TOKEN_FACTORY', PlatformStateTokenFactory.address);
       console.info();
