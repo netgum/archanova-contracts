@@ -1,6 +1,6 @@
 {
   "name": "@archanova/solidity",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Archanova solidity contracts",
   "author": {
     "name": "Stanislaw Glogowski",
@@ -15,31 +15,25 @@
     "url": "https://github.com/archanova/solidity/issues"
   },
   "scripts": {
-    "truffle:compile": "truffle compile",
-    "truffle:migrate": "truffle migrate --network=development",
-    "truffle:test": "truffle test --network=testing",
     "eslint": "eslint .",
-    "pretest": "npm run eslint",
-    "test": "npm run truffle:test"
+    "compile": "truffle compile",
+    "test": "./scripts/test.sh --network=test",
+    "migrate:kovan": "truffle migrate --network=kovan"
   },
   "dependencies": {
-    "@ensdomains/ens": "^0.3.3",
-    "openzeppelin-solidity": "^2.1.2"
+    "@ensdomains/ens": "0.3.5",
+    "openzeppelin-solidity": "2.1.2"
   },
   "devDependencies": {
-    "@netgum/utils": "^0.0.5",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.21",
-    "bip39": "^2.5.0",
-    "bn.js": "^4.11.8",
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
-    "ethereumjs-wallet": "^0.6.3",
-    "expect": "^24.0.0",
-    "ganache-core": "^2.4.0",
-    "truffle": "^5.0.3",
-    "truffle-hdwallet-provider": "^1.0.3",
-    "web3": "^1.0.0-beta.41"
+    "expect": "^24.7.1",
+    "ganache-cli": "^6.4.2",
+    "truffle": "^5.0.12",
+    "truffle-hdwallet-provider": "^1.0.6",
+    "web3": "^1.0.0-beta.52"
   }
 }

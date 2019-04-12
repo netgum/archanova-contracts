@@ -1,9 +1,13 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 /**
  * @title Abstract Account
  */
 contract AbstractAccount {
+
+  event DeviceAdded(address device, AccessTypes accessType);
+  event DeviceRemoved(address device);
+  event TransactionExecuted(address recipient, uint256 value, bytes data, bytes response);
 
   enum AccessTypes {
     NONE,
@@ -11,21 +15,18 @@ contract AbstractAccount {
     DELEGATE
   }
 
-  event DeviceAdded(address deviceAddress, AccessTypes deviceAccessType);
+  struct Device {
+    AccessTypes accessType;
+    bool existed;
+  }
 
-  event DeviceRemoved(address deviceAddress);
+  mapping(address => Device) public devices;
 
-  event TransactionExecuted(address payable to, uint256 value, bytes data, bytes response);
-
-  function deviceExists(address _device) public view returns (bool);
-
-  function deviceExisted(address _device) public view returns (bool);
-
-  function getDeviceAccessType(address _device) public view returns (AccessTypes);
+  function initialize(address[] memory _devices, uint256 _refund, address payable _beneficiary) public;
 
   function addDevice(address _device, AccessTypes _accessType) public;
 
   function removeDevice(address _device) public;
 
-  function executeTransaction(address payable _to, uint256 _value, bytes memory _data) public returns (bytes memory _response);
+  function executeTransaction(address payable _recipient, uint256 _value, bytes memory _data) public returns (bytes memory _response);
 }

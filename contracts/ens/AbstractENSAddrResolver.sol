@@ -1,10 +1,9 @@
-pragma solidity ^0.5.0;
-
+pragma solidity ^0.5.2;
 
 /**
- * @title Abstract ENS Resolver
+ * @title Abstract ENS Addr Resolver
  */
-contract AbstractENSResolver {
+contract AbstractENSAddrResolver {
 
   event AddrChanged(bytes32 indexed node, address addr);
 

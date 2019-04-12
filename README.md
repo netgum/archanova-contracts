@@ -9,30 +9,23 @@ Archanova [solidity](http://solidity.readthedocs.io) contracts
 $ npm i @archanova/solidity -S
 ```
 
-## Development
+## Configuration
 
-Configuration via environment variables:
+Environment variables:
 
 | Name 	| Default Value 	|
 | --- | ---|
-| ACCOUNTS_MNEMONIC 	| `false myself sadness rebuild shallow powder outdoor thank basket light fun tip` 	|
-| ACCOUNTS_COUNT 	| `10` 	|
-| NETWORK_PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
-| NETWORK_USE_GANACHE_FOR_TESTING 	| `` 	|
-| PLATFORM_ACCOUNT_PROVIDER_ENS_ROOT_NODE_NAME 	| `smartsafe.test` 	|
+| KOVAN_PROVIDER_ENDPOINT 	| `-` 	|
+| KOVAN_ACCOUNT_MNEMONIC 	| `-` 	|
 
-**NOTE: It looks like `ganache-core@2.4.0` is still not ready for constantinople hard fork**
+## Migration
 
-Running tests on `testing` network
+(TODO)
+
+## Testing
 
 ```bash
 $ npm test
-```
-
-Running migration on `development` network
-
-```bash
-$ npm run truffle:migrate
 ```
 
 ## License
