@@ -1,4 +1,5 @@
 .*
+!.circleci
 !.editorconfig
 !.eslintignore
 !.eslintrc
