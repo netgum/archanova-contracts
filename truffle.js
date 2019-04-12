@@ -1,36 +1,30 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
-const ganache = require('ganache-core');
-const config = require('./config');
 
-const defaultNetwork = {
-  provider: () => new HDWalletProvider(
-    config.accounts.mnemonic,
-    config.network.providerEndpoint,
-    0,
-    config.accounts.count,
-  ),
-  network_id: '*',
-};
-
-const ganacheNetwork = {
-  provider: () => ganache.provider({
-    mnemonic: config.accounts.mnemonic,
-    hardfork: 'constantinople',
-    total_accounts: config.accounts.count,
-  }),
-  network_id: '*',
-};
+const {
+  KOVAN_PROVIDER_ENDPOINT,
+  KOVAN_ACCOUNT_MNEMONIC,
+} = process.env;
 
 module.exports = {
   networks: {
-    development: defaultNetwork,
-    testing: config.network.useGanacheForTesting
-      ? ganacheNetwork
-      : defaultNetwork,
+    test: {
+      host: '127.0.0.1',
+      port: 8545,
+      network_id: '*',
+    },
+    kovan: {
+      provider: () => new HDWalletProvider(
+        KOVAN_ACCOUNT_MNEMONIC,
+        KOVAN_PROVIDER_ENDPOINT,
+        0,
+        10,
+      ),
+      network_id: '44',
+    },
   },
   compilers: {
     solc: {
-      version: '0.5.0',
+      version: '0.5.2',
       settings: {
         optimizer: {
           enabled: true,

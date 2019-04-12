@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 /**
  * @title Contract Creator
@@ -6,10 +6,9 @@ pragma solidity ^0.5.0;
 contract ContractCreator {
 
   bytes private contractCode;
-
   bytes32 private contractCodeHash;
 
-  constructor(bytes memory _contractCode) public {
+  constructor(bytes memory _contractCode) internal {
     contractCode = _contractCode;
     contractCodeHash = keccak256(_contractCode);
   }
@@ -18,7 +17,9 @@ contract ContractCreator {
     bytes memory _contractCode = contractCode;
 
     assembly {
-      _contract := create2(0, add(_contractCode, 0x20), mload(_contractCode), _salt)
+      let p := add(_contractCode, 0x20)
+      let n := mload(_contractCode)
+      _contract := create2(0, p, n, _salt)
       if iszero(extcodesize(_contract)) {revert(0, 0)}
     }
   }

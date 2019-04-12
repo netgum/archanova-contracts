@@ -1,94 +1,116 @@
-const BN = require('bn.js');
-const bip39 = require('bip39');
-const hdKey = require('ethereumjs-wallet/hdkey');
 const {
-  anyToBuffer,
-  anyToHex,
-  targetToAddress,
-  signPersonalMessage,
-} = require('@netgum/utils');
-const config = require('../config');
+  currentProvider,
+  eth: {
+    sign,
+    getGasPrice: web3GetGasPrice,
+    getBalance: web3GetBalance,
+  },
+  utils: {
+    BN,
+    sha3,
+    soliditySha3,
+    toHex,
+    toWei,
+    padLeft,
+    toChecksumAddress,
+  },
+} = web3;
 
-const privateKeys = (() => {
-  const result = new Map();
-  const hdWallet = hdKey.fromMasterSeed(bip39.mnemonicToSeed(config.accounts.mnemonic));
+function getMethodSign(name, ...params) {
+  return sha3(`${name}(${params.join(',')})`)
+    .substr(0, 10);
+}
 
-  for (let i = 0; i < config.accounts.count; i += 1) {
-    const wallet = hdWallet.derivePath(`m/44'/60'/0'/0/${i}`)
-      .getWallet();
-    const privateKey = anyToBuffer(wallet.getPrivateKey(), {
-      autoStringDetect: true,
+function increaseTime(seconds) {
+  return new Promise((resolve, reject) => {
+    currentProvider.send({
+      jsonrpc: '2.0',
+      method: 'evm_increaseTime',
+      params: [
+        BN.isBN(seconds) ? seconds.toNumber() : seconds,
+      ],
+      id: Date.now(),
+    }, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(new BN(data.result));
+      }
     });
-
-    const address = anyToHex(wallet.getAddress(), {
-      add0x: true,
-    });
-
-    result.set(address, privateKey);
-  }
-
-  return result;
-})();
-
-async function sendWei(from, to, value) {
-  await web3.eth.sendTransaction({
-    from,
-    to,
-    value,
   });
 }
 
-async function getBalance(target) {
-  const value = await web3.eth.getBalance(
-    targetToAddress(target),
-  );
-  return new BN(value, 10);
+function getGasPrice() {
+  return web3GetGasPrice()
+    .then(value => new BN(value, 10));
 }
 
-async function getGasPrice() {
-  const value = await web3.eth.getGasPrice();
-  return new BN(value, 10);
+function getBalance(address) {
+  return web3GetBalance(address)
+    .then(value => new BN(value, 10));
 }
 
-function signMessage(message, address) {
-  let result = null;
-  const privateKey = privateKeys.get(
-    anyToHex(
-      address, {
-        add0x: true,
-      },
-    ),
+function logGasUsed({ receipt: { gasUsed } }) {
+  // eslint-disable-next-line no-console
+  console.log(
+    `${' '.repeat(7)}⛽`,
+    `gas used: ${gasUsed} ⤵︎`,
   );
+}
 
-  if (privateKey) {
-    try {
-      result = anyToHex(
-        signPersonalMessage(message, privateKey), {
-          add0x: true,
-        },
-      );
-    } catch (err) {
-      result = null;
-    }
+function getCost({ receipt: { gasUsed } }, gasPrice) {
+  return gasPrice.mul(new BN(gasUsed));
+}
+
+function now() {
+  return new BN(Math.floor(Date.now() / 1000));
+}
+
+function getEnsLabelHash(name) {
+  const [label] = name.split('.');
+  return sha3(label);
+}
+
+function getEnsNameHash(name) {
+  let result = padLeft('0x0', 64);
+  const labels = name.split('.');
+
+  for (let i = labels.length - 1; i >= 0; i -= 1) {
+    const labelHash = sha3(labels[i])
+      .substr(2);
+    result = sha3(`${result}${labelHash}`);
   }
 
   return result;
 }
 
-function now() {
-  return new BN(Math.floor(Date.now() / 1000), 10);
-}
+function computeContractAddress(deployer, salt, byteCode) {
+  const hash = soliditySha3(
+    '0xff',
+    deployer,
+    salt,
+    sha3(byteCode),
+  );
 
-async function sleep(seconds) {
-  const ms = (BN.isBN(seconds) ? seconds.toNumber() : seconds) * 1000;
-  await new Promise(resolve => setTimeout(resolve, ms));
+  return toChecksumAddress(
+    `0x${hash.substr(-40)}`,
+  );
 }
 
 module.exports = {
-  sendWei,
-  getBalance,
+  BN,
+  soliditySha3,
+  sign,
+  toHex,
+  toWei,
+  getMethodSign,
+  increaseTime,
+  logGasUsed,
   getGasPrice,
-  signMessage,
+  getBalance,
+  getCost,
   now,
-  sleep,
+  getEnsLabelHash,
+  getEnsNameHash,
+  computeContractAddress,
 };

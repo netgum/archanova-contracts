@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 import "./AbstractAccount.sol";
 
@@ -8,87 +8,107 @@ import "./AbstractAccount.sol";
  */
 contract Account is AbstractAccount {
 
-  mapping(address => AccessTypes) internal devicesAccessType;
-  mapping(address => bool) internal devicesLog;
+  string constant ERR_ONLY_OWNER = "Sender is not owner";
+  string constant ERR_ONLY_INITIALIZER = "Sender is not a initializer";
+  string constant ERR_INVALID_DEVICE = "Invalid device";
+  string constant ERR_INVALID_ACCESS_TYPE = "Invalid access type";
+  string constant ERR_INVALID_RECIPIENT = "Invalid recipient";
+  string constant ERR_DEVICE_ALREADY_EXISTS = "Device already exists";
+  string constant ERR_DEVICE_DOESNT_EXIST = "Device doesn't exist";
+  string constant ERR_TRANSACTION_FAILED = "Transaction failed";
+
+  address private initializer;
 
   modifier onlyOwner() {
     require(
-      getDeviceAccessType(msg.sender) == AccessTypes.OWNER,
-      "msg.sender is not owner"
+      devices[msg.sender].accessType == AccessTypes.OWNER,
+      ERR_ONLY_OWNER
     );
 
     _;
   }
 
-  constructor(address _device) public {
-    if (_device != address(0)) {
-      devicesAccessType[_device] = AccessTypes.OWNER;
-      devicesLog[_device] = true;
-    }
+  modifier onlyInitializer() {
+    require(
+      msg.sender == initializer,
+      ERR_ONLY_INITIALIZER
+    );
+
+    delete initializer;
+
+    _;
+  }
+
+  constructor() public {
+    initializer = msg.sender;
   }
 
   function() external payable {
     //
   }
 
-  function deviceExists(address _device) public view returns (bool) {
-    return devicesAccessType[_device] != AccessTypes.NONE;
-  }
+  function initialize(address[] memory _devices, uint256 _refund, address payable _beneficiary) onlyInitializer() public {
+    for (uint i = 0; i < _devices.length; i++) {
+      if (_devices[i] != address(0)) {
+        devices[_devices[i]].accessType = AccessTypes.OWNER;
+        devices[_devices[i]].existed = true;
+      }
+    }
 
-  function deviceExisted(address _device) public view returns (bool) {
-    return devicesLog[_device];
-  }
-
-  function getDeviceAccessType(address _device) public view returns (AccessTypes) {
-    return devicesAccessType[_device];
+    if (_refund > 0) {
+      _beneficiary.transfer(_refund);
+    }
   }
 
   function addDevice(address _device, AccessTypes _accessType) onlyOwner public {
     require(
-      _accessType != AccessTypes.NONE,
-      "invalid device access type"
-    );
-    require(
       _device != address(0),
-      "invalid device address"
+      ERR_INVALID_DEVICE
     );
     require(
-      !deviceExists(_device),
-      "device already exists"
+      _accessType != AccessTypes.NONE,
+      ERR_INVALID_ACCESS_TYPE
+    );
+    require(
+      devices[_device].accessType == AccessTypes.NONE,
+      ERR_DEVICE_ALREADY_EXISTS
     );
 
-    devicesAccessType[_device] = _accessType;
-    devicesLog[_device] = true;
+    devices[_device].accessType = _accessType;
+
+    if (!devices[_device].existed) {
+      devices[_device].existed = true;
+    }
 
     emit DeviceAdded(_device, _accessType);
   }
 
   function removeDevice(address _device) onlyOwner public {
     require(
-      deviceExists(_device),
-      "device doesn't exists"
+      devices[_device].accessType != AccessTypes.NONE,
+      ERR_DEVICE_DOESNT_EXIST
     );
 
-    delete devicesAccessType[_device];
+    delete devices[_device].accessType;
 
     emit DeviceRemoved(_device);
   }
 
-  function executeTransaction(address payable _to, uint256 _value, bytes memory _data) onlyOwner public returns (bytes memory _response) {
+  function executeTransaction(address payable _recipient, uint256 _value, bytes memory _data) onlyOwner public returns (bytes memory _response) {
     require(
-      _to != address(0) &&
-      _to != address(this),
-      "invalid address"
+      _recipient != address(0) &&
+      _recipient != address(this),
+      ERR_INVALID_RECIPIENT
     );
 
     bool _succeeded;
-    (_succeeded, _response) = _to.call.value(_value)(_data);
+    (_succeeded, _response) = _recipient.call.value(_value)(_data);
 
     require(
       _succeeded,
-      "transaction failed"
+      ERR_TRANSACTION_FAILED
     );
 
-    emit TransactionExecuted(_to, _value, _data, _response);
+    emit TransactionExecuted(_recipient, _value, _data, _response);
   }
 }

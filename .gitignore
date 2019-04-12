@@ -1,12 +1,13 @@
 .*
+!.circleci
 !.editorconfig
 !.eslintignore
 !.eslintrc
 !.gitignore
 !.gitattributes
 !.npmignore
+bak
 build/
+dist
 node_modules/
 *.log
-bak
-test.js

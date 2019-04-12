@@ -1,9 +1,10 @@
 .*
 !.npmignore
-build/
-test/
+bak/
 migrations/
 node_modules/
+scripts/
+test/
 *.js
 *.ts
 *.log

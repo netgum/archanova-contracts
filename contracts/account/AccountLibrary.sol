@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "./AbstractAccount.sol";
@@ -11,26 +11,59 @@ library AccountLibrary {
 
   using ECDSA for bytes32;
 
-  function verifyDeviceSignature(
+  function isOwnerDevice(
     AbstractAccount _account,
+    address _device
+  ) internal view returns (bool) {
+    AbstractAccount.AccessTypes accessType;
+    (accessType,) = _account.devices(_device);
+    return accessType == AbstractAccount.AccessTypes.OWNER;
+  }
+
+  function isAnyDevice(
+    AbstractAccount _account,
+    address _device
+  ) internal view returns (bool) {
+    AbstractAccount.AccessTypes accessType;
+    (accessType,) = _account.devices(_device);
+    return accessType != AbstractAccount.AccessTypes.NONE;
+  }
+
+  function isExistedDevice(
+    AbstractAccount _account,
+    address _device
+  ) internal view returns (bool) {
+    bool existed;
+    (, existed) = _account.devices(_device);
+    return existed;
+  }
+
+  function verifyOwnerSignature(
+    AbstractAccount _account,
+    bytes32 _messageHash,
+    bytes memory _signature
+  ) internal view returns (bool _result) {
+    address _recovered = _messageHash.recover(_signature);
+
+    if (_recovered != address(0)) {
+      _result = isOwnerDevice(_account, _recovered);
+    }
+  }
+
+  function verifySignature(
+    AbstractAccount _account,
+    bytes32 _messageHash,
     bytes memory _signature,
-    bytes memory _message,
     bool _strict
-  ) public view returns (address _device) {
-    _device = keccak256(_message).toEthSignedMessageHash().recover(_signature);
+  ) internal view returns (bool _result) {
+    address _recovered = _messageHash.recover(_signature);
 
-    require(
-      _device != address(0),
-      "invalid signature"
-    );
-
-    require(
-      _account.deviceExists(_device) ||
-      (
-      !_strict &&
-      _account.deviceExisted(_device)
-      ),
-      "invalid signer"
-    );
+    if (_recovered != address(0)) {
+      if (_strict) {
+        _result = isAnyDevice(_account, _recovered);
+      } else {
+        _result = isExistedDevice(_account, _recovered);
+      }
+    }
   }
 }

@@ -1,30 +1,34 @@
+const Address = artifacts.require('Address');
 const ECDSA = artifacts.require('ECDSA');
 const SafeMath = artifacts.require('SafeMath');
 
 const AccountLibrary = artifacts.require('AccountLibrary');
-const AccountLibraryExample = artifacts.require('AccountLibraryExample');
-const GuardedExample = artifacts.require('GuardedExample');
-const PlatformAccountProvider = artifacts.require('PlatformAccountProvider');
-const PlatformAccountProxy = artifacts.require('PlatformAccountProxy');
-const PlatformStateTokenFactory = artifacts.require('PlatformStateTokenFactory');
-const StateTokenFactory = artifacts.require('StateTokenFactory');
+const AccountProvider = artifacts.require('AccountProvider');
+const AccountProxy = artifacts.require('AccountProxy');
+const AddressLibrary = artifacts.require('AddressLibrary');
+const AddressLibraryWrapper = artifacts.require('AddressLibraryWrapper');
 
 module.exports = async (deployer) => {
+  await deployer.deploy(Address);
   await deployer.deploy(ECDSA);
   await deployer.deploy(SafeMath);
 
   deployer.link(ECDSA, AccountLibrary);
-
   await deployer.deploy(AccountLibrary);
 
-  deployer.link(AccountLibrary, AccountLibraryExample);
-  deployer.link(AccountLibrary, GuardedExample);
-  deployer.link(AccountLibrary, PlatformAccountProvider);
-  deployer.link(AccountLibrary, PlatformStateTokenFactory);
-  deployer.link(AccountLibrary, StateTokenFactory);
+  deployer.link(AccountLibrary, AddressLibrary);
+  deployer.link(Address, AddressLibrary);
+  deployer.link(ECDSA, AddressLibrary);
 
-  deployer.link(ECDSA, PlatformAccountProvider);
-  deployer.link(ECDSA, PlatformAccountProxy);
+  await deployer.deploy(AddressLibrary);
 
-  deployer.link(SafeMath, PlatformAccountProxy);
+  deployer.link(AddressLibrary, AddressLibraryWrapper);
+  deployer.link(ECDSA, AddressLibraryWrapper);
+
+  deployer.link(AddressLibrary, AccountProvider);
+  deployer.link(ECDSA, AccountProvider);
+
+  deployer.link(AddressLibrary, AccountProxy);
+  deployer.link(ECDSA, AccountProxy);
+  deployer.link(SafeMath, AccountProxy);
 };

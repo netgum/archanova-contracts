@@ -1,37 +1,33 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 import "../account/AbstractAccount.sol";
 import "../account/AccountLibrary.sol";
-import "./AbstractGuarded.sol";
 
 
 /**
  * @title Guarded
  */
-contract Guarded is AbstractGuarded {
+contract Guarded {
 
   using AccountLibrary for AbstractAccount;
+
+  string constant ERR_ONLY_GUARDIAN = "Sender is not a guardian or guardian device";
+
+  AbstractAccount public guardian;
 
   modifier onlyGuardian() {
     require(
       (
       address(guardian) == msg.sender ||
-      guardian.deviceExists(msg.sender)
+      guardian.isAnyDevice(msg.sender)
       ),
-      "msg.sender is not a guardian device"
+      ERR_ONLY_GUARDIAN
     );
+
     _;
   }
 
-  constructor(address _guardian) public {
+  constructor(address _guardian) internal {
     guardian = AbstractAccount(_guardian);
-  }
-
-  function verifyGuardianSignature(bytes memory _signature, bytes memory _message) public view returns (address _device) {
-    _device = guardian.verifyDeviceSignature(
-      _signature,
-      _message,
-      true
-    );
   }
 }

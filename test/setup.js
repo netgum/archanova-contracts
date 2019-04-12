@@ -1,8 +1,8 @@
 const expect = require('expect');
-const BN = require('bn.js');
+const { BN } = require('./utils');
 
 expect.extend({
-  toEqualBN(received, expected) {
+  toBeBN(received, expected) {
     let result;
     if (!BN.isBN(received)) {
       result = {
