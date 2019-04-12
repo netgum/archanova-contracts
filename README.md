@@ -9,20 +9,22 @@ Archanova [solidity](http://solidity.readthedocs.io) contracts
 $ npm i @archanova/solidity -S
 ```
 
-## Configuration
+## Development
 
-Environment variables:
+### Running Migration
 
-| Name 	| Default Value 	|
-| --- | ---|
-| KOVAN_PROVIDER_ENDPOINT 	| `-` 	|
-| KOVAN_ACCOUNT_MNEMONIC 	| `-` 	|
+#### Kovan TestNet
 
-## Migration
+```bash
+# configuration via env variables
+$ export KOVAN_PROVIDER_ENDPOINT=
+$ export KOVAN_ACCOUNT_MNEMONIC=
 
-(TODO)
+# start migration
+$ npm run migrate:kovan
+```
 
-## Testing
+### Running Tests
 
 ```bash
 $ npm test
