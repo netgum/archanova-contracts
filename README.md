@@ -11,6 +11,20 @@ $ npm i @archanova/solidity -S
 
 ## Development
 
+### Setup
+
+```bash
+$ git clone git@github.com:archanova/solidity.git
+$ cd ./solidity
+$ npm i
+```
+
+### Running Tests
+
+```bash
+$ npm test
+```
+
 ### Running Migration
 
 #### Kovan TestNet
@@ -22,12 +36,6 @@ $ export KOVAN_ACCOUNT_MNEMONIC=
 
 # start migration
 $ npm run migrate:kovan
-```
-
-### Running Tests
-
-```bash
-$ npm test
 ```
 
 ## License
