@@ -1,5 +1,6 @@
 # Archanova Solidity
 [![NPM version][npm-image]][npm-url]
+[![CircleCI](https://circleci.com/gh/archanova/solidity.svg?style=svg)](https://circleci.com/gh/archanova/solidity)
 
 Archanova [solidity](http://solidity.readthedocs.io) contracts
 
