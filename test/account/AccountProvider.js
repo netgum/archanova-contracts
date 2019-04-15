@@ -46,30 +46,16 @@ contract('AccountProvider', (addresses) => {
       guardian.address,
       Account.binary,
       accountDevices.accountProxy,
-      ens.address, [
-        ensNameHash,
-      ],
+      ens.address,
     );
 
-    await ens.setSubnodeOwner('0x00', getEnsLabelHash('test'), accountProvider.address);
-  });
+    await ens.setSubnodeOwner('0x00', getEnsLabelHash('test'), addresses[0]);
 
-  describe('views', () => {
-    describe('ensNodes()', () => {
-      it('expect to return true when ens node exists', async () => {
-        const output = await accountProvider.ensNodes(getEnsNameHash('test'));
+    await accountProvider.addEnsRootNode(ensNameHash);
 
-        expect(output)
-          .toBeTruthy();
-      });
+    await ens.setOwner(ensNameHash, accountProvider.address);
 
-      it('expect to return false when ens node doesn\'t exist', async () => {
-        const output = await accountProvider.ensNodes(getEnsNameHash('unsupported'));
-
-        expect(output)
-          .toBeFalsy();
-      });
-    });
+    await accountProvider.verifyEnsRootNode(ensNameHash);
   });
 
   describe('methods', () => {
@@ -78,84 +64,6 @@ contract('AccountProvider', (addresses) => {
         'createAccount', 'bytes32', 'bytes32', 'uint256', 'bytes',
       ),
     };
-
-    describe('addENSNode()', () => {
-      it('expect to add new ens node', async () => {
-        const nameHash = getEnsNameHash('test1');
-
-        const output = await accountProvider.addENSNode(nameHash, {
-          from: accountDevices.guardian,
-        });
-
-        logGasUsed(output);
-
-        const { logs: [log] } = output;
-
-        expect(log.event)
-          .toBe('ENSNodeAdded');
-        expect(log.args.ensNode)
-          .toBe(nameHash);
-      });
-
-      it('expect to reject if ens node exists', async () => {
-        const nameHash = getEnsNameHash('test1');
-
-        await expect(accountProvider.addENSNode(nameHash, {
-          from: accountDevices.guardian,
-        }))
-          .rejects
-          .toThrow();
-      });
-
-      it('expect to reject if sender is not a guardian device', async () => {
-        const nameHash = getEnsNameHash('test2');
-
-        await expect(accountProvider.addENSNode(nameHash, {
-          from: accountDevices.invalid,
-        }))
-          .rejects
-          .toThrow();
-      });
-    });
-
-    describe('removeENSNode()', () => {
-      it('expect to remove existed ens node', async () => {
-        const nameHash = getEnsNameHash('test1');
-
-        const output = await accountProvider.removeENSNode(nameHash, {
-          from: accountDevices.guardian,
-        });
-
-        logGasUsed(output);
-
-        const { logs: [log] } = output;
-
-        expect(log.event)
-          .toBe('ENSNodeRemoved');
-        expect(log.args.ensNode)
-          .toBe(nameHash);
-      });
-
-      it('expect to reject if ens node doesn\t exist', async () => {
-        const nameHash = getEnsNameHash('test1');
-
-        await expect(accountProvider.removeENSNode(nameHash, {
-          from: accountDevices.guardian,
-        }))
-          .rejects
-          .toThrow();
-      });
-
-      it('expect to reject if sender is not a guardian device', async () => {
-        const nameHash = getEnsNameHash('test');
-
-        await expect(accountProvider.removeENSNode(nameHash, {
-          from: accountDevices.invalid,
-        }))
-          .rejects
-          .toThrow();
-      });
-    });
 
     describe('createAccount()', () => {
       it('expect to create new account', async () => {
