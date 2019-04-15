@@ -1,14 +1,12 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const {
-  ZERO_ADDRESS,
-} = require('../constants');
+const { ZERO_ADDRESS } = require('../../shared/constants');
 const {
   getEnsNameHash,
   getEnsLabelHash,
   logGasUsed,
-} = require('../utils');
+} = require('../../shared/utils');
 
 const ENSMultiManager = artifacts.require('ENSMultiManagerWrapper');
 const ENSRegistry = artifacts.require('ENSRegistry');

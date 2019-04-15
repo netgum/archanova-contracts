@@ -5,7 +5,7 @@ const {
   ACCOUNT_SALT_MSG_PREFIX,
   ACCOUNT_SALT_MSG_PREFIX_UNSAFE,
   ZERO_ADDRESS,
-} = require('../constants');
+} = require('../../shared/constants');
 const {
   BN,
   getEnsNameHash,
@@ -15,7 +15,7 @@ const {
   soliditySha3,
   sign,
   getMethodSign,
-} = require('../utils');
+} = require('../../shared/utils');
 
 const Account = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
