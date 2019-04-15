@@ -6,8 +6,7 @@
 !.gitignore
 !.gitattributes
 !.npmignore
-bak
+bak/
 build/
-dist
 node_modules/
 *.log
