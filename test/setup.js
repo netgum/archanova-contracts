@@ -1,5 +1,5 @@
 const expect = require('expect');
-const { BN } = require('../shared/utils');
+const { BN } = require('./utils');
 
 expect.extend({
   toBeBN(received, expected) {

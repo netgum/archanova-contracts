@@ -1,14 +1,15 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { ZERO_ADDRESS, ACCOUNT_ACCESS_TYPES } = require('../../shared/constants');
+const { ZERO_ADDRESS } = require('../../shared/constants');
+const { ACCOUNT_ACCESS_TYPES } = require('../constants');
 const {
   BN,
   getBalance,
   getGasPrice,
   getCost,
   logGasUsed,
-} = require('../../shared/utils');
+} = require('../utils');
 
 const Account = artifacts.require('Account');
 

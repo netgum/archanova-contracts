@@ -11,7 +11,7 @@ const {
   getBalance,
   getCost,
   now,
-} = require('../../shared/utils');
+} = require('../utils');
 
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
 

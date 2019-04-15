@@ -2,11 +2,8 @@
 
 const expect = require('expect');
 const { ZERO_ADDRESS } = require('../../shared/constants');
-const {
-  getEnsNameHash,
-  getEnsLabelHash,
-  logGasUsed,
-} = require('../../shared/utils');
+const { getEnsNameHash, getEnsLabelHash } = require('../../shared/utils');
+const { logGasUsed } = require('../utils');
 
 const ENSMultiManager = artifacts.require('ENSMultiManagerWrapper');
 const ENSRegistry = artifacts.require('ENSRegistry');

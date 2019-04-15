@@ -1,13 +1,9 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
-
-const {
-  TRUFFLE_PROVIDER_ENDPOINT,
-  TRUFFLE_ACCOUNT_MNEMONIC,
-} = process.env;
+const { truffle } = require('./config');
 
 const provider = () => new HDWalletProvider(
-  TRUFFLE_ACCOUNT_MNEMONIC || 'false myself sadness rebuild shallow powder outdoor thank basket light fun tip',
-  TRUFFLE_PROVIDER_ENDPOINT || 'http://localhost:8545',
+  truffle.accountMnemonic,
+  truffle.providerEndpoint,
   0,
   10,
 );

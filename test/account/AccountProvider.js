@@ -1,21 +1,17 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const {
-  ACCOUNT_SALT_MSG_PREFIX,
-  ACCOUNT_SALT_MSG_PREFIX_UNSAFE,
-  ZERO_ADDRESS,
-} = require('../../shared/constants');
+const { ZERO_ADDRESS } = require('../../shared/constants');
+const { getEnsNameHash, getEnsLabelHash } = require('../../shared/utils');
+const { ACCOUNT_SALT_MSG_PREFIX, ACCOUNT_SALT_MSG_PREFIX_UNSAFE } = require('../constants');
 const {
   BN,
-  getEnsNameHash,
-  getEnsLabelHash,
   logGasUsed,
   computeContractAddress,
   soliditySha3,
   sign,
   getMethodSign,
-} = require('../../shared/utils');
+} = require('../utils');
 
 const Account = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
