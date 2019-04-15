@@ -10,7 +10,7 @@ const ACCOUNT_ACCESS_TYPES = {
 const ACCOUNT_SALT_MSG_PREFIX = '0x01';
 const ACCOUNT_SALT_MSG_PREFIX_UNSAFE = '0x02';
 
-const ZERO_ADDRESS = web3.utils.padLeft('0x0', 40);
+const ZERO_ADDRESS = `0x${'0'.repeat(40)}`;
 
 module.exports = {
   ACCOUNT_ACCESS_TYPES,

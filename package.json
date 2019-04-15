@@ -18,6 +18,7 @@
     "eslint": "eslint .",
     "compile": "truffle compile",
     "test": "./scripts/test.sh --network=test",
+    "migrate:local": "truffle migrate --network=local",
     "migrate:kovan": "truffle migrate --network=kovan"
   },
   "dependencies": {

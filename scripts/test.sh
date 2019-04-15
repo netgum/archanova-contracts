@@ -7,11 +7,11 @@ set -o errexit
 trap stop_ganache EXIT
 
 ganache_running() {
-  nc -z localhost 8545
+  nc -z localhost 8555
 }
 
 start_ganache() {
-  node_modules/.bin/ganache-cli --gasLimit 0xfffffffffff -e 1000000 > /dev/null &
+  node_modules/.bin/ganache-cli -p 8555 --gasLimit 0xfffffffffff -e 1000000 > /dev/null &
   ganache_pid=$!
 }
 

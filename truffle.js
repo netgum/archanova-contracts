@@ -1,24 +1,30 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
 const {
-  KOVAN_PROVIDER_ENDPOINT,
-  KOVAN_ACCOUNT_MNEMONIC,
+  TRUFFLE_PROVIDER_ENDPOINT,
+  TRUFFLE_ACCOUNT_MNEMONIC,
 } = process.env;
+
+const provider = () => new HDWalletProvider(
+  TRUFFLE_ACCOUNT_MNEMONIC || 'false myself sadness rebuild shallow powder outdoor thank basket light fun tip',
+  TRUFFLE_PROVIDER_ENDPOINT || 'http://localhost:8545',
+  0,
+  10,
+);
 
 module.exports = {
   networks: {
     test: {
       host: '127.0.0.1',
-      port: 8545,
+      port: 8555,
+      network_id: '*',
+    },
+    local: {
+      provider,
       network_id: '*',
     },
     kovan: {
-      provider: () => new HDWalletProvider(
-        KOVAN_ACCOUNT_MNEMONIC,
-        KOVAN_PROVIDER_ENDPOINT,
-        0,
-        10,
-      ),
+      provider,
       network_id: '44',
     },
   },

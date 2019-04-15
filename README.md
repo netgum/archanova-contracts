@@ -20,23 +20,29 @@ $ cd ./solidity
 $ npm i
 ```
 
+### Running Migration
+
+Configuration via env variables:
+
+| Name 	| Default Value 	|
+| --- | ---|
+| TRUFFLE_ACCOUNT_MNEMONIC 	| `false myself sadness rebuild shallow powder outdoor thank basket light fun tip` 	|
+| TRUFFLE_PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
+| ENS_ROOT_NODES 	| `archanova.test,smartsafe.test` 	|
+
+
+```bash
+# Local TestNet:
+$ npm run migrate:local
+
+# Kovan TestNet
+$ npm run migrate:kovan
+```
+
 ### Running Tests
 
 ```bash
 $ npm test
-```
-
-### Running Migration
-
-#### Kovan TestNet
-
-```bash
-# configuration via env variables
-$ export KOVAN_PROVIDER_ENDPOINT=
-$ export KOVAN_ACCOUNT_MNEMONIC=
-
-# start migration
-$ npm run migrate:kovan
 ```
 
 ## License
