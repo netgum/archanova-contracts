@@ -7,6 +7,7 @@ const AccountProvider = artifacts.require('AccountProvider');
 const AccountProxy = artifacts.require('AccountProxy');
 const AddressLibrary = artifacts.require('AddressLibrary');
 const AddressLibraryWrapper = artifacts.require('AddressLibraryWrapper');
+const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
 
 module.exports = async (deployer) => {
   await deployer.deploy(Address);
@@ -31,4 +32,8 @@ module.exports = async (deployer) => {
   deployer.link(AddressLibrary, AccountProxy);
   deployer.link(ECDSA, AccountProxy);
   deployer.link(SafeMath, AccountProxy);
+
+  deployer.link(AddressLibrary, VirtualPaymentManager);
+  deployer.link(ECDSA, VirtualPaymentManager);
+  deployer.link(SafeMath, VirtualPaymentManager);
 };
