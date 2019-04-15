@@ -1,8 +1,6 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { ZERO_ADDRESS } = require('../../shared/constants');
-const { ACCOUNT_ACCESS_TYPES } = require('../constants');
 const {
   BN,
   getGasPrice,
@@ -13,7 +11,7 @@ const {
   getCost,
   getBalance,
   toWei,
-} = require('../utils');
+} = require('../shared/utils');
 
 const Account = artifacts.require('Account');
 const AccountProxy = artifacts.require('AccountProxy');
@@ -43,14 +41,17 @@ contract('AccountProxy', (addresses) => {
 
     accountProxy = await AccountProxy.new();
 
-    account = await Account.new();
+    account = await Account.new({
+      from: accountDevices.owner,
+    });
 
-    await account.initialize([
-      accountDevices.owner,
-      accountDevices.removed,
-      accountProxy.address,
-    ], 0, ZERO_ADDRESS);
-    await account.addDevice(accountDevices.delegate, ACCOUNT_ACCESS_TYPES.delegate, {
+    await account.addDevice(accountProxy.address, true, {
+      from: accountDevices.owner,
+    });
+    await account.addDevice(accountDevices.delegate, false, {
+      from: accountDevices.owner,
+    });
+    await account.addDevice(accountDevices.removed, false, {
       from: accountDevices.owner,
     });
     await account.removeDevice(accountDevices.removed, {

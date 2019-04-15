@@ -15,18 +15,18 @@ library AccountLibrary {
     AbstractAccount _account,
     address _device
   ) internal view returns (bool) {
-    AbstractAccount.AccessTypes accessType;
-    (accessType,) = _account.devices(_device);
-    return accessType == AbstractAccount.AccessTypes.OWNER;
+    bool isOwner;
+    (isOwner,,) = _account.devices(_device);
+    return isOwner;
   }
 
   function isAnyDevice(
     AbstractAccount _account,
     address _device
   ) internal view returns (bool) {
-    AbstractAccount.AccessTypes accessType;
-    (accessType,) = _account.devices(_device);
-    return accessType != AbstractAccount.AccessTypes.NONE;
+    bool exists;
+    (,exists,) = _account.devices(_device);
+    return exists;
   }
 
   function isExistedDevice(
@@ -34,7 +34,7 @@ library AccountLibrary {
     address _device
   ) internal view returns (bool) {
     bool existed;
-    (, existed) = _account.devices(_device);
+    (,,existed) = _account.devices(_device);
     return existed;
   }
 

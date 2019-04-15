@@ -1,9 +1,7 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { ZERO_ADDRESS } = require('../../shared/constants');
-const { ACCOUNT_ACCESS_TYPES } = require('../constants');
-const { sign, soliditySha3 } = require('../utils');
+const { sign, soliditySha3 } = require('../shared/utils');
 
 const Account = artifacts.require('Account');
 const AddressLibraryWrapper = artifacts.require('AddressLibraryWrapper');
@@ -26,10 +24,14 @@ contract('AddressLibrary', (addresses) => {
 
   before(async () => {
     addressLibrary = await AddressLibraryWrapper.new();
-    account = await Account.new();
+    account = await Account.new({
+      from: accountDevices.owner,
+    });
 
-    await account.initialize([accountDevices.owner, accountDevices.removed], 0, ZERO_ADDRESS);
-    await account.addDevice(accountDevices.delegate, ACCOUNT_ACCESS_TYPES.delegate, {
+    await account.addDevice(accountDevices.delegate, false, {
+      from: accountDevices.owner,
+    });
+    await account.addDevice(accountDevices.removed, false, {
       from: accountDevices.owner,
     });
     await account.removeDevice(accountDevices.removed, {

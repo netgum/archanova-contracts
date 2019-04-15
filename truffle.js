@@ -1,9 +1,9 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
-const { truffle } = require('./config');
+const { providerMnemonic, providerEndpoint } = require('./config');
 
 const provider = () => new HDWalletProvider(
-  truffle.accountMnemonic,
-  truffle.providerEndpoint,
+  providerMnemonic,
+  providerEndpoint,
   0,
   10,
 );

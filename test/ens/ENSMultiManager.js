@@ -1,9 +1,8 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { ZERO_ADDRESS } = require('../../shared/constants');
 const { getEnsNameHash, getEnsLabelHash } = require('../../shared/utils');
-const { logGasUsed } = require('../utils');
+const { logGasUsed } = require('../shared/utils');
 
 const ENSMultiManager = artifacts.require('ENSMultiManagerWrapper');
 const ENSRegistry = artifacts.require('ENSRegistry');
@@ -66,7 +65,7 @@ contract('ENSMultiManager', (addresses) => {
         const output = await ensMultiManager.ensRootNodes(ensRootNodes.invalid);
 
         expect(output.owner)
-          .toBe(ZERO_ADDRESS);
+          .toBeZeroAddress();
         expect(output.verified)
           .toBeFalsy();
       });

@@ -92,20 +92,20 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
   ) private {
 
     // initialize account
-    address _account = _createContract(_salt);
+    AbstractAccount _account = AbstractAccount(_createContract(_salt));
 
-    address[] memory _devices = new address[](2);
-    _devices[0] = accountProxy;
-    _devices[1] = _device;
-
-    AbstractAccount(_account).initialize(_devices, _refundAmount, msg.sender);
+    if (_refundAmount > 0) {
+      _account.executeTransaction(msg.sender, _refundAmount, new bytes(0));
+    }
+    _account.addDevice(_device, true);
+    _account.removeDevice(address(this));
 
     _register(
       _ensLabel,
       _ensNode,
-      _account
+      address(_account)
     );
 
-    emit AccountCreated(_account);
+    emit AccountCreated(address(_account));
   }
 }

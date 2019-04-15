@@ -1,25 +1,16 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { ZERO_ADDRESS } = require('../../shared/constants');
-const { ACCOUNT_ACCESS_TYPES } = require('../constants');
 const {
   BN,
   getBalance,
-  getGasPrice,
-  getCost,
   logGasUsed,
-} = require('../utils');
+} = require('../shared/utils');
 
 const Account = artifacts.require('Account');
 
 contract('Account', (addresses) => {
   let account;
-  let gasPrice;
-
-  before(async () => {
-    gasPrice = await getGasPrice();
-  });
 
   describe('views', () => {
     const accountDevices = {
@@ -30,10 +21,14 @@ contract('Account', (addresses) => {
     };
 
     before(async () => {
-      account = await Account.new();
+      account = await Account.new({
+        from: accountDevices.owner,
+      });
 
-      await account.initialize([accountDevices.owner, accountDevices.removed], 0, ZERO_ADDRESS);
-      await account.addDevice(accountDevices.delegate, ACCOUNT_ACCESS_TYPES.delegate, {
+      await account.addDevice(accountDevices.delegate, false, {
+        from: accountDevices.owner,
+      });
+      await account.addDevice(accountDevices.removed, false, {
         from: accountDevices.owner,
       });
       await account.removeDevice(accountDevices.removed, {
@@ -43,37 +38,45 @@ contract('Account', (addresses) => {
 
     describe('devices()', () => {
       it('expect to return correct struct for OWNER device', async () => {
-        const { accessType, existed } = await account.devices(accountDevices.owner);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.owner);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.owner);
+        expect(isOwner)
+          .toBeTruthy();
+        expect(exists)
+          .toBeTruthy();
         expect(existed)
           .toBeTruthy();
       });
 
       it('expect to return correct struct for DELEGATE device', async () => {
-        const { accessType, existed } = await account.devices(accountDevices.delegate);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.delegate);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.delegate);
+        expect(isOwner)
+          .toBeFalsy();
+        expect(exists)
+          .toBeTruthy();
         expect(existed)
           .toBeTruthy();
       });
 
       it('expect to return correct struct for removed device', async () => {
-        const { accessType, existed } = await account.devices(accountDevices.removed);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.removed);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.none);
+        expect(isOwner)
+          .toBeFalsy();
+        expect(exists)
+          .toBeFalsy();
         expect(existed)
           .toBeTruthy();
       });
 
       it('expect to return correct struct for invalid device', async () => {
-        const { accessType, existed } = await account.devices(accountDevices.invalid);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.invalid);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.none);
+        expect(isOwner)
+          .toBeFalsy();
+        expect(exists)
+          .toBeFalsy();
         expect(existed)
           .toBeFalsy();
       });
@@ -88,94 +91,63 @@ contract('Account', (addresses) => {
       invalid: addresses[4],
     };
 
-    describe('initialize()', () => {
-      it('expect to reject on invalid initializer', async () => {
-        account = await Account.new();
-
-        await expect(account.initialize([accountDevices.creator], 0, ZERO_ADDRESS, {
-          from: accountDevices.creator,
-        }))
-          .rejects
-          .toThrow();
-      });
-
-      it('expect to reject on invalid refund', async () => {
-        account = await Account.new();
-
-        await expect(account.initialize([accountDevices.creator], 100, accountDevices.creator))
-          .rejects
-          .toThrow();
-      });
-
-      it('expect to initialize and refund to creator', async () => {
-        const refund = new BN(1000);
-
-        account = await Account.new({
-          from: accountDevices.creator,
-        });
-
-        await account.send(refund);
-
-        const creatorBalance = await getBalance(accountDevices.creator);
-
-        const output = await account.initialize([accountDevices.creator], refund, accountDevices.creator, {
-          gasPrice,
-          from: accountDevices.creator,
-        });
-
-        logGasUsed(output);
-
-        const cost = getCost(output, gasPrice);
-
-        expect(await getBalance(accountDevices.creator))
-          .toBeBN(creatorBalance.sub(cost)
-            .add(refund));
+    before(async () => {
+      account = await Account.new({
+        from: accountDevices.creator,
       });
     });
 
     describe('addDevice()', () => {
       it('expect to add OWNER device by OWNER device', async () => {
-        const output = await account.addDevice(accountDevices.owner, ACCOUNT_ACCESS_TYPES.owner, {
+        const output = await account.addDevice(accountDevices.owner, true, {
           from: accountDevices.creator,
         });
 
         logGasUsed(output);
 
         const { logs: [log] } = output;
-        const { accessType } = await account.devices(accountDevices.owner);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.owner);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.owner);
+        expect(isOwner)
+          .toBeTruthy();
+        expect(exists)
+          .toBeTruthy();
+        expect(existed)
+          .toBeTruthy();
         expect(log.event)
           .toBe('DeviceAdded');
         expect(log.args.device)
           .toBe(accountDevices.owner);
-        expect(log.args.accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.owner);
+        expect(log.args.isOwner)
+          .toBeTruthy();
       });
 
       it('expect to add DELEGATE device by OWNER device', async () => {
-        const output = await account.addDevice(accountDevices.delegate, ACCOUNT_ACCESS_TYPES.delegate, {
+        const output = await account.addDevice(accountDevices.delegate, false, {
           from: accountDevices.creator,
         });
 
         logGasUsed(output);
 
         const { logs: [log] } = output;
-        const { accessType } = await account.devices(accountDevices.delegate);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.delegate);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.delegate);
+        expect(isOwner)
+          .toBeFalsy();
+        expect(exists)
+          .toBeTruthy();
+        expect(existed)
+          .toBeTruthy();
         expect(log.event)
           .toBe('DeviceAdded');
         expect(log.args.device)
           .toBe(accountDevices.delegate);
-        expect(log.args.accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.delegate);
+        expect(log.args.isOwner)
+          .toBeFalsy();
       });
 
       it('expect to reject when msg.sender is DELEGATE device', async () => {
-        await expect(account.addDevice(addresses[5], ACCOUNT_ACCESS_TYPES.delegate, {
+        await expect(account.addDevice(addresses[5], false, {
           from: accountDevices.delegate,
         }))
           .rejects
@@ -183,7 +155,7 @@ contract('Account', (addresses) => {
       });
 
       it('expect to reject when msg.sender is not account device', async () => {
-        await expect(account.addDevice(addresses[5], ACCOUNT_ACCESS_TYPES.delegate, {
+        await expect(account.addDevice(addresses[5], false, {
           from: accountDevices.invalid,
         }))
           .rejects
@@ -191,23 +163,7 @@ contract('Account', (addresses) => {
       });
 
       it('expect to reject when device already exists', async () => {
-        await expect(account.addDevice(accountDevices.delegate, ACCOUNT_ACCESS_TYPES.delegate, {
-          from: accountDevices.creator,
-        }))
-          .rejects
-          .toThrow();
-      });
-
-      it('expect to reject on device zero address', async () => {
-        await expect(account.addDevice(ZERO_ADDRESS, ACCOUNT_ACCESS_TYPES.owner, {
-          from: accountDevices.creator,
-        }))
-          .rejects
-          .toThrow();
-      });
-
-      it('expect to reject on INVALID access type', async () => {
-        await expect(account.addDevice(addresses[5], ACCOUNT_ACCESS_TYPES.invalid, {
+        await expect(account.addDevice(accountDevices.delegate, false, {
           from: accountDevices.creator,
         }))
           .rejects
@@ -224,10 +180,14 @@ contract('Account', (addresses) => {
         logGasUsed(output);
 
         const { logs: [log] } = output;
-        const { accessType } = await account.devices(accountDevices.creator);
+        const { isOwner, exists, existed } = await account.devices(accountDevices.creator);
 
-        expect(accessType)
-          .toBeBN(ACCOUNT_ACCESS_TYPES.none);
+        expect(isOwner)
+          .toBeFalsy();
+        expect(exists)
+          .toBeFalsy();
+        expect(existed)
+          .toBeTruthy();
         expect(log.event)
           .toBe('DeviceRemoved');
         expect(log.args.device)

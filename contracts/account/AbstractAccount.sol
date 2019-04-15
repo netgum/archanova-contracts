@@ -5,26 +5,19 @@ pragma solidity ^0.5.2;
  */
 contract AbstractAccount {
 
-  event DeviceAdded(address device, AccessTypes accessType);
+  event DeviceAdded(address device, bool isOwner);
   event DeviceRemoved(address device);
   event TransactionExecuted(address recipient, uint256 value, bytes data, bytes response);
 
-  enum AccessTypes {
-    NONE,
-    OWNER,
-    DELEGATE
-  }
-
   struct Device {
-    AccessTypes accessType;
+    bool isOwner;
+    bool exists;
     bool existed;
   }
 
   mapping(address => Device) public devices;
 
-  function initialize(address[] memory _devices, uint256 _refund, address payable _beneficiary) public;
-
-  function addDevice(address _device, AccessTypes _accessType) public;
+  function addDevice(address _device, bool _isOwner) public;
 
   function removeDevice(address _device) public;
 

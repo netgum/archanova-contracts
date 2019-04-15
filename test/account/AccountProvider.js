@@ -1,9 +1,7 @@
 /* eslint-env mocha */
 
 const expect = require('expect');
-const { ZERO_ADDRESS } = require('../../shared/constants');
 const { getEnsNameHash, getEnsLabelHash } = require('../../shared/utils');
-const { ACCOUNT_SALT_MSG_PREFIX, ACCOUNT_SALT_MSG_PREFIX_UNSAFE } = require('../constants');
 const {
   BN,
   logGasUsed,
@@ -11,13 +9,15 @@ const {
   soliditySha3,
   sign,
   getMethodSign,
-} = require('../utils');
+} = require('../shared/utils');
 
 const Account = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
 const ENSRegistry = artifacts.require('ENSRegistry');
 
 contract('AccountProvider', (addresses) => {
+  const accountSaltPrefix = '0x01';
+  const accountSaltPrefixUnsafe = '0x02';
   const accountDevices = {
     guardian: addresses[1],
     owner: addresses[2],
@@ -32,11 +32,9 @@ contract('AccountProvider', (addresses) => {
 
   before(async () => {
     ens = await ENSRegistry.new();
-    guardian = await Account.new();
-
-    await guardian.initialize([
-      accountDevices.guardian,
-    ], 0, ZERO_ADDRESS);
+    guardian = await Account.new({
+      from: accountDevices.guardian,
+    });
 
     accountProvider = await AccountProvider.new(
       guardian.address,
@@ -66,7 +64,7 @@ contract('AccountProvider', (addresses) => {
         const labelHash = getEnsLabelHash('test1');
         const refundAmount = new BN(0);
         const salt = soliditySha3(
-          ACCOUNT_SALT_MSG_PREFIX,
+          accountSaltPrefix,
           soliditySha3(accountDevices.owner),
         );
         const accountAddress = computeContractAddress(
@@ -108,7 +106,7 @@ contract('AccountProvider', (addresses) => {
         const labelHash = getEnsLabelHash('test2');
         const refundAmount = new BN(0);
         const salt = soliditySha3(
-          ACCOUNT_SALT_MSG_PREFIX_UNSAFE,
+          accountSaltPrefixUnsafe,
           accountId,
         );
         const accountAddress = computeContractAddress(

@@ -18,8 +18,8 @@
     "eslint": "eslint .",
     "compile": "truffle compile",
     "test": "./scripts/test.sh --network=test",
-    "migrate:local": "truffle migrate --network=local",
-    "migrate:kovan": "truffle migrate --network=kovan"
+    "migrate:local": "truffle migrate --reset --network=local",
+    "migrate:kovan": "truffle migrate --reset --network=kovan"
   },
   "dependencies": {
     "@ensdomains/ens": "0.3.5",

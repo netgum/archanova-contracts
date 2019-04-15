@@ -1,5 +1,7 @@
 const expect = require('expect');
-const { BN } = require('./utils');
+const { BN } = require('./shared/utils');
+
+const zeroAddress = `0x${'0'.repeat(40)}`;
 
 expect.extend({
   toBeBN(received, expected) {
@@ -26,6 +28,24 @@ expect.extend({
     } else {
       result = {
         message: () => `expected ${received} is not equal ${expected}`,
+        pass: false,
+      };
+    }
+
+    return result;
+  },
+
+  toBeZeroAddress(received) {
+    let result;
+
+    if (received === zeroAddress) {
+      result = {
+        message: () => `expected ${received} is zero address`,
+        pass: true,
+      };
+    } else {
+      result = {
+        message: () => `expected ${received} is not zero address`,
         pass: false,
       };
     }
