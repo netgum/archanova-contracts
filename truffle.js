@@ -27,7 +27,7 @@ module.exports = {
     },
     kovan: {
       provider,
-      network_id: '44',
+      network_id: '42',
     },
   },
   compilers: {

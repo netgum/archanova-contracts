@@ -38,7 +38,7 @@ function networksToAddresses(networks) {
       key,
       address,
     }))
-    .filter(key => supportedNetworks.includes(key))
+    .filter(({ key, address }) => !!address && supportedNetworks.includes(key))
     .reduce((result, { key, address }) => ({
       ...result,
       [key]: address,

@@ -452,7 +452,9 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {}
+    "addresses": {
+      "42": "0x67b030Ba50ACF853e7fA1218D236c622749F3a9c"
+    }
   },
   "AccountProxy": {
     "abi": [
@@ -527,7 +529,9 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {}
+    "addresses": {
+      "42": "0x268029b110f7CC8b0cA98a007FdCa2F8FC7a2106"
+    }
   },
   "ENSRegistry": {
     "abi": [
@@ -757,7 +761,9 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {}
+    "addresses": {
+      "42": "0xD810485C4668973c614A6E40120390c173CbE910"
+    }
   },
   "ENSResolver": {
     "abi": [
@@ -1080,6 +1086,8 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {}
+    "addresses": {
+      "42": "0x3Eaf764406b6E7E4903e0Ad84B7bed04057F04Da"
+    }
   }
 };
