@@ -453,6 +453,7 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
+      "4": "0xd7dBA57752CEB8bb9EB7ed922B0aCA583A7FEBE6",
       "42": "0x67b030Ba50ACF853e7fA1218D236c622749F3a9c"
     }
   },
@@ -530,6 +531,7 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
+      "4": "0x94DA39996Fc88c776Bf9e19E6F7A6669B838B432",
       "42": "0x268029b110f7CC8b0cA98a007FdCa2F8FC7a2106"
     }
   },
@@ -762,6 +764,7 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
+      "4": "0xab5085671a28D9aD6F6C576Fb9ecCE360864F10b",
       "42": "0xD810485C4668973c614A6E40120390c173CbE910"
     }
   },
@@ -829,6 +832,7 @@ module.exports = {
     "abi": null,
     "byteCodeHash": null,
     "addresses": {
+      "4": "0x78EA41c97792084a1B5F3188e5ABc28763427381",
       "42": "0x2ca8BA91d4569E3Ba9B76Cfe0C1Fe15EEEf5C1AA"
     }
   },
@@ -1094,6 +1098,7 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
+      "4": "0x7Aa6b7fC18a4AC1654E346dEC23f7A0f79205250",
       "42": "0x3Eaf764406b6E7E4903e0Ad84B7bed04057F04Da"
     }
   }

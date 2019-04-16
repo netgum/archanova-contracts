@@ -58,6 +58,9 @@ $ npm i
 #### Start Migration:
 
 ```bash
+# Rinkeby TestNet
+$ npm run migrate:rinkeby
+
 # Kovan TestNet
 $ npm run migrate:kovan
 ```

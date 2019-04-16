@@ -25,6 +25,10 @@ module.exports = {
       provider,
       network_id: '*',
     },
+    rinkeby: {
+      provider,
+      network_id: '4',
+    },
     kovan: {
       provider,
       network_id: '42',
