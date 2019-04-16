@@ -7,4 +7,6 @@ export interface IContract {
 export declare const Account: IContract;
 export declare const AccountProvider: IContract;
 export declare const AccountProxy: IContract;
+export declare const ENSResolver: IContract;
+export declare const ENSRegistry: IContract;
 export declare const VirtualPaymentManager: IContract;

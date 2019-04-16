@@ -6,7 +6,7 @@ const {
 } = process.env;
 
 module.exports = {
-  providerMnemonic: PROVIDER_MNEMONIC || 'false myself sadness rebuild shallow powder outdoor thank basket light fun tip',
+  providerMnemonic: PROVIDER_MNEMONIC || '',
   providerEndpoint: PROVIDER_ENDPOINT || 'http://localhost:8545',
   ensTopLabels: (ENS_TOP_LABELS || 'archanova,smartsafe').split(','),
   virtualPaymentLockPeriod: parseInt(VIRTUAL_PAYMENT_LOCK_PERIOD, 10) || 30 * 24 * 60 * 60,

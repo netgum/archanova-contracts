@@ -10,7 +10,6 @@ const {
   getGasPrice,
   getBalance,
   getCost,
-  now,
 } = require('../shared/utils');
 
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
@@ -262,15 +261,12 @@ contract('VirtualPaymentManager', ([guardian, sender, receiver]) => {
           .toBe('NewWithdrawalRequest');
         expect(args.receiver)
           .toBe(sender);
-        expect(args.unlockedAt)
-          .toBeBN(now()
-            .add(lockPeriod));
       });
 
       it('expect to process withdraw', async () => {
         const senderBalance = await getBalance(sender);
 
-        await increaseTime(lockPeriod);
+        await increaseTime(lockPeriod.add(new BN(1)));
 
         const output = await manager.withdrawDeposit({
           from: sender,

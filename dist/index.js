@@ -452,9 +452,7 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {
-      "4081": "0xdF8bfD1aa88223230cBfc1a98F3b3B1457442cA1"
-    }
+    "addresses": {}
   },
   "AccountProxy": {
     "abi": [
@@ -529,9 +527,297 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {
-      "4081": "0xF2c00e3ddF389CCd216ddBfA791b092D00EFB54e"
-    }
+    "addresses": {}
+  },
+  "ENSRegistry": {
+    "abi": [
+      {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor",
+        "signature": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": true,
+            "name": "label",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "NewOwner",
+        "type": "event",
+        "signature": "0xce0457fe73731f824cc272376169235128c118b49d344817417c6d108d155e82"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "Transfer",
+        "type": "event",
+        "signature": "0xd4735d920b0f87494915f556dd9b54c8f309026070caea5c737245152564d266"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "resolver",
+            "type": "address"
+          }
+        ],
+        "name": "NewResolver",
+        "type": "event",
+        "signature": "0x335721b01866dc23fbee8b6b2c7b1e14d6f05c28cd35a2c934239f94095602a0"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "ttl",
+            "type": "uint64"
+          }
+        ],
+        "name": "NewTTL",
+        "type": "event",
+        "signature": "0x1d4f9bbfc9cab89d66e1a1562f2233ccbf1308cb4f63de2ead5787adddb8fa68"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "setOwner",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x5b0fc9c3"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "label",
+            "type": "bytes32"
+          },
+          {
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "setSubnodeOwner",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x06ab5923"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "resolver",
+            "type": "address"
+          }
+        ],
+        "name": "setResolver",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x1896f70a"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "name": "ttl",
+            "type": "uint64"
+          }
+        ],
+        "name": "setTTL",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x14ab9038"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          }
+        ],
+        "name": "owner",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x02571be3"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          }
+        ],
+        "name": "resolver",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x0178b8bf"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "node",
+            "type": "bytes32"
+          }
+        ],
+        "name": "ttl",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint64"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x16a25cbd"
+      }
+    ],
+    "byteCodeHash": null,
+    "addresses": {}
+  },
+  "ENSResolver": {
+    "abi": [
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "node",
+            "type": "bytes32"
+          },
+          {
+            "indexed": false,
+            "name": "addr",
+            "type": "address"
+          }
+        ],
+        "name": "AddrChanged",
+        "type": "event"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_node",
+            "type": "bytes32"
+          }
+        ],
+        "name": "addr",
+        "outputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_node",
+            "type": "bytes32"
+          },
+          {
+            "name": "_addr",
+            "type": "address"
+          }
+        ],
+        "name": "setAddr",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "byteCodeHash": null,
+    "addresses": {}
   },
   "VirtualPaymentManager": {
     "abi": [
@@ -794,8 +1080,6 @@ module.exports = {
       }
     ],
     "byteCodeHash": null,
-    "addresses": {
-      "4081": "0x8ddC60e705bADD3b3018e19fcc063462c2460224"
-    }
+    "addresses": {}
   }
 };

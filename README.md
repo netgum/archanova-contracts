@@ -10,6 +10,29 @@ Archanova [solidity](http://solidity.readthedocs.io) contracts
 $ npm i @archanova/solidity -S
 ```
 
+## Usage
+
+Example:
+
+```typescript
+import { Account, AccountProvider } from '@archanova/solidity'; 
+
+console.log('Account abi:', Account.abi);
+console.log('Account byteCodeHash:', Account.byteCodeHash);
+console.log('AccountProvider addresses:', AccountProvider.addresses);
+```
+
+Exported fields:
+
+| Contract name 	| `abi` 	| `byteCodeHash` 	| `addresses` 	|
+| --- | :---: | :---: | :---: |
+| `Account` 	| ✅ 	| ✅ 	| 	|
+| `AccountProvider` 	| ✅ 	| 	| ✅ 	|
+| `AccountProxy` 	| ✅ 	| 	| ✅ 	|
+| `ENSRegistry` 	| ✅ 	| 	| ✅ 	|
+| `ENSResolver` 	| ✅ 	| 	|  	|
+| `VirtualPaymentManager` 	| ✅ 	| 	| ✅ 	|
+
 ## Development
 
 ### Setup
@@ -20,23 +43,28 @@ $ cd ./solidity
 $ npm i
 ```
 
-### Running Migration
+### Migration
 
-Configuration via env variables:
+#### Configure `env` variables:
 
 | Name 	| Default Value 	|
 | --- | ---|
-| PROVIDER_MNEMONIC 	| `false myself sadness rebuild shallow powder outdoor thank basket light fun tip` 	|
+| PROVIDER_MNEMONIC 	| `-` 	|
 | PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
 | ENS_TOP_LABELS 	| `archanova,smartsafe` 	|
 | VIRTUAL_PAYMENT_LOCK_PERIOD 	| `30 * 24 * 60 * 60` 	|
 
-```bash
-# Local TestNet:
-$ npm run migrate:local
+#### Start Migration:
 
+```bash
 # Kovan TestNet
 $ npm run migrate:kovan
+```
+
+### Building `./dist`
+
+```bash
+$ npm run build
 ```
 
 ### Running Tests

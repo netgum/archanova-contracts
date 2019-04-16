@@ -1,12 +1,18 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const { providerMnemonic, providerEndpoint } = require('./config');
 
-const provider = () => new HDWalletProvider(
-  providerMnemonic,
-  providerEndpoint,
-  0,
-  10,
-);
+function provider() {
+  if (!providerMnemonic) {
+    throw new Error('Please setup PROVIDER_MNEMONIC env variable');
+  }
+
+  return new HDWalletProvider(
+    providerMnemonic,
+    providerEndpoint,
+    0,
+    10,
+  );
+}
 
 module.exports = {
   networks: {

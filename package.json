@@ -1,6 +1,6 @@
 {
   "name": "@archanova/solidity",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Archanova solidity contracts",
   "author": {
     "name": "Stanislaw Glogowski",
@@ -18,7 +18,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "eslint": "eslint .",
-    "test": "./scripts/test.sh --network=test",
+    "test": "./scripts/test.sh --compile-all --network=test",
     "build": "node ./scripts/build.js",
     "compile": "truffle compile",
     "migrate:local": "truffle migrate --reset --network=local",
