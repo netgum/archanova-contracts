@@ -31,6 +31,7 @@ Exported fields:
 | `AccountProxy` 	| ✅ 	| 	| ✅ 	|
 | `ENSRegistry` 	| ✅ 	| 	| ✅ 	|
 | `ENSResolver` 	| ✅ 	| 	|  	|
+| `Guardian` 	|  	| 	| ✅ 	|
 | `VirtualPaymentManager` 	| ✅ 	| 	| ✅ 	|
 
 ## Development

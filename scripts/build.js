@@ -12,21 +12,31 @@ const supportedNetworks = Object.values(config.networks)
 
 const schemas = {
   Account: {
+    addAbi: true,
     addByteCodeHash: true,
   },
   AccountProvider: {
+    addAbi: true,
     addAddresses: true,
   },
   AccountProxy: {
+    addAbi: true,
     addAddresses: true,
   },
   ENSRegistry: {
+    addAbi: true,
     addAddresses: true,
   },
-  AbstractENSAddrResolver: {
-    name: 'ENSResolver',
+  ENSResolver: {
+    addAbi: true,
+    contract: 'AbstractENSAddrResolver',
+  },
+  Guardian: {
+    contract: 'Account',
+    addAddresses: true,
   },
   VirtualPaymentManager: {
+    addAbi: true,
     addAddresses: true,
   },
 };
@@ -60,12 +70,26 @@ async function main() {
   const contracts = await Promise.all(
     Object
       .entries(schemas)
-      .map(async ([key, { name, addByteCodeHash, addAddresses }]) => {
-        const { abi, bytecode, networks } = await readJSON(join(buildPath, `${key}.json`));
+      .map(async ([name, schema]) => {
+        const {
+          addAbi,
+          addByteCodeHash,
+          addAddresses,
+        } = schema;
+
+        let {
+          contract,
+        } = schema;
+
+        if (!contract) {
+          contract = name;
+        }
+
+        const { abi, bytecode, networks } = await readJSON(join(buildPath, `${contract}.json`));
 
         return {
-          abi,
-          name: name || key,
+          name,
+          abi: !addAbi ? null : abi,
           byteCodeHash: !addByteCodeHash ? null : sha3(bytecode),
           addresses: !addAddresses ? {} : networksToAddresses(networks),
         };

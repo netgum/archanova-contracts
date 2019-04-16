@@ -825,6 +825,13 @@ module.exports = {
     "byteCodeHash": null,
     "addresses": {}
   },
+  "Guardian": {
+    "abi": null,
+    "byteCodeHash": null,
+    "addresses": {
+      "42": "0x2ca8BA91d4569E3Ba9B76Cfe0C1Fe15EEEf5C1AA"
+    }
+  },
   "VirtualPaymentManager": {
     "abi": [
       {
