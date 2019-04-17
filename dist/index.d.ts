@@ -1,13 +1,13 @@
-export interface IContract {
-  abi: any;
-  byteCodeHash: string;
-  addresses: { [ key: string ]: string };
+export declare enum ContractNames {
+  Account = "Account",
+  AccountProvider = "AccountProvider",
+  AccountProxy = "AccountProxy",
+  ENSRegistry = "ENSRegistry",
+  ENSResolver = "ENSResolver",
+  Guardian = "Guardian",
+  VirtualPaymentManager = "VirtualPaymentManager",
 }
 
-export declare const Account: IContract;
-export declare const AccountProvider: IContract;
-export declare const AccountProxy: IContract;
-export declare const ENSRegistry: IContract;
-export declare const ENSResolver: IContract;
-export declare const Guardian: IContract;
-export declare const VirtualPaymentManager: IContract;
+export declare function getContractAddress(contractName: ContractNames, network: string): string;
+export declare function getContractAbi(contractName: ContractNames): any;
+export declare function getContractByteCodeHash(contractName: ContractNames): string;

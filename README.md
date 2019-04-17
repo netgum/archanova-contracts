@@ -12,14 +12,26 @@ $ npm i @archanova/solidity -S
 
 ## Usage
 
-Example:
-
 ```typescript
-import { Account, AccountProvider } from '@archanova/solidity'; 
+import { 
+  ContractNames, 
+  getContractAddress, 
+  getContractAbi, 
+  getContractByteCodeHash, 
+} from '@archanova/solidity'; 
 
-console.log('Account abi:', Account.abi);
-console.log('Account byteCodeHash:', Account.byteCodeHash);
-console.log('AccountProvider addresses:', AccountProvider.addresses);
+console.log(
+  'AccountProvider rinkeby address:', 
+  getContractAddress(ContractNames.AccountProvider, '4'),
+);
+console.log(
+  'Account abi:', 
+  getContractAbi(ContractNames.Account),
+);
+console.log(
+  'Account byteCodeHash:',
+  getContractByteCodeHash(ContractNames.Account),
+);
 ```
 
 Exported fields:

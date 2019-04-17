@@ -4,7 +4,7 @@ const { sha3 } = require('web3-utils');
 const config = require('../truffle');
 
 const buildPath = resolve(__dirname, '../build/contracts');
-const distFile = resolve(__dirname, '../dist/index.js');
+const distFile = resolve(__dirname, '../dist/data.js');
 
 const supportedNetworks = Object.values(config.networks)
   .map(({ network_id: id }) => id)
@@ -97,7 +97,6 @@ async function main() {
   );
 
   const content = `/* eslint-disable */
-
 module.exports = ${contractsToExport(contracts)};
 `;
 
