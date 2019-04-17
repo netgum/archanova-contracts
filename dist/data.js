@@ -403,7 +403,7 @@ module.exports = {
             "type": "bytes32"
           },
           {
-            "name": "_refundAmount",
+            "name": "_fixedGas",
             "type": "uint256"
           },
           {
@@ -438,7 +438,7 @@ module.exports = {
             "type": "bytes32"
           },
           {
-            "name": "_refundAmount",
+            "name": "_fixedGas",
             "type": "uint256"
           }
         ],
@@ -452,8 +452,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0xd7dBA57752CEB8bb9EB7ed922B0aCA583A7FEBE6",
-      "42": "0x67b030Ba50ACF853e7fA1218D236c622749F3a9c"
+      "4": "0x6Fe3489B8aD0e01E25341b8b558f4F30959eaE66",
+      "42": "0xc9c446064EBf3698142F440A1EA3B0e9b5DbB948"
     }
   },
   "AccountProxy": {
@@ -530,8 +530,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0x94DA39996Fc88c776Bf9e19E6F7A6669B838B432",
-      "42": "0x268029b110f7CC8b0cA98a007FdCa2F8FC7a2106"
+      "4": "0xb67132FFd480dAA5125bB5370f9f0f8ae0bebde0",
+      "42": "0xf2d1d27619c247921aa18D84E1Ce708de822be4b"
     }
   },
   "ENSRegistry": {
@@ -763,8 +763,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0xab5085671a28D9aD6F6C576Fb9ecCE360864F10b",
-      "42": "0xD810485C4668973c614A6E40120390c173CbE910"
+      "4": "0x2F308b9FC64855B85476d80f0212c2De6237F371",
+      "42": "0x6b0e8a7B6D8F7A718eEccDD43c16d288807Cd3d9"
     }
   },
   "ENSResolver": {
@@ -831,8 +831,8 @@ module.exports = {
     "abi": null,
     "byteCodeHash": null,
     "addresses": {
-      "4": "0x78EA41c97792084a1B5F3188e5ABc28763427381",
-      "42": "0x2ca8BA91d4569E3Ba9B76Cfe0C1Fe15EEEf5C1AA"
+      "4": "0xB6646F72C9Ba1081c062c3C8eED4A7861AdfEfc6",
+      "42": "0x2C0d004A8Eb78e346d1F15d9a93F23d6793CF0CC"
     }
   },
   "VirtualPaymentManager": {
@@ -1097,8 +1097,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0x7Aa6b7fC18a4AC1654E346dEC23f7A0f79205250",
-      "42": "0x3Eaf764406b6E7E4903e0Ad84B7bed04057F04Da"
+      "4": "0xa7338c4dF574846b4EE1f3AFac6ff140Ad2B434f",
+      "42": "0x478d3D37ee549E0Ec5DFBAB2E3a17c0424D23097"
     }
   }
 };

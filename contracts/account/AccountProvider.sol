@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../contractCreator/ContractCreator.sol";
 import "../ens/ENSMultiManager.sol";
 import "../guardian/Guarded.sol";
@@ -13,6 +14,7 @@ import "./AbstractAccount.sol";
 contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
 
   using ECDSA for bytes32;
+  using SafeMath for uint256;
 
   event AccountCreated(address account);
 
@@ -33,16 +35,18 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
   function createAccount(
     bytes32 _ensLabel,
     bytes32 _ensNode,
-    uint256 _refundAmount,
+    uint256 _fixedGas,
     bytes memory _signature
   ) onlyGuardian public {
+    uint _startGas = gasleft();
     address _device = keccak256(
       abi.encodePacked(
         address(this),
         msg.sig,
         _ensLabel,
         _ensNode,
-        _refundAmount
+        _fixedGas,
+        tx.gasprice
       )
     ).toEthSignedMessageHash().recover(_signature);
 
@@ -56,7 +60,8 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
       _device,
       _ensLabel,
       _ensNode,
-      _refundAmount
+      _startGas,
+      _fixedGas
     );
   }
 
@@ -65,8 +70,9 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
     address _device,
     bytes32 _ensLabel,
     bytes32 _ensNode,
-    uint256 _refundAmount
+    uint256 _fixedGas
   ) onlyGuardian public {
+    uint _startGas = gasleft();
     bytes32 _salt = keccak256(
       abi.encodePacked(
         ACCOUNT_SALT_MSG_PREFIX_UNSAFE,
@@ -79,7 +85,8 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
       _device,
       _ensLabel,
       _ensNode,
-      _refundAmount
+      _startGas,
+      _fixedGas
     );
   }
 
@@ -88,16 +95,22 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
     address _device,
     bytes32 _ensLabel,
     bytes32 _ensNode,
-    uint256 _refundAmount
+    uint _startGas,
+    uint256 _fixedGas
   ) private {
-
     // initialize account
     AbstractAccount _account = AbstractAccount(_createContract(_salt));
-
-    if (_refundAmount > 0) {
-      _account.executeTransaction(msg.sender, _refundAmount, new bytes(0));
-    }
     _account.addDevice(_device, true);
+
+    if (_fixedGas > 0) {
+      uint256 _gasTotal = _fixedGas.add(_startGas).sub(gasleft());
+      _account.executeTransaction(
+        msg.sender,
+        _gasTotal.mul(tx.gasprice),
+        new bytes(0)
+      );
+    }
+
     _account.removeDevice(address(this));
 
     _register(

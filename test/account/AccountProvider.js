@@ -9,13 +9,16 @@ const {
   soliditySha3,
   sign,
   getMethodSign,
+  getGasPrice,
+  toWei,
+  sendTransaction,
 } = require('../shared/utils');
 
 const Account = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
 const ENSRegistry = artifacts.require('ENSRegistry');
 
-contract('AccountProvider', (addresses) => {
+contract.only('AccountProvider', (addresses) => {
   const accountSaltPrefix = '0x01';
   const accountSaltPrefixUnsafe = '0x02';
   const accountDevices = {
@@ -26,11 +29,13 @@ contract('AccountProvider', (addresses) => {
   };
   const ensNameHash = getEnsNameHash('test');
 
+  let gasPrice;
   let ens;
   let guardian;
   let accountProvider;
 
   before(async () => {
+    gasPrice = await getGasPrice();
     ens = await ENSRegistry.new();
     guardian = await Account.new({
       from: accountDevices.guardian,
@@ -60,9 +65,9 @@ contract('AccountProvider', (addresses) => {
     };
 
     describe('createAccount()', () => {
-      it('expect to create new account', async () => {
+      it('expect to create new account and refund', async () => {
         const labelHash = getEnsLabelHash('test1');
-        const refundAmount = new BN(0);
+        const fixedGas = new BN(1);
         const salt = soliditySha3(
           accountSaltPrefix,
           soliditySha3(accountDevices.owner),
@@ -77,15 +82,23 @@ contract('AccountProvider', (addresses) => {
           methodSigns.createAccount,
           labelHash,
           ensNameHash,
-          refundAmount,
+          fixedGas,
+          gasPrice,
         );
+
+        await sendTransaction({
+          from: addresses[0],
+          to: accountAddress,
+          value: toWei('1', 'ether'),
+        });
 
         const output = await accountProvider.createAccount(
           labelHash,
           ensNameHash,
-          refundAmount,
+          fixedGas,
           await sign(messageHash, accountDevices.owner), {
             from: accountDevices.guardian,
+            gasPrice,
           },
         );
 
@@ -104,7 +117,7 @@ contract('AccountProvider', (addresses) => {
       it('expect to create new account', async () => {
         const accountId = new BN(1);
         const labelHash = getEnsLabelHash('test2');
-        const refundAmount = new BN(0);
+        const fixedGas = new BN(0);
         const salt = soliditySha3(
           accountSaltPrefixUnsafe,
           accountId,
@@ -120,7 +133,47 @@ contract('AccountProvider', (addresses) => {
           accountDevices.owner,
           labelHash,
           ensNameHash,
-          refundAmount, {
+          fixedGas, {
+            from: accountDevices.guardian,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+
+        expect(log.event)
+          .toBe('AccountCreated');
+        expect(log.args.account)
+          .toBe(accountAddress);
+      });
+
+      it('expect to create new account and refund', async () => {
+        const accountId = new BN(2);
+        const labelHash = getEnsLabelHash('test3');
+        const fixedGas = new BN(1);
+        const salt = soliditySha3(
+          accountSaltPrefixUnsafe,
+          accountId,
+        );
+        const accountAddress = computeContractAddress(
+          accountProvider.address,
+          salt,
+          Account.bytecode,
+        );
+
+        await sendTransaction({
+          from: addresses[0],
+          to: accountAddress,
+          value: toWei('1', 'ether'),
+        });
+
+        const output = await accountProvider.unsafeCreateAccount(
+          accountId,
+          accountDevices.owner,
+          labelHash,
+          ensNameHash,
+          fixedGas, {
             from: accountDevices.guardian,
           },
         );

@@ -28,6 +28,7 @@ module.exports = async (deployer) => {
 
   deployer.link(AddressLibrary, AccountProvider);
   deployer.link(ECDSA, AccountProvider);
+  deployer.link(SafeMath, AccountProvider);
 
   deployer.link(AddressLibrary, AccountProxy);
   deployer.link(ECDSA, AccountProxy);

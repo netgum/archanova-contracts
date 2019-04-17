@@ -4,6 +4,7 @@ const {
     sign,
     getGasPrice: web3GetGasPrice,
     getBalance: web3GetBalance,
+    sendTransaction,
   },
   utils: {
     BN,
@@ -82,6 +83,7 @@ module.exports = {
   soliditySha3,
   sign,
   toWei,
+  sendTransaction,
   getMethodSign,
   increaseTime,
   logGasUsed,
