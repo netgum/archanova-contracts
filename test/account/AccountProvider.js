@@ -18,7 +18,7 @@ const Account = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
 const ENSRegistry = artifacts.require('ENSRegistry');
 
-contract.only('AccountProvider', (addresses) => {
+contract('AccountProvider', (addresses) => {
   const accountSaltPrefix = '0x01';
   const accountSaltPrefixUnsafe = '0x02';
   const accountDevices = {
