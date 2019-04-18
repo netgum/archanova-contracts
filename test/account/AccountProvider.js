@@ -67,7 +67,7 @@ contract('AccountProvider', (addresses) => {
     describe('createAccount()', () => {
       it('expect to create new account and refund', async () => {
         const labelHash = getEnsLabelHash('test1');
-        const fixedGas = new BN(1);
+        const refundGas = new BN(1);
         const salt = soliditySha3(
           accountSaltPrefix,
           soliditySha3(accountDevices.owner),
@@ -82,7 +82,7 @@ contract('AccountProvider', (addresses) => {
           methodSigns.createAccount,
           labelHash,
           ensNameHash,
-          fixedGas,
+          refundGas,
           gasPrice,
         );
 
@@ -95,7 +95,7 @@ contract('AccountProvider', (addresses) => {
         const output = await accountProvider.createAccount(
           labelHash,
           ensNameHash,
-          fixedGas,
+          refundGas,
           await sign(messageHash, accountDevices.owner), {
             from: accountDevices.guardian,
             gasPrice,
@@ -117,7 +117,7 @@ contract('AccountProvider', (addresses) => {
       it('expect to create new account', async () => {
         const accountId = new BN(1);
         const labelHash = getEnsLabelHash('test2');
-        const fixedGas = new BN(0);
+        const refundGas = new BN(0);
         const salt = soliditySha3(
           accountSaltPrefixUnsafe,
           accountId,
@@ -133,7 +133,7 @@ contract('AccountProvider', (addresses) => {
           accountDevices.owner,
           labelHash,
           ensNameHash,
-          fixedGas, {
+          refundGas, {
             from: accountDevices.guardian,
           },
         );
@@ -151,7 +151,7 @@ contract('AccountProvider', (addresses) => {
       it('expect to create new account and refund', async () => {
         const accountId = new BN(2);
         const labelHash = getEnsLabelHash('test3');
-        const fixedGas = new BN(1);
+        const refundGas = new BN(1);
         const salt = soliditySha3(
           accountSaltPrefixUnsafe,
           accountId,
@@ -173,7 +173,7 @@ contract('AccountProvider', (addresses) => {
           accountDevices.owner,
           labelHash,
           ensNameHash,
-          fixedGas, {
+          refundGas, {
             from: accountDevices.guardian,
           },
         );
