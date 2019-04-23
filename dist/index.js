@@ -1,10 +1,11 @@
+/* eslint-disable */
 const data = require('./data');
 
 const ContractNames = Object.keys(data)
-  .reduce((result, key) => ({
-    [key]: key,
-    ...result,
-  }), {});
+  .reduce((result, key) => {
+    result[key] = key;
+    return result;
+  }, {});
 
 function getContractAddress(contractName, network) {
   let result;
