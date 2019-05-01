@@ -34,8 +34,6 @@ contract AccountProxy {
     uint256 _fixedGas,
     bytes memory _signature
   ) public {
-    uint _startGas = gasleft();
-
     bytes32 _messageHash = keccak256(
       abi.encodePacked(
         address(this),
@@ -63,6 +61,7 @@ contract AccountProxy {
     emit NewAccountOwnerCall(_account, _nonce);
 
     bool _succeeded;
+    uint _startGas = gasleft();
 
     (_succeeded,) = _account.call(_data);
 

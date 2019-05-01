@@ -105,6 +105,7 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
     }
 
     _account.addDevice(_device, true);
+    _account.addDevice(accountProxy, true);
     _account.removeDevice(address(this));
 
     _register(

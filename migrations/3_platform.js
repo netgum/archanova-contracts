@@ -7,6 +7,12 @@ const AccountProxy = artifacts.require('AccountProxy');
 const ENSRegistry = artifacts.require('ENSRegistry');
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
 
+function printEnv(name, value) {
+  console.log( // eslint-disable-line no-console
+    `ARCHANOVA_${name}=${value}`,
+  );
+}
+
 module.exports = async (deployer, network, addresses) => {
   if (network === 'test') {
     return;
@@ -63,4 +69,10 @@ module.exports = async (deployer, network, addresses) => {
         from: ensOwner,
       });
     }));
+
+  printEnv('ETH_ACCOUNT_PROVIDER_ADDRESS', AccountProvider.address);
+  printEnv('ETH_ACCOUNT_PROXY_ADDRESS', AccountProxy.address);
+  printEnv('ETH_ENS_REGISTRY_ADDRESS', ENSRegistry.address);
+  printEnv('ETH_GUARDIAN_ADDRESS', Account.address);
+  printEnv('ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS', VirtualPaymentManager.address);
 };

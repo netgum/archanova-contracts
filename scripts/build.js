@@ -104,4 +104,4 @@ module.exports = ${contractsToExport(contracts)};
 }
 
 main()
-  .catch(console.error);
+  .catch(console.error); // eslint-disable-line no-console
