@@ -7,11 +7,25 @@ const AccountProxy = artifacts.require('AccountProxy');
 const ENSRegistry = artifacts.require('ENSRegistry');
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
 
+/* eslint-disable no-console */
+function printLabel(label) {
+  console.log();
+  console.log(label);
+  console.log('-'.repeat(label.length));
+}
+
 function printEnv(name, value) {
-  console.log( // eslint-disable-line no-console
+  console.log(
     `ARCHANOVA_${name}=${value}`,
   );
 }
+
+function printEnsName(ensName, ensNameHash) {
+  console.log(
+    `name: ${ensName}, nameHash: ${ensNameHash}`,
+  );
+}
+/* eslint-enable no-console */
 
 module.exports = async (deployer, network, addresses) => {
   if (network === 'test') {
@@ -50,10 +64,14 @@ module.exports = async (deployer, network, addresses) => {
 
   await ens.setSubnodeOwner('0x00', getEnsLabelHash(network), ensOwner);
 
+  printLabel('ENS root nodes');
+
   await Promise
     .all(ensTopLabels.map(async (ensTopLabel) => {
       const ensName = `${ensTopLabel}.${network}`;
       const ensNameHash = getEnsNameHash(ensName);
+
+      printEnsName(ensName, ensNameHash);
 
       await ens.setSubnodeOwner(ensRoot, getEnsLabelHash(ensName), ensOwner);
 
@@ -69,6 +87,8 @@ module.exports = async (deployer, network, addresses) => {
         from: ensOwner,
       });
     }));
+
+  printLabel('Env variables');
 
   printEnv('ETH_ACCOUNT_PROVIDER_ADDRESS', AccountProvider.address);
   printEnv('ETH_ACCOUNT_PROXY_ADDRESS', AccountProxy.address);
