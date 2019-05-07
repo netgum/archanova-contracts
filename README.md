@@ -1,13 +1,13 @@
 # Archanova Solidity
 [![NPM version][npm-image]][npm-url]
-[![CircleCI](https://circleci.com/gh/archanova/solidity.svg?style=svg)](https://circleci.com/gh/archanova/solidity)
+[![CircleCI](https://circleci.com/gh/netgum/archanova-contracts.svg?style=svg)](https://circleci.com/gh/netgum/archanova-contracts)
 
 Archanova [solidity](http://solidity.readthedocs.io) contracts
 
 ## Installation
 
 ```bash
-$ npm i @archanova/solidity -S
+$ npm i @archanova/contracts -S
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ import {
   getContractAddress, 
   getContractAbi, 
   getContractByteCodeHash, 
-} from '@archanova/solidity'; 
+} from '@archanova/contracts'; 
 
 console.log(
   'AccountProvider rinkeby address:', 
@@ -51,8 +51,8 @@ Exported fields:
 ### Setup
 
 ```bash
-$ git clone git@github.com:archanova/solidity.git
-$ cd ./solidity
+$ git clone https://github.com/netgum/archanova-contracts.git
+$ cd ./archanova-contracts
 $ npm i
 ```
 
@@ -93,5 +93,5 @@ $ npm test
 
 The MIT License
 
-[npm-image]: https://badge.fury.io/js/%40archanova%2Fsolidity.svg
-[npm-url]: https://npmjs.org/package/@archanova/solidity
+[npm-image]: https://badge.fury.io/js/%40archanova%2Fcontracts.svg
+[npm-url]: https://npmjs.org/package/@archanova/contracts

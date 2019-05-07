@@ -164,7 +164,7 @@ module.exports = {
         "signature": "0x3f579f42"
       }
     ],
-    "byteCodeHash": "0xc8446c8040e8f89949f2fb2a86739d570187f4d4fb30b220d83f62928ee177f4",
+    "byteCodeHash": "0x38f70e2d9e8c2700595640dfbfb0b46d0f1af5c7873f7cf6d88d2565ef97f5cd",
     "addresses": {}
   },
   "AccountProvider": {
@@ -452,8 +452,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0xCD643F0aCa7E795f989DB8238f3A15D20bBfd21a",
-      "42": "0x544A08B2dF894a0BF55BBd895877F9206D611b1B"
+      "4": "0x92fc732269FCb0a99EC4482D9595A1F1147c1CC9",
+      "42": "0xc2e7443a378ca952F93CBD30F78Da24a6f40bd3c"
     }
   },
   "AccountProxy": {
@@ -530,8 +530,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0x4855218553ce382231388A226aC4CB77D90AC62A",
-      "42": "0xbAbb24311CBedD8bfEE14C00d4697AFec7926592"
+      "4": "0x685E72CB8dde8Fb17f9123dba56a993ADF05a478",
+      "42": "0x2A94e2aB8ca9fbD414a58b50c04d9DBea69e5620"
     }
   },
   "ENSRegistry": {
@@ -763,8 +763,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0xF1D74eebc2C12EDa90dF73cB90176ac03b1edC86",
-      "42": "0xE76a579dA1774d8A381D2F5e22AC391308D3E748"
+      "4": "0xb83d6AFE5cfe370F8Ae6D6368B0B877DBAA95616",
+      "42": "0x55b077799Cf832c744148834f493A544DB42fA80"
     }
   },
   "ENSResolver": {
@@ -831,8 +831,8 @@ module.exports = {
     "abi": null,
     "byteCodeHash": null,
     "addresses": {
-      "4": "0x4dB8d750509328483928c913d52D1EA3e2D691ea",
-      "42": "0xB68097Abf69dadDAD9D0661D7451b85b4977332a"
+      "4": "0xaC565C847373983789A009A11326Df0EED13BB90",
+      "42": "0x63EEaD35AB88B77209389eCB2D2a8066ae837046"
     }
   },
   "VirtualPaymentManager": {
@@ -1097,8 +1097,8 @@ module.exports = {
     ],
     "byteCodeHash": null,
     "addresses": {
-      "4": "0x58864a5ef44629A5Ae10f89cf38387354dec61d4",
-      "42": "0xE73b3Ff7bc23761066a9c5DbC1340c78c165A0A2"
+      "4": "0x3d6f705d48bb70ea154E7d47d2C7dafBEad2E480",
+      "42": "0x929f84d7b725238042D81160B6F160B2B98A24d9"
     }
   }
 };
