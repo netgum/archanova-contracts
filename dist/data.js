@@ -1,6 +1,7 @@
 /* eslint-disable */
 module.exports = {
   "Account": {
+    "addresses": {},
     "abi": [
       {
         "constant": true,
@@ -164,10 +165,14 @@ module.exports = {
         "signature": "0x3f579f42"
       }
     ],
-    "byteCodeHash": "0x38f70e2d9e8c2700595640dfbfb0b46d0f1af5c7873f7cf6d88d2565ef97f5cd",
-    "addresses": {}
+    "byteCodeHash": "0x38f70e2d9e8c2700595640dfbfb0b46d0f1af5c7873f7cf6d88d2565ef97f5cd"
   },
   "AccountProvider": {
+    "addresses": {
+      "3": "0x60785fB68e66339636a00A39A8d9Da666918b872",
+      "4": "0xa06CdB0B31BCa1db1a230d3956E2251d64804333",
+      "42": "0x08f1439c6fB9D5BCAdFBb9edbAc463971C9B6cA3"
+    },
     "abi": [
       {
         "constant": false,
@@ -450,13 +455,14 @@ module.exports = {
         "signature": "0x188b954f"
       }
     ],
-    "byteCodeHash": null,
-    "addresses": {
-      "4": "0x92fc732269FCb0a99EC4482D9595A1F1147c1CC9",
-      "42": "0xc2e7443a378ca952F93CBD30F78Da24a6f40bd3c"
-    }
+    "byteCodeHash": null
   },
   "AccountProxy": {
+    "addresses": {
+      "3": "0x74926aAbC28649BD24fae7005fAf7A2d464e8f33",
+      "4": "0xEa8Bc3738257e7718C80F5D872a2264C4c6A7877",
+      "42": "0x7602DABF9e426599CfF5EF74fDcCEfD3d000C934"
+    },
     "abi": [
       {
         "constant": true,
@@ -528,13 +534,14 @@ module.exports = {
         "signature": "0x09403cb6"
       }
     ],
-    "byteCodeHash": null,
-    "addresses": {
-      "4": "0x685E72CB8dde8Fb17f9123dba56a993ADF05a478",
-      "42": "0x2A94e2aB8ca9fbD414a58b50c04d9DBea69e5620"
-    }
+    "byteCodeHash": null
   },
   "ENSRegistry": {
+    "addresses": {
+      "3": "0x861b56FBe130bf88Ae7D1af7dD3EAAcb5185fc5A",
+      "4": "0xB2617d5CC845Cd70124cd38C9E5495f60DB78B62",
+      "42": "0xc1d25D7232Be06bE518CFA77A5a3b9D5ad5cc452"
+    },
     "abi": [
       {
         "inputs": [],
@@ -761,13 +768,10 @@ module.exports = {
         "signature": "0x16a25cbd"
       }
     ],
-    "byteCodeHash": null,
-    "addresses": {
-      "4": "0xb83d6AFE5cfe370F8Ae6D6368B0B877DBAA95616",
-      "42": "0x55b077799Cf832c744148834f493A544DB42fA80"
-    }
+    "byteCodeHash": null
   },
   "ENSResolver": {
+    "addresses": {},
     "abi": [
       {
         "anonymous": false,
@@ -824,18 +828,23 @@ module.exports = {
         "type": "function"
       }
     ],
-    "byteCodeHash": null,
-    "addresses": {}
+    "byteCodeHash": null
   },
   "Guardian": {
-    "abi": null,
-    "byteCodeHash": null,
     "addresses": {
-      "4": "0xaC565C847373983789A009A11326Df0EED13BB90",
-      "42": "0x63EEaD35AB88B77209389eCB2D2a8066ae837046"
-    }
+      "3": "0x960F23059Ec87a92182f8DeD40C9aA16B403369b",
+      "4": "0xF01F87Ad71E624679b7dd103D46a29BF5144EB42",
+      "42": "0xA4A97F9cc69C93036F231E9e03165eF99b623640"
+    },
+    "abi": null,
+    "byteCodeHash": null
   },
   "VirtualPaymentManager": {
+    "addresses": {
+      "3": "0xC65ee1BA3F36F7C2834230A0DAa9D7CaD0e1D195",
+      "4": "0x8babfDDa5B3C1529eA3D0cca5c8350e8bf032316",
+      "42": "0x978f550AB34C628cDC504627B24461DBD8459F18"
+    },
     "abi": [
       {
         "constant": true,
@@ -1095,10 +1104,6 @@ module.exports = {
         "signature": "0x117df088"
       }
     ],
-    "byteCodeHash": null,
-    "addresses": {
-      "4": "0x3d6f705d48bb70ea154E7d47d2C7dafBEad2E480",
-      "42": "0x929f84d7b725238042D81160B6F160B2B98A24d9"
-    }
+    "byteCodeHash": null
   }
 };

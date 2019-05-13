@@ -67,6 +67,14 @@ function contractsToExport(contracts) {
 }
 
 async function main() {
+  let data;
+
+  try {
+    data = require(distFile); // eslint-disable-line global-require,import/no-dynamic-require
+  } catch (err) {
+    data = {};
+  }
+
   const contracts = await Promise.all(
     Object
       .entries(schemas)
@@ -85,13 +93,34 @@ async function main() {
           contract = name;
         }
 
-        const { abi, bytecode, networks } = await readJSON(join(buildPath, `${contract}.json`));
+        const previous = data[name] || {
+          abi: null,
+          byteCodeHash: null,
+          addresses: {},
+        };
+
+        const next = await readJSON(join(buildPath, `${contract}.json`));
+
+        const abi = !addAbi
+          ? null
+          : previous.abi || next.abi;
+
+        const addresses = !addAddresses
+          ? {}
+          : {
+            ...previous.addresses,
+            ...networksToAddresses(next.networks),
+          };
+
+        const byteCodeHash = !addByteCodeHash
+          ? null
+          : previous.byteCodeHash || sha3(next.bytecode);
 
         return {
           name,
-          abi: !addAbi ? null : abi,
-          byteCodeHash: !addByteCodeHash ? null : sha3(bytecode),
-          addresses: !addAddresses ? {} : networksToAddresses(networks),
+          addresses,
+          abi,
+          byteCodeHash,
         };
       }),
   );
