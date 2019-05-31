@@ -78,6 +78,18 @@ function computeContractAddress(deployer, salt, byteCode) {
   );
 }
 
+function joinHex(...data) {
+  return data
+    .map((value, index) => {
+      let result = value;
+      if (index) {
+        result = value.substr(2);
+      }
+      return result;
+    })
+    .join('');
+}
+
 module.exports = {
   BN,
   soliditySha3,
@@ -92,4 +104,5 @@ module.exports = {
   getCost,
   now,
   computeContractAddress,
+  joinHex,
 };
