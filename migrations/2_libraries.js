@@ -45,5 +45,4 @@ module.exports = async (deployer) => {
   deployer.link(AddressLibrary, VirtualPaymentManager);
   deployer.link(ECDSA, VirtualPaymentManager);
   deployer.link(SafeMath, VirtualPaymentManager);
-
 };
