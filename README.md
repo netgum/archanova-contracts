@@ -41,6 +41,7 @@ Exported fields:
 | `Account` 	| ✅ 	| ✅ 	| 	|
 | `AccountProvider` 	| ✅ 	| 	| ✅ 	|
 | `AccountProxy` 	| ✅ 	| 	| ✅ 	|
+| `AccountFriendRecovery` 	| ✅ 	| 	| ✅ 	|
 | `ENSRegistry` 	| ✅ 	| 	| ✅ 	|
 | `ENSResolver` 	| ✅ 	| 	|  	|
 | `Guardian` 	|  	| 	| ✅ 	|
@@ -70,6 +71,9 @@ $ npm i
 #### Start Migration:
 
 ```bash
+# Ropsten TestNet
+$ npm run migrate:ropsten
+
 # Rinkeby TestNet
 $ npm run migrate:rinkeby
 
