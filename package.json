@@ -1,6 +1,6 @@
 {
   "name": "@archanova/contracts",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "Archanova solidity contracts",
   "author": {
     "name": "Stanislaw Glogowski",
@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@ensdomains/ens": "0.3.5",
-    "openzeppelin-solidity": "2.1.2"
+    "openzeppelin-solidity": "2.1.2",
+    "solidity-bytes-utils": "^0.0.7"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.1.0",
