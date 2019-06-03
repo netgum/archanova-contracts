@@ -4,6 +4,7 @@ const { ensTopLabels, virtualPaymentLockPeriod } = require('../config');
 const Account = artifacts.require('Account');
 const AccountProvider = artifacts.require('AccountProvider');
 const AccountProxy = artifacts.require('AccountProxy');
+const AccountFriendRecovery = artifacts.require('AccountFriendRecovery');
 const ENSRegistry = artifacts.require('ENSRegistry');
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
 
@@ -38,6 +39,7 @@ module.exports = async (deployer, network, addresses) => {
 
   await deployer.deploy(Account);
   await deployer.deploy(AccountProxy);
+  await deployer.deploy(AccountFriendRecovery);
   await deployer.deploy(ENSRegistry);
 
   const accountProxy = await AccountProxy.at(AccountProxy.address);
@@ -92,6 +94,7 @@ module.exports = async (deployer, network, addresses) => {
 
   printEnv('ETH_ACCOUNT_PROVIDER_ADDRESS', AccountProvider.address);
   printEnv('ETH_ACCOUNT_PROXY_ADDRESS', AccountProxy.address);
+  printEnv('ETH_ACCOUNT_FRIEND_RECOVERY', AccountFriendRecovery.address);
   printEnv('ETH_ENS_REGISTRY_ADDRESS', ENSRegistry.address);
   printEnv('ETH_GUARDIAN_ADDRESS', Account.address);
   printEnv('ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS', VirtualPaymentManager.address);

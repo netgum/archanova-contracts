@@ -23,6 +23,10 @@ const schemas = {
     addAbi: true,
     addAddresses: true,
   },
+  AccountFriendRecovery: {
+    addAbi: true,
+    addAddresses: true,
+  },
   ENSRegistry: {
     addAbi: true,
     addAddresses: true,
