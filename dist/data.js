@@ -536,6 +536,166 @@ module.exports = {
     ],
     "byteCodeHash": null
   },
+  "AccountFriendRecovery": {
+    "addresses": {},
+    "abi": [
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "accounts",
+        "outputs": [
+          {
+            "name": "connected",
+            "type": "bool"
+          },
+          {
+            "name": "nonce",
+            "type": "uint256"
+          },
+          {
+            "name": "requiredFriends",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_requiredFriends",
+            "type": "uint256"
+          },
+          {
+            "name": "_friends",
+            "type": "address[]"
+          }
+        ],
+        "name": "connect",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [],
+        "name": "disconnect",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_requiredFriends",
+            "type": "uint256"
+          }
+        ],
+        "name": "setRequiredFriends",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_friend",
+            "type": "address"
+          }
+        ],
+        "name": "addFriend",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_friends",
+            "type": "address[]"
+          }
+        ],
+        "name": "addFriends",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_friend",
+            "type": "address"
+          }
+        ],
+        "name": "removeFriend",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_friends",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeFriends",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "name": "_device",
+            "type": "address"
+          },
+          {
+            "name": "_friends",
+            "type": "address[]"
+          },
+          {
+            "name": "_signatures",
+            "type": "bytes"
+          },
+          {
+            "name": "_gasFee",
+            "type": "uint256"
+          }
+        ],
+        "name": "recoverAccount",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "byteCodeHash": null
+  },
   "ENSRegistry": {
     "addresses": {
       "3": "0x861b56FBe130bf88Ae7D1af7dD3EAAcb5185fc5A",
