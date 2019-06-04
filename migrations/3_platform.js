@@ -94,7 +94,7 @@ module.exports = async (deployer, network, addresses) => {
 
   printEnv('ETH_ACCOUNT_PROVIDER_ADDRESS', AccountProvider.address);
   printEnv('ETH_ACCOUNT_PROXY_ADDRESS', AccountProxy.address);
-  printEnv('ETH_ACCOUNT_FRIEND_RECOVERY', AccountFriendRecovery.address);
+  printEnv('ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS', AccountFriendRecovery.address);
   printEnv('ETH_ENS_REGISTRY_ADDRESS', ENSRegistry.address);
   printEnv('ETH_GUARDIAN_ADDRESS', Account.address);
   printEnv('ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS', VirtualPaymentManager.address);
