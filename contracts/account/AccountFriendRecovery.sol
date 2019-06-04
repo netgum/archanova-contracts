@@ -12,6 +12,12 @@ import "./AccountLibrary.sol";
  */
 contract AccountFriendRecovery {
 
+  event AccountConnected(address account);
+  event AccountDisconnected(address account);
+  event RequiredFriendsChanged(address account, uint256 requiredFriends);
+  event FriendsAdded(address account, address[] friends);
+  event FriendsRemoved(address account, address[] friends);
+
   using AccountLibrary for AbstractAccount;
   using ECDSA for bytes32;
   using SafeMath for uint256;
@@ -41,6 +47,8 @@ contract AccountFriendRecovery {
 
     accounts[msg.sender].connected = true;
 
+    emit AccountConnected(msg.sender);
+
     _setRequiredFriends(_requiredFriends);
     _addFriends(_friends);
   }
@@ -49,22 +57,16 @@ contract AccountFriendRecovery {
     AbstractAccount(msg.sender).removeDevice(address(this));
 
     accounts[msg.sender].connected = false;
+
+    emit AccountDisconnected(msg.sender);
   }
 
   function setRequiredFriends(uint256 _requiredFriends) onlyConnectedAccount public {
     _setRequiredFriends(_requiredFriends);
   }
 
-  function addFriend(address _friend) onlyConnectedAccount public {
-    accounts[msg.sender].friends[_friend] = true;
-  }
-
   function addFriends(address[] memory _friends) onlyConnectedAccount public {
     _addFriends(_friends);
-  }
-
-  function removeFriend(address _friend) onlyConnectedAccount public {
-    delete accounts[msg.sender].friends[_friend];
   }
 
   function removeFriends(address[] memory _friends) onlyConnectedAccount public {
@@ -73,6 +75,8 @@ contract AccountFriendRecovery {
     for (uint i = 0; i < friendsLength; i++) {
       delete accounts[msg.sender].friends[_friends[i]];
     }
+
+    emit FriendsRemoved(msg.sender, _friends);
   }
 
   function recoverAccount(
@@ -107,13 +111,18 @@ contract AccountFriendRecovery {
       )
     ).toEthSignedMessageHash();
 
-
     for (uint i = 0; i < friendsLength; i++) {
       bytes memory signature = _signatures.slice(i * 65, 65);
 
       require(
         AbstractAccount(_friends[i]).verifyOwnerSignature(_messageHash, signature)
       );
+
+      for (uint j = 0; j < friendsLength; j++) {
+        if (j != i) {
+          require(_friends[i] != _friends[j]);
+        }
+      }
     }
 
     accounts[_account].nonce = accounts[_account].nonce.add(1);
@@ -131,14 +140,19 @@ contract AccountFriendRecovery {
 
   function _setRequiredFriends(uint256 _requiredFriends) private {
     accounts[msg.sender].requiredFriends = _requiredFriends;
+
+    emit RequiredFriendsChanged(msg.sender, _requiredFriends);
   }
 
   function _addFriends(address[] memory _friends) private {
     uint friendsLength = _friends.length;
 
     for (uint i = 0; i < friendsLength; i++) {
+      require(_friends[i] != address(0));
       accounts[msg.sender].friends[_friends[i]] = true;
     }
+
+    emit FriendsAdded(msg.sender, _friends);
   }
 
 }
