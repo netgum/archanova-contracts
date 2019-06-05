@@ -61,6 +61,11 @@ contract AccountFriendRecovery {
     emit AccountDisconnected(msg.sender);
   }
 
+  function update(uint256 _requiredFriends, address[] memory _friends) onlyConnectedAccount public {
+    _setRequiredFriends(_requiredFriends);
+    _addFriends(_friends);
+  }
+
   function setRequiredFriends(uint256 _requiredFriends) onlyConnectedAccount public {
     _setRequiredFriends(_requiredFriends);
   }
