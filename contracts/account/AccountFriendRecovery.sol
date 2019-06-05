@@ -57,13 +57,7 @@ contract AccountFriendRecovery {
     AbstractAccount(msg.sender).removeDevice(address(this));
 
     accounts[msg.sender].connected = false;
-
     emit AccountDisconnected(msg.sender);
-  }
-
-  function update(uint256 _requiredFriends, address[] memory _friends) onlyConnectedAccount public {
-    _setRequiredFriends(_requiredFriends);
-    _addFriends(_friends);
   }
 
   function setRequiredFriends(uint256 _requiredFriends) onlyConnectedAccount public {
@@ -75,13 +69,7 @@ contract AccountFriendRecovery {
   }
 
   function removeFriends(address[] memory _friends) onlyConnectedAccount public {
-    uint friendsLength = _friends.length;
-
-    for (uint i = 0; i < friendsLength; i++) {
-      delete accounts[msg.sender].friends[_friends[i]];
-    }
-
-    emit FriendsRemoved(msg.sender, _friends);
+    _removeFriends(_friends);
   }
 
   function recoverAccount(
@@ -160,4 +148,13 @@ contract AccountFriendRecovery {
     emit FriendsAdded(msg.sender, _friends);
   }
 
+  function _removeFriends(address[] memory _friends) private {
+    uint friendsLength = _friends.length;
+
+    for (uint i = 0; i < friendsLength; i++) {
+      delete accounts[msg.sender].friends[_friends[i]];
+    }
+
+    emit FriendsRemoved(msg.sender, _friends);
+  }
 }
