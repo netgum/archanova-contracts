@@ -550,10 +550,6 @@ module.exports = {
         'name': 'accounts',
         'outputs': [
           {
-            'name': 'connected',
-            'type': 'bool',
-          },
-          {
             'name': 'nonce',
             'type': 'uint256',
           },
@@ -566,50 +562,6 @@ module.exports = {
         'stateMutability': 'view',
         'type': 'function',
         'signature': '0x5e5c06e2',
-      },
-      {
-        'anonymous': false,
-        'inputs': [
-          {
-            'indexed': false,
-            'name': 'account',
-            'type': 'address',
-          },
-        ],
-        'name': 'AccountConnected',
-        'type': 'event',
-        'signature': '0x1e2b1ddb81668a84998f89d60938d36014a7b0c4d427c87e6f2bd708c9d320f1',
-      },
-      {
-        'anonymous': false,
-        'inputs': [
-          {
-            'indexed': false,
-            'name': 'account',
-            'type': 'address',
-          },
-        ],
-        'name': 'AccountDisconnected',
-        'type': 'event',
-        'signature': '0xa9e03e9361b6f5a1dead34b060e756dd4e3e496443a7645e6dbf1e6c013a8171',
-      },
-      {
-        'anonymous': false,
-        'inputs': [
-          {
-            'indexed': false,
-            'name': 'account',
-            'type': 'address',
-          },
-          {
-            'indexed': false,
-            'name': 'device',
-            'type': 'address',
-          },
-        ],
-        'name': 'AccountRecovered',
-        'type': 'event',
-        'signature': '0xf3c2cfcba78dedc0396d1efe1de1c5eefff973232934298197de8aedfa69f3bd',
       },
       {
         'anonymous': false,
@@ -643,27 +595,9 @@ module.exports = {
             'type': 'address[]',
           },
         ],
-        'name': 'FriendsAdded',
+        'name': 'FriendsChanged',
         'type': 'event',
-        'signature': '0x19e718f36d9490a404cf490272a94af16cc402786cb173ef080aed0df07b804f',
-      },
-      {
-        'anonymous': false,
-        'inputs': [
-          {
-            'indexed': false,
-            'name': 'account',
-            'type': 'address',
-          },
-          {
-            'indexed': false,
-            'name': 'friends',
-            'type': 'address[]',
-          },
-        ],
-        'name': 'FriendsRemoved',
-        'type': 'event',
-        'signature': '0x8d9739df6acaa2cffd8a79609a6efa99a6b8c2ce1a9880002b7cc90273353ad3',
+        'signature': '0xca4c23b9ce256db47e380479ed723fa548baf50a55c53aec593bbc3c8be1bcf1',
       },
       {
         'constant': false,
@@ -677,22 +611,12 @@ module.exports = {
             'type': 'address[]',
           },
         ],
-        'name': 'connect',
+        'name': 'setup',
         'outputs': [],
         'payable': false,
         'stateMutability': 'nonpayable',
         'type': 'function',
-        'signature': '0xb07fed45',
-      },
-      {
-        'constant': false,
-        'inputs': [],
-        'name': 'disconnect',
-        'outputs': [],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function',
-        'signature': '0xd9374bff',
+        'signature': '0x0e298303',
       },
       {
         'constant': false,
@@ -717,27 +641,12 @@ module.exports = {
             'type': 'address[]',
           },
         ],
-        'name': 'addFriends',
+        'name': 'setFriends',
         'outputs': [],
         'payable': false,
         'stateMutability': 'nonpayable',
         'type': 'function',
-        'signature': '0xa00d7c2a',
-      },
-      {
-        'constant': false,
-        'inputs': [
-          {
-            'name': '_friends',
-            'type': 'address[]',
-          },
-        ],
-        'name': 'removeFriends',
-        'outputs': [],
-        'payable': false,
-        'stateMutability': 'nonpayable',
-        'type': 'function',
-        'signature': '0xd8f72b34',
+        'signature': '0xb8755fe2',
       },
       {
         'constant': false,

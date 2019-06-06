@@ -12,11 +12,8 @@ import "./AccountLibrary.sol";
  */
 contract AccountFriendRecovery {
 
-  event AccountConnected(address account);
-  event AccountDisconnected(address account);
   event RequiredFriendsChanged(address account, uint256 requiredFriends);
-  event FriendsAdded(address account, address[] friends);
-  event FriendsRemoved(address account, address[] friends);
+  event FriendsChanged(address account, address[] friends);
 
   using AccountLibrary for AbstractAccount;
   using ECDSA for bytes32;
@@ -24,52 +21,33 @@ contract AccountFriendRecovery {
   using BytesLib for bytes;
 
   struct Account {
-    bool connected;
     uint256 nonce;
     uint256 requiredFriends;
-    mapping(address => bool) friends;
+    address[] friends;
+    mapping(address => bool) friendsMap;
   }
 
   mapping(address => Account) public accounts;
 
   modifier onlyConnectedAccount() {
     require(
-      accounts[msg.sender].connected && AbstractAccount(msg.sender).isOwnerDevice(address(this))
+      AbstractAccount(msg.sender).isOwnerDevice(address(this))
     );
 
     _;
   }
 
-  function connect(uint256 _requiredFriends, address[] memory _friends) public {
-    require(
-      !accounts[msg.sender].connected && AbstractAccount(msg.sender).isOwnerDevice(address(this))
-    );
-
-    accounts[msg.sender].connected = true;
-
-    emit AccountConnected(msg.sender);
-
+  function setup(uint256 _requiredFriends, address[] memory _friends) onlyConnectedAccount public {
     _setRequiredFriends(_requiredFriends);
-    _addFriends(_friends);
-  }
-
-  function disconnect() onlyConnectedAccount public {
-    AbstractAccount(msg.sender).removeDevice(address(this));
-
-    accounts[msg.sender].connected = false;
-    emit AccountDisconnected(msg.sender);
+    _setFriends(_friends);
   }
 
   function setRequiredFriends(uint256 _requiredFriends) onlyConnectedAccount public {
     _setRequiredFriends(_requiredFriends);
   }
 
-  function addFriends(address[] memory _friends) onlyConnectedAccount public {
-    _addFriends(_friends);
-  }
-
-  function removeFriends(address[] memory _friends) onlyConnectedAccount public {
-    _removeFriends(_friends);
+  function setFriends(address[] memory _friends) onlyConnectedAccount public {
+    _setFriends(_friends);
   }
 
   function recoverAccount(
@@ -79,10 +57,6 @@ contract AccountFriendRecovery {
     bytes memory _signatures,
     uint256 _gasFee
   ) public {
-    require(
-      accounts[_account].connected
-    );
-
     uint friendsLength = _friends.length;
     uint signaturesLength = _signatures.length;
 
@@ -108,6 +82,7 @@ contract AccountFriendRecovery {
       bytes memory signature = _signatures.slice(i * 65, 65);
 
       require(
+        accounts[_account].friendsMap[_friends[i]] &&
         AbstractAccount(_friends[i]).verifyOwnerSignature(_messageHash, signature)
       );
 
@@ -137,24 +112,26 @@ contract AccountFriendRecovery {
     emit RequiredFriendsChanged(msg.sender, _requiredFriends);
   }
 
-  function _addFriends(address[] memory _friends) private {
-    uint friendsLength = _friends.length;
+  function _setFriends(address[] memory _friends) private {
+    uint friendsLength = accounts[msg.sender].friends.length;
+    uint i;
 
-    for (uint i = 0; i < friendsLength; i++) {
-      require(_friends[i] != address(0));
-      accounts[msg.sender].friends[_friends[i]] = true;
+    for (i = 0; i < friendsLength; i++) {
+      delete accounts[msg.sender].friendsMap[accounts[msg.sender].friends[i]];
     }
 
-    emit FriendsAdded(msg.sender, _friends);
-  }
+    accounts[msg.sender].friends = _friends;
 
-  function _removeFriends(address[] memory _friends) private {
-    uint friendsLength = _friends.length;
+    friendsLength = _friends.length;
 
-    for (uint i = 0; i < friendsLength; i++) {
-      delete accounts[msg.sender].friends[_friends[i]];
+    for (i = 0; i < friendsLength; i++) {
+      require(
+        !accounts[msg.sender].friendsMap[_friends[i]] && _friends[i] != address(0)
+      );
+
+      accounts[msg.sender].friendsMap[_friends[i]] = true;
     }
 
-    emit FriendsRemoved(msg.sender, _friends);
+    emit FriendsChanged(msg.sender, _friends);
   }
 }
