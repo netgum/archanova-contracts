@@ -169,9 +169,9 @@ module.exports = {
   },
   "AccountProvider": {
     "addresses": {
-      "3": "0x60785fB68e66339636a00A39A8d9Da666918b872",
-      "4": "0xa06CdB0B31BCa1db1a230d3956E2251d64804333",
-      "42": "0x08f1439c6fB9D5BCAdFBb9edbAc463971C9B6cA3"
+      "3": "0x69Cd4Fd7B5622F892Ee8cFCaa20A930AecA64cAB",
+      "4": "0xD76fB46c4af359a1905193572832524987Ca5E24",
+      "42": "0x4fd179a80dFCa5f1529016F45f2eC74ea452B54C"
     },
     "abi": [
       {
@@ -459,9 +459,9 @@ module.exports = {
   },
   "AccountProxy": {
     "addresses": {
-      "3": "0x74926aAbC28649BD24fae7005fAf7A2d464e8f33",
-      "4": "0xEa8Bc3738257e7718C80F5D872a2264C4c6A7877",
-      "42": "0x7602DABF9e426599CfF5EF74fDcCEfD3d000C934"
+      "3": "0xA6796c83024258E0aC222aC19f19def9D8f2e032",
+      "4": "0x6Aa0aE42bDc9DddC0e128af101fCF9198fAaD73a",
+      "42": "0xe77B0413Fa997f36d5aA4f3f19868C25F3f07548"
     },
     "abi": [
       {
@@ -537,7 +537,11 @@ module.exports = {
     "byteCodeHash": null
   },
   "AccountFriendRecovery": {
-    "addresses": {},
+    "addresses": {
+      "3": "0x4d128BCfe76136d7Cf067F190757654c282d0875",
+      "4": "0xF5932C003DC297A74d920eAC231996D1d629C613",
+      "42": "0xc11F17D00569be0F279590DAa84eadBF5030219d"
+    },
     "abi": [
       {
         "constant": true,
@@ -550,10 +554,6 @@ module.exports = {
         "name": "accounts",
         "outputs": [
           {
-            "name": "connected",
-            "type": "bool"
-          },
-          {
             "name": "nonce",
             "type": "uint256"
           },
@@ -564,7 +564,44 @@ module.exports = {
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function"
+        "type": "function",
+        "signature": "0x5e5c06e2"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "account",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "requiredFriends",
+            "type": "uint256"
+          }
+        ],
+        "name": "RequiredFriendsChanged",
+        "type": "event",
+        "signature": "0x66f92348ae6d17cffb78f8bb20d50b5ac8c983e02794942c183116d3add7d2c0"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "account",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "friends",
+            "type": "address[]"
+          }
+        ],
+        "name": "FriendsChanged",
+        "type": "event",
+        "signature": "0xca4c23b9ce256db47e380479ed723fa548baf50a55c53aec593bbc3c8be1bcf1"
       },
       {
         "constant": false,
@@ -578,20 +615,12 @@ module.exports = {
             "type": "address[]"
           }
         ],
-        "name": "connect",
+        "name": "setup",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "disconnect",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "type": "function",
+        "signature": "0x0e298303"
       },
       {
         "constant": false,
@@ -605,21 +634,8 @@ module.exports = {
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_friend",
-            "type": "address"
-          }
-        ],
-        "name": "addFriend",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "type": "function",
+        "signature": "0x4d56bbc9"
       },
       {
         "constant": false,
@@ -629,39 +645,12 @@ module.exports = {
             "type": "address[]"
           }
         ],
-        "name": "addFriends",
+        "name": "setFriends",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_friend",
-            "type": "address"
-          }
-        ],
-        "name": "removeFriend",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "_friends",
-            "type": "address[]"
-          }
-        ],
-        "name": "removeFriends",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "type": "function",
+        "signature": "0xb8755fe2"
       },
       {
         "constant": false,
@@ -691,16 +680,17 @@ module.exports = {
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function"
+        "type": "function",
+        "signature": "0x53f3aac6"
       }
     ],
     "byteCodeHash": null
   },
   "ENSRegistry": {
     "addresses": {
-      "3": "0x861b56FBe130bf88Ae7D1af7dD3EAAcb5185fc5A",
-      "4": "0xB2617d5CC845Cd70124cd38C9E5495f60DB78B62",
-      "42": "0xc1d25D7232Be06bE518CFA77A5a3b9D5ad5cc452"
+      "3": "0xAcCB4436F9f1C16D9384Ed95180D9Eee2dC293BD",
+      "4": "0x15DE0EA6B145Ffc544Cc955005179b2Bd5230CD2",
+      "42": "0x0297206c7a08F9Dd14D76D1f66D56d4463cF9d3B"
     },
     "abi": [
       {
@@ -992,18 +982,18 @@ module.exports = {
   },
   "Guardian": {
     "addresses": {
-      "3": "0x960F23059Ec87a92182f8DeD40C9aA16B403369b",
-      "4": "0xF01F87Ad71E624679b7dd103D46a29BF5144EB42",
-      "42": "0xA4A97F9cc69C93036F231E9e03165eF99b623640"
+      "3": "0xfE6F6c554D1a32BE5b65728B9AF8a7c283642791",
+      "4": "0xfb19f10c1dA444d12E51C1429665a3A774022c4d",
+      "42": "0x1AEc00Fea01ef534e76DA54796d218E9a5696688"
     },
     "abi": null,
     "byteCodeHash": null
   },
   "VirtualPaymentManager": {
     "addresses": {
-      "3": "0xC65ee1BA3F36F7C2834230A0DAa9D7CaD0e1D195",
-      "4": "0x8babfDDa5B3C1529eA3D0cca5c8350e8bf032316",
-      "42": "0x978f550AB34C628cDC504627B24461DBD8459F18"
+      "3": "0x39B778aA9c0D7CA8e4287C5F538287b3f50a7142",
+      "4": "0xCccD693173C0fe39533388DE8C07C706416D3b40",
+      "42": "0xf9D669e8057D0c9bbf90FBe66b34B3eBA3b79f8c"
     },
     "abi": [
       {

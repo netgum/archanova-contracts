@@ -2,6 +2,7 @@
 
 const expect = require('expect');
 const {
+  BN,
   logGasUsed,
   soliditySha3,
   sign,
@@ -50,12 +51,12 @@ contract('AccountFriendRecovery', (addresses) => {
       await account.addDevice(accountFriendRecovery.address, true);
     });
 
-    describe('connect()', () => {
-      it('expects to connect account', async () => {
+    describe('setup()', () => {
+      it('expects to setup account recovery', async () => {
         const data = accountFriendRecovery
           .contract
           .methods
-          .connect(
+          .setup(
             2,
             friendAccounts,
           )
@@ -69,9 +70,10 @@ contract('AccountFriendRecovery', (addresses) => {
 
         logGasUsed(output);
 
-        const { connected } = await accountFriendRecovery.accounts(account.address);
+        const { nonce, requiredFriends } = await accountFriendRecovery.accounts(account.address);
 
-        expect(connected).toBeTruthy();
+        expect(nonce).toBeBN(new BN(0));
+        expect(requiredFriends).toBeBN(new BN(2));
       });
     });
 
