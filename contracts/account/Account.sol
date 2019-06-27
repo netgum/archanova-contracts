@@ -1,4 +1,5 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.5.8;
+pragma experimental ABIEncoderV2;
 
 import "./AbstractAccount.sol";
 
@@ -7,6 +8,8 @@ import "./AbstractAccount.sol";
  * @title Account
  */
 contract Account is AbstractAccount {
+
+  uint256 constant TX_SERIES_LIMIT = 10;
 
   modifier onlyOwner() {
     require(
@@ -54,16 +57,33 @@ contract Account is AbstractAccount {
 
   function executeTransaction(address payable _recipient, uint256 _value, bytes memory _data) onlyOwner public returns (bytes memory _response) {
     require(
-      _recipient != address(0)
+      _recipient != address(0),
+      "executeTransaction:: Invalid _recipient"
     );
 
     bool _succeeded;
     (_succeeded, _response) = _recipient.call.value(_value)(_data);
 
     require(
-      _succeeded
+      _succeeded,
+      "executeTransaction:: Unsuccessfull transaction"
     );
 
     emit TransactionExecuted(_recipient, _value, _data, _response);
+  }
+
+  function executeTransactions(address payable[] memory _recipients, uint256[] memory _values, bytes[] memory _datas) onlyOwner public {
+    require(_recipients.length <= TX_SERIES_LIMIT, "executeTransactionSeries:: Too many transactions sent (_recipients)");
+    require(_values.length <= TX_SERIES_LIMIT, "executeTransactionSeries:: Too many transactions sent (_values)");
+    require(_datas.length <= TX_SERIES_LIMIT, "executeTransactionSeries:: Too many transactions sent (_datas)");
+
+    require(_datas.length == _values.length, "executeTransactionSeries:: Transactions params length differ (data <> value)");
+    require(_datas.length == _recipients.length, "executeTransactionSeries:: Transactions params length differ (data <> recipient)");
+
+    uint256 len = _recipients.length;
+    for(uint256 i = 0; i < len; i++) {
+      executeTransaction(_recipients[i], _values[i], _datas[i]);
+    }
+    
   }
 }

@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.5.8;
 
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "./AbstractAccount.sol";

@@ -268,5 +268,44 @@ contract('Account', (addresses) => {
           .toThrow();
       });
     });
+
+    describe('executeTransactions()', () => {
+
+      it('should send funds to recipient', async () => {
+        const recipients = [addresses[5], addresses[8]];
+        const values = [new BN(30), new BN(30)];
+        const datas = ['0x', '0x'];
+        const recepientBalances = [];
+        recepientBalances.push(await getBalance(recipients[0]))
+        recepientBalances.push(await getBalance(recipients[1]))
+
+        const output = await account.executeTransactions(recipients, values, datas, {
+          from: accountDevices.owner,
+        });
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+
+        expect(await getBalance(recipients[0]))
+          .toBeBN(recepientBalances[0].add(values[0]));
+        expect(await getBalance(recipients[1]))
+          .toBeBN(recepientBalances[1].add(values[1]));
+      });
+
+      it('should revert everything on failed transaction', async () => {
+        const recipients = [addresses[5], addresses[8]];
+        const values = [new BN(30), new BN(5455533330)];
+        const datas = ['0x', '0x333'];
+        const recepientBalances = [];
+        recepientBalances.push(await getBalance(recipients[0]))
+        recepientBalances.push(await getBalance(recipients[1]))
+
+        await expect(account.executeTransactions(recipients, values, datas, {
+          from: accountDevices.owner,
+        })).rejects.toThrow();
+
+      });
+    });
   });
 });
