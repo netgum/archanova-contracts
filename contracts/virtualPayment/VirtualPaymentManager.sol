@@ -2,6 +2,7 @@ pragma solidity ^0.5.2;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "../address/AddressLibrary.sol";
 
 /**
@@ -13,10 +14,10 @@ contract VirtualPaymentManager {
   using ECDSA for bytes32;
   using SafeMath for uint256;
 
-  event NewDeposit(address sender, uint256 value);
-  event NewWithdrawal(address receiver, uint256 value);
-  event NewWithdrawalRequest(address receiver, uint256 unlockedAt);
-  event NewPayment(address sender, address receiver, uint256 id, uint256 value);
+  event NewDeposit(address owner, address token, uint256 value);
+  event NewWithdrawal(address owner, address token, uint256 value);
+  event NewWithdrawalRequest(address owner, address token, uint256 unlockedAt);
+  event NewPayment(address sender, address recipient, address token, uint256 id, uint256 value);
 
   struct Deposit {
     uint256 value;
@@ -27,7 +28,7 @@ contract VirtualPaymentManager {
     uint256 value;
   }
 
-  mapping(address => Deposit) public deposits;
+  mapping(address => mapping(address => Deposit)) public deposits;
   mapping(bytes32 => Payment) public payments;
 
   address public guardian;
@@ -35,6 +36,7 @@ contract VirtualPaymentManager {
 
   string constant ERR_INVALID_SIGNATURE = "Invalid signature";
   string constant ERR_INVALID_VALUE = "Invalid value";
+  string constant ERR_INVALID_TOKEN = "Invalid token";
 
   constructor(
     address _guardian,
@@ -44,15 +46,37 @@ contract VirtualPaymentManager {
     depositWithdrawalLockPeriod = _depositWithdrawalLockPeriod;
   }
 
-  function() external payable {
-    deposits[msg.sender].value = deposits[msg.sender].value.add(msg.value);
+  function getDepositValue(address _owner, address _token) public view returns (uint256) {
+    return deposits[_owner][_token].value;
+  }
 
-    emit NewDeposit(msg.sender, msg.value);
+  function getDepositWithdrawalUnlockedAt(address _owner, address _token) public view returns (uint256) {
+    return deposits[_owner][_token].withdrawalUnlockedAt;
+  }
+
+  function() external payable {
+    deposits[msg.sender][address(0)].value = deposits[msg.sender][address(0)].value.add(msg.value);
+
+    emit NewDeposit(msg.sender, address(0), msg.value);
+  }
+
+  function depositToken(address _token, uint256 _value) public {
+    require(
+      _token != address(0),
+      ERR_INVALID_TOKEN
+    );
+
+    IERC20(_token).transferFrom(msg.sender, address(this), _value);
+
+    deposits[msg.sender][_token].value = deposits[msg.sender][_token].value.add(_value);
+
+    emit NewDeposit(msg.sender, _token, _value);
   }
 
   function depositPayment(
     address _sender,
-    address _receiver,
+    address _recipient,
+    address _token,
     uint256 _id,
     uint256 _value,
     bytes memory _senderSignature,
@@ -60,22 +84,24 @@ contract VirtualPaymentManager {
   ) public {
     uint256 _processedValue = _processPayment(
       _sender,
-      _receiver,
+      _recipient,
+      _token,
       _id,
       _value,
       _senderSignature,
       _guardianSignature
     );
 
-    deposits[_receiver].value = deposits[_receiver].value.add(_processedValue);
+    deposits[_recipient][_token].value = deposits[_recipient][_token].value.add(_processedValue);
 
-    emit NewPayment(_sender, _receiver, _id, _processedValue);
-    emit NewDeposit(_receiver, _processedValue);
+    emit NewPayment(_sender, _recipient, _token, _id, _processedValue);
+    emit NewDeposit(_recipient, _token, _processedValue);
   }
 
   function withdrawPayment(
     address _sender,
-    address payable _receiver,
+    address _recipient,
+    address _token,
     uint256 _id,
     uint256 _value,
     bytes memory _senderSignature,
@@ -83,38 +109,40 @@ contract VirtualPaymentManager {
   ) public {
     uint256 _processedValue = _processPayment(
       _sender,
-      _receiver,
+      _recipient,
+      _token,
       _id,
       _value,
       _senderSignature,
       _guardianSignature
     );
 
-    _receiver.transfer(_processedValue);
+    _transfer(_recipient, _token, _processedValue);
 
-    emit NewPayment(_sender, _receiver, _id, _processedValue);
-    emit NewWithdrawal(_receiver, _processedValue);
+    emit NewPayment(_sender, _recipient, _token, _id, _processedValue);
+    emit NewWithdrawal(_recipient, _token, _processedValue);
   }
 
-  function withdrawDeposit() public {
+  function withdrawDeposit(address _token) public {
     if (
-      deposits[msg.sender].withdrawalUnlockedAt != 0 && deposits[msg.sender].withdrawalUnlockedAt <= now
+      deposits[msg.sender][_token].withdrawalUnlockedAt != 0 && deposits[msg.sender][_token].withdrawalUnlockedAt <= now
     ) {
-      msg.sender.transfer(deposits[msg.sender].value);
+      _transfer(msg.sender, _token, deposits[msg.sender][_token].value);
 
-      emit NewWithdrawal(msg.sender, deposits[msg.sender].value);
+      emit NewWithdrawal(msg.sender, _token, deposits[msg.sender][_token].value);
 
-      delete deposits[msg.sender];
+      delete deposits[msg.sender][_token];
     } else {
-      deposits[msg.sender].withdrawalUnlockedAt = now.add(depositWithdrawalLockPeriod);
+      deposits[msg.sender][_token].withdrawalUnlockedAt = now.add(depositWithdrawalLockPeriod);
 
-      emit NewWithdrawalRequest(msg.sender, deposits[msg.sender].withdrawalUnlockedAt);
+      emit NewWithdrawalRequest(msg.sender, _token, deposits[msg.sender][_token].withdrawalUnlockedAt);
     }
   }
 
   function _processPayment(
     address _sender,
-    address _receiver,
+    address _recipient,
+    address _token,
     uint256 _id,
     uint256 _value,
     bytes memory _senderSignature,
@@ -124,7 +152,8 @@ contract VirtualPaymentManager {
       abi.encodePacked(
         address(this),
         _sender,
-        _receiver,
+        _recipient,
+        _token,
         _id,
         _value
       )
@@ -141,7 +170,8 @@ contract VirtualPaymentManager {
 
     bytes32 _paymentHash = keccak256(abi.encodePacked(
         _sender,
-        _receiver,
+        _recipient,
+        _token,
         _id
       ));
 
@@ -161,15 +191,24 @@ contract VirtualPaymentManager {
     }
 
     require(
-      deposits[_sender].value >= _processedValue,
+      deposits[_sender][_token].value >= _processedValue,
       ERR_INVALID_VALUE
     );
 
-    if (deposits[_sender].withdrawalUnlockedAt > 0) {
-      delete deposits[_sender].withdrawalUnlockedAt;
+    if (deposits[_sender][_token].withdrawalUnlockedAt > 0) {
+      delete deposits[_sender][_token].withdrawalUnlockedAt;
     }
 
     payments[_paymentHash].value = _value;
-    deposits[_sender].value = deposits[_sender].value.sub(_processedValue);
+    deposits[_sender][_token].value = deposits[_sender][_token].value.sub(_processedValue);
+  }
+
+  function _transfer(address _recipient, address _token, uint256 _value) private {
+    if (_token == address(0)) {
+      address payable _payableRecipient = address(uint160(_recipient));
+      _payableRecipient.transfer(_value);
+    } else {
+      IERC20(_token).transfer(_recipient, _value);
+    }
   }
 }
