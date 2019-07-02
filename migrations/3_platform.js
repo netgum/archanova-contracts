@@ -7,6 +7,7 @@ const AccountProxy = artifacts.require('AccountProxy');
 const AccountFriendRecovery = artifacts.require('AccountFriendRecovery');
 const ENSRegistry = artifacts.require('ENSRegistry');
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
+const ExampleToken = artifacts.require('ExampleToken');
 
 /* eslint-disable no-console */
 function printLabel(label) {
@@ -62,6 +63,8 @@ module.exports = async (deployer, network, addresses) => {
     virtualPaymentLockPeriod,
   );
 
+  await deployer.deploy(ExampleToken);
+
   const accountProvider = await AccountProvider.at(AccountProvider.address);
 
   await ens.setSubnodeOwner('0x00', getEnsLabelHash(network), ensOwner);
@@ -98,4 +101,5 @@ module.exports = async (deployer, network, addresses) => {
   printEnv('ETH_ENS_REGISTRY_ADDRESS', ENSRegistry.address);
   printEnv('ETH_GUARDIAN_ADDRESS', Account.address);
   printEnv('ETH_VIRTUAL_PAYMENT_MANAGER_ADDRESS', VirtualPaymentManager.address);
+  printEnv('ETH_EXAMPLE_TOKEN', ExampleToken.address);
 };
