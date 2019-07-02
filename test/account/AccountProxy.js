@@ -17,7 +17,7 @@ const {
 const Account = artifacts.require('Account');
 const AccountProxy = artifacts.require('AccountProxy');
 
-contract.only('AccountProxy', (addresses) => {
+contract('AccountProxy', (addresses) => {
   const sender = addresses[0];
   const accountDevices = {
     owner: addresses[1],

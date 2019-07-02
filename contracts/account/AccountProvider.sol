@@ -6,6 +6,7 @@ import "../contractCreator/ContractCreator.sol";
 import "../ens/ENSMultiManager.sol";
 import "../guardian/Guarded.sol";
 import "./AbstractAccount.sol";
+import "./AccountLibrary.sol";
 
 
 /**
@@ -13,6 +14,7 @@ import "./AbstractAccount.sol";
  */
 contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
 
+  using AccountLibrary for address;
   using ECDSA for bytes32;
   using SafeMath for uint256;
 
@@ -20,6 +22,7 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
 
   bytes1 constant ACCOUNT_SALT_MSG_PREFIX = 0x01;
   bytes1 constant ACCOUNT_SALT_MSG_PREFIX_UNSAFE = 0x02;
+  string constant ERR_INVALID_SIGNATURE = "Invalid signature";
 
   address private accountProxy;
 
@@ -30,6 +33,33 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
     address _ens
   ) ContractCreator(_accountContractCode) ENSMultiManager(_ens) Guarded(_guardian) public {
     accountProxy = _accountProxy;
+  }
+
+  function updateAccountEnsName(
+    bytes32 _ensLabel,
+    bytes32 _ensNode,
+    bytes  memory _guardianSignature
+  ) public {
+    bytes32 _messageHash = keccak256(
+      abi.encodePacked(
+        address(this),
+        msg.sig,
+        _ensLabel,
+        _ensNode,
+        msg.sender
+      )
+    ).toEthSignedMessageHash();
+
+    require(
+      guardian.verifySignature(_messageHash, _guardianSignature, true),
+      ERR_INVALID_SIGNATURE
+    );
+
+    _register(
+      _ensLabel,
+      _ensNode,
+      msg.sender
+    );
   }
 
   function createAccount(
@@ -54,13 +84,19 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
         keccak256(abi.encodePacked(_device))
       ));
 
-    _createAccount(
+    address _account = _createAccount(
       _salt,
       _device,
-      _ensLabel,
-      _ensNode,
       _refundGas
     );
+
+    if (_ensLabel != 0) {
+      _register(
+        _ensLabel,
+        _ensNode,
+        _account
+      );
+    }
   }
 
   function unsafeCreateAccount(
@@ -77,22 +113,26 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
       )
     );
 
-    _createAccount(
+    address _account = _createAccount(
       _salt,
       _device,
-      _ensLabel,
-      _ensNode,
       _refundGas
     );
+
+    if (_ensLabel != 0) {
+      _register(
+        _ensLabel,
+        _ensNode,
+        _account
+      );
+    }
   }
 
   function _createAccount(
     bytes32 _salt,
     address _device,
-    bytes32 _ensLabel,
-    bytes32 _ensNode,
     uint256 _refundGas
-  ) private {
+  ) private returns (address) {
     // initialize account
     AbstractAccount _account = AbstractAccount(_createContract(_salt));
 
@@ -108,12 +148,8 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
     _account.addDevice(accountProxy, true);
     _account.removeDevice(address(this));
 
-    _register(
-      _ensLabel,
-      _ensNode,
-      address(_account)
-    );
-
     emit AccountCreated(address(_account));
+
+    return address(_account);
   }
 }
