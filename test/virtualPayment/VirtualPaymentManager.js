@@ -16,7 +16,7 @@ const { ZERO_ADDRESS } = require('../shared/constants');
 const VirtualPaymentManager = artifacts.require('VirtualPaymentManager');
 const ExampleToken = artifacts.require('ExampleToken');
 
-contract.only('VirtualPaymentManager', ([guardian, sender, recipient]) => {
+contract('VirtualPaymentManager', ([guardian, sender, recipient]) => {
   const lockPeriod = new BN(24 * 60 * 60); // 1 day
 
   let manager;

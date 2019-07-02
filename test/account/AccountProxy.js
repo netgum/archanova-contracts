@@ -11,12 +11,13 @@ const {
   getCost,
   getBalance,
   toWei,
+  joinHex,
 } = require('../shared/utils');
 
 const Account = artifacts.require('Account');
 const AccountProxy = artifacts.require('AccountProxy');
 
-contract('AccountProxy', (addresses) => {
+contract.only('AccountProxy', (addresses) => {
   const sender = addresses[0];
   const accountDevices = {
     owner: addresses[1],
@@ -285,6 +286,192 @@ contract('AccountProxy', (addresses) => {
         ))
           .rejects
           .toThrow();
+      });
+    });
+
+    describe('forwardAccountOwnerCalls2()', () => {
+      it('expect to forward 2 calls', async () => {
+        const messageHash = soliditySha3(
+          accountProxy.address,
+          methodSigns.forwardAccountOwnerCall,
+          account.address,
+          nonce,
+          joinHex(data, data),
+          0,
+          gasPrice,
+        );
+        const senderBalance = await getBalance(sender);
+
+        const output = await accountProxy.forwardAccountOwnerCalls2(
+          account.address,
+          nonce,
+          data,
+          data,
+          0,
+          await sign(messageHash, accountDevices.owner), {
+            gasPrice,
+            from: sender,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+        const cost = getCost(output, gasPrice);
+        const refund = (await getBalance(sender)).add(cost)
+          .sub(senderBalance);
+
+        expect(refund)
+          .toBeBN(new BN(0));
+        expect(log.event)
+          .toBe('NewAccountOwnerCall');
+        expect(log.args.account)
+          .toBe(account.address);
+        expect(log.args.nonce)
+          .toBeBN(nonce);
+
+        nonce = nonce.add(new BN(1));
+      });
+    });
+
+    describe('forwardAccountOwnerCalls3()', () => {
+      it('expect to forward 3 calls', async () => {
+        const messageHash = soliditySha3(
+          accountProxy.address,
+          methodSigns.forwardAccountOwnerCall,
+          account.address,
+          nonce,
+          joinHex(data, data, data),
+          0,
+          gasPrice,
+        );
+        const senderBalance = await getBalance(sender);
+
+        const output = await accountProxy.forwardAccountOwnerCalls3(
+          account.address,
+          nonce,
+          data,
+          data,
+          data,
+          0,
+          await sign(messageHash, accountDevices.owner), {
+            gasPrice,
+            from: sender,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+        const cost = getCost(output, gasPrice);
+        const refund = (await getBalance(sender)).add(cost)
+          .sub(senderBalance);
+
+        expect(refund)
+          .toBeBN(new BN(0));
+        expect(log.event)
+          .toBe('NewAccountOwnerCall');
+        expect(log.args.account)
+          .toBe(account.address);
+        expect(log.args.nonce)
+          .toBeBN(nonce);
+
+        nonce = nonce.add(new BN(1));
+      });
+    });
+
+    describe('forwardAccountOwnerCalls4()', () => {
+      it('expect to forward 4 calls', async () => {
+        const messageHash = soliditySha3(
+          accountProxy.address,
+          methodSigns.forwardAccountOwnerCall,
+          account.address,
+          nonce,
+          joinHex(data, data, data, data),
+          0,
+          gasPrice,
+        );
+        const senderBalance = await getBalance(sender);
+
+        const output = await accountProxy.forwardAccountOwnerCalls4(
+          account.address,
+          nonce,
+          data,
+          data,
+          data,
+          data,
+          0,
+          await sign(messageHash, accountDevices.owner), {
+            gasPrice,
+            from: sender,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+        const cost = getCost(output, gasPrice);
+        const refund = (await getBalance(sender)).add(cost)
+          .sub(senderBalance);
+
+        expect(refund)
+          .toBeBN(new BN(0));
+        expect(log.event)
+          .toBe('NewAccountOwnerCall');
+        expect(log.args.account)
+          .toBe(account.address);
+        expect(log.args.nonce)
+          .toBeBN(nonce);
+
+        nonce = nonce.add(new BN(1));
+      });
+    });
+
+    describe('forwardAccountOwnerCalls5()', () => {
+      it('expect to forward 5 calls', async () => {
+        const messageHash = soliditySha3(
+          accountProxy.address,
+          methodSigns.forwardAccountOwnerCall,
+          account.address,
+          nonce,
+          joinHex(data, data, data, data, data),
+          0,
+          gasPrice,
+        );
+        const senderBalance = await getBalance(sender);
+
+        const output = await accountProxy.forwardAccountOwnerCalls5(
+          account.address,
+          nonce,
+          data,
+          data,
+          data,
+          data,
+          data,
+          0,
+          await sign(messageHash, accountDevices.owner), {
+            gasPrice,
+            from: sender,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+        const cost = getCost(output, gasPrice);
+        const refund = (await getBalance(sender)).add(cost)
+          .sub(senderBalance);
+
+        expect(refund)
+          .toBeBN(new BN(0));
+        expect(log.event)
+          .toBe('NewAccountOwnerCall');
+        expect(log.args.account)
+          .toBe(account.address);
+        expect(log.args.nonce)
+          .toBeBN(nonce);
+
+        nonce = nonce.add(new BN(1));
       });
     });
   });
