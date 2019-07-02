@@ -5,6 +5,8 @@ export declare enum ContractNames {
   AccountProxy = 'AccountProxy',
   ENSRegistry = 'ENSRegistry',
   ENSResolver = 'ENSResolver',
+  ExampleToken = 'ExampleToken',
+  ERC20Token = 'ERC20Token',
   Guardian = 'Guardian',
   VirtualPaymentManager = 'VirtualPaymentManager',
 }

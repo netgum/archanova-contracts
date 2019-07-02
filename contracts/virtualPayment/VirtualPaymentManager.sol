@@ -15,7 +15,7 @@ contract VirtualPaymentManager {
   using SafeMath for uint256;
 
   event NewDeposit(address owner, address token, uint256 value);
-  event NewWithdrawal(address owner, address token, uint256 value);
+  event NewWithdrawal(address recipient, address token, uint256 value);
   event NewWithdrawalRequest(address owner, address token, uint256 unlockedAt);
   event NewPayment(address sender, address recipient, address token, uint256 id, uint256 value);
 

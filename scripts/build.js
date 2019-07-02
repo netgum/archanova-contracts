@@ -38,7 +38,7 @@ const schemas = {
   ExampleToken: {
     addAddresses: true,
   },
-  ERC20: {
+  ERC20Token: {
     contract: 'ExampleToken',
     addAbi: true,
   },
