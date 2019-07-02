@@ -34,9 +34,9 @@ console.log(
 );
 ```
 
-Exported fields:
+Contracts:
 
-| Contract name 	| `abi` 	| `byteCodeHash` 	| `addresses` 	|
+| Name 	| `abi` 	| `byteCodeHash` 	| `addresses` 	|
 | --- | :---: | :---: | :---: |
 | `Account` 	| ✅ 	| ✅ 	| 	|
 | `AccountProvider` 	| ✅ 	| 	| ✅ 	|
