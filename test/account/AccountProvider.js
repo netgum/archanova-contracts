@@ -269,7 +269,7 @@ contract('AccountProvider', (addresses) => {
       });
     });
 
-    describe.only('updateAccountEnsName()', () => {
+    describe('updateAccountEnsName()', () => {
       let account;
       const owner = accountDevices.owners[1];
 

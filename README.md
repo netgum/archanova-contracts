@@ -65,7 +65,7 @@ $ npm i
 | --- | ---|
 | PROVIDER_MNEMONIC 	| `-` 	|
 | PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
-| ENS_TOP_LABELS 	| `archanova,smartsafe` 	|
+| ENS_TOP_LABELS 	| `archanova,smartsafe,pillar` 	|
 | VIRTUAL_PAYMENT_LOCK_PERIOD 	| `30 * 24 * 60 * 60` 	|
 
 #### Start Migration:
