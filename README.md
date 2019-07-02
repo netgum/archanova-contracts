@@ -44,6 +44,8 @@ Exported fields:
 | `AccountFriendRecovery` 	| ✅ 	| 	| ✅ 	|
 | `ENSRegistry` 	| ✅ 	| 	| ✅ 	|
 | `ENSResolver` 	| ✅ 	| 	|  	|
+| `ExampleToken` 	|  	| 	| ✅ 	|
+| `ERC20Token` 	| ✅ 	| 	|  	|
 | `Guardian` 	|  	| 	| ✅ 	|
 | `VirtualPaymentManager` 	| ✅ 	| 	| ✅ 	|
 
