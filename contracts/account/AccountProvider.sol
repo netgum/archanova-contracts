@@ -19,6 +19,7 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
   using SafeMath for uint256;
 
   event AccountCreated(address account);
+  event AccountEnsNameUpdated(address account);
 
   bytes1 constant ACCOUNT_SALT_MSG_PREFIX = 0x01;
   bytes1 constant ACCOUNT_SALT_MSG_PREFIX_UNSAFE = 0x02;
@@ -60,6 +61,8 @@ contract AccountProvider is ContractCreator, ENSMultiManager, Guarded {
       _ensNode,
       msg.sender
     );
+
+    emit AccountEnsNameUpdated(msg.sender);
   }
 
   function createAccount(
