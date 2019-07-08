@@ -37,6 +37,10 @@ module.exports = {
       provider,
       network_id: '42',
     },
+    sokol: {
+      provider,
+      network_id: '77',
+    },
   },
   compilers: {
     solc: {

@@ -25,6 +25,10 @@ console.log(
   getContractAddress(ContractNames.AccountProvider, '4'),
 );
 console.log(
+  'AccountProvider kovan address:', 
+  getContractAddress(ContractNames.AccountProvider, '42'),
+);
+console.log(
   'Account abi:', 
   getContractAbi(ContractNames.Account),
 );
@@ -73,14 +77,11 @@ $ npm i
 #### Start Migration:
 
 ```bash
-# Ropsten TestNet
+# testnets
 $ npm run migrate:ropsten
-
-# Rinkeby TestNet
 $ npm run migrate:rinkeby
-
-# Kovan TestNet
 $ npm run migrate:kovan
+$ npm run migrate:sokol
 ```
 
 ### Building `./dist`

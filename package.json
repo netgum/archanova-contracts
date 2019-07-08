@@ -1,6 +1,6 @@
 {
   "name": "@archanova/contracts",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.11",
   "description": "Archanova solidity contracts",
   "author": {
     "name": "Stanislaw Glogowski",
@@ -24,7 +24,8 @@
     "migrate:local": "truffle migrate --reset --network=local",
     "migrate:ropsten": "truffle migrate --network=ropsten",
     "migrate:rinkeby": "truffle migrate --network=rinkeby",
-    "migrate:kovan": "truffle migrate --network=kovan"
+    "migrate:kovan": "truffle migrate --network=kovan",
+    "migrate:sokol": "truffle migrate --network=sokol"
   },
   "dependencies": {
     "@ensdomains/ens": "0.3.5",
