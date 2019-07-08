@@ -35,6 +35,13 @@ const schemas = {
     addAbi: true,
     contract: 'AbstractENSAddrResolver',
   },
+  ExampleToken: {
+    addAddresses: true,
+  },
+  ERC20Token: {
+    contract: 'ExampleToken',
+    addAbi: true,
+  },
   Guardian: {
     contract: 'Account',
     addAddresses: true,

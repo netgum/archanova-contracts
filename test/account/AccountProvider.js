@@ -23,8 +23,8 @@ contract('AccountProvider', (addresses) => {
   const accountSaltPrefixUnsafe = '0x02';
   const accountDevices = {
     guardian: addresses[1],
-    owner: addresses[2],
-    invalid: addresses[3],
+    owners: [addresses[2], addresses[3]],
+    invalid: addresses[4],
     accountProxy: addresses[8],
   };
   const ensNameHash = getEnsNameHash('test');
@@ -62,6 +62,9 @@ contract('AccountProvider', (addresses) => {
       createAccount: getMethodSign(
         'createAccount', 'bytes32', 'bytes32', 'uint256', 'bytes',
       ),
+      updateAccountEnsName: getMethodSign(
+        'updateAccountEnsName', 'bytes32', 'bytes32', 'bytes',
+      ),
     };
 
     describe('createAccount()', () => {
@@ -70,7 +73,7 @@ contract('AccountProvider', (addresses) => {
         const refundGas = new BN(1);
         const salt = soliditySha3(
           accountSaltPrefix,
-          soliditySha3(accountDevices.owner),
+          soliditySha3(accountDevices.owners[0]),
         );
         const accountAddress = computeContractAddress(
           accountProvider.address,
@@ -96,7 +99,52 @@ contract('AccountProvider', (addresses) => {
           labelHash,
           ensNameHash,
           refundGas,
-          await sign(messageHash, accountDevices.owner), {
+          await sign(messageHash, accountDevices.owners[0]), {
+            from: accountDevices.guardian,
+            gasPrice,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+
+        expect(log.event)
+          .toBe('AccountCreated');
+        expect(log.args.account)
+          .toBe(accountAddress);
+      });
+
+      it('expect to create new account without ens name', async () => {
+        const salt = soliditySha3(
+          accountSaltPrefix,
+          soliditySha3(accountDevices.owners[1]),
+        );
+        const accountAddress = computeContractAddress(
+          accountProvider.address,
+          salt,
+          Account.bytecode,
+        );
+        const messageHash = soliditySha3(
+          accountProvider.address,
+          methodSigns.createAccount,
+          0,
+          0,
+          0,
+          gasPrice,
+        );
+
+        await sendTransaction({
+          from: addresses[0],
+          to: accountAddress,
+          value: toWei('1', 'ether'),
+        });
+
+        const output = await accountProvider.createAccount(
+          '0x',
+          '0x',
+          0,
+          await sign(messageHash, accountDevices.owners[1]), {
             from: accountDevices.guardian,
             gasPrice,
           },
@@ -130,7 +178,7 @@ contract('AccountProvider', (addresses) => {
 
         const output = await accountProvider.unsafeCreateAccount(
           accountId,
-          accountDevices.owner,
+          accountDevices.owners[0],
           labelHash,
           ensNameHash,
           refundGas, {
@@ -148,8 +196,40 @@ contract('AccountProvider', (addresses) => {
           .toBe(accountAddress);
       });
 
-      it('expect to create new account and refund', async () => {
+      it('expect to create new account without ens name', async () => {
         const accountId = new BN(2);
+        const salt = soliditySha3(
+          accountSaltPrefixUnsafe,
+          accountId,
+        );
+        const accountAddress = computeContractAddress(
+          accountProvider.address,
+          salt,
+          Account.bytecode,
+        );
+
+        const output = await accountProvider.unsafeCreateAccount(
+          accountId,
+          accountDevices.owners[0],
+          '0x',
+          '0x',
+          0, {
+            from: accountDevices.guardian,
+          },
+        );
+
+        logGasUsed(output);
+
+        const { logs: [log] } = output;
+
+        expect(log.event)
+          .toBe('AccountCreated');
+        expect(log.args.account)
+          .toBe(accountAddress);
+      });
+
+      it('expect to create new account and refund', async () => {
+        const accountId = new BN(3);
         const labelHash = getEnsLabelHash('test3');
         const refundGas = new BN(1);
         const salt = soliditySha3(
@@ -170,7 +250,7 @@ contract('AccountProvider', (addresses) => {
 
         const output = await accountProvider.unsafeCreateAccount(
           accountId,
-          accountDevices.owner,
+          accountDevices.owners[0],
           labelHash,
           ensNameHash,
           refundGas, {
@@ -186,6 +266,55 @@ contract('AccountProvider', (addresses) => {
           .toBe('AccountCreated');
         expect(log.args.account)
           .toBe(accountAddress);
+      });
+    });
+
+    describe('updateAccountEnsName()', () => {
+      let account;
+      const owner = accountDevices.owners[1];
+
+      before(async () => {
+        const accountId = new BN(4);
+        const output = await accountProvider.unsafeCreateAccount(
+          accountId,
+          owner,
+          '0x',
+          '0x',
+          0, {
+            from: accountDevices.guardian,
+          },
+        );
+
+        const { logs: [log] } = output;
+
+        account = await Account.at(log.args.account);
+      });
+
+      it('expect to update account ens name', async () => {
+        const labelHash = getEnsLabelHash('test4');
+        const messageHash = soliditySha3(
+          accountProvider.address,
+          methodSigns.updateAccountEnsName,
+          labelHash,
+          ensNameHash,
+          account.address,
+        );
+
+        const data = accountProvider.contract.methods.updateAccountEnsName(
+          labelHash,
+          ensNameHash,
+          await sign(messageHash, accountDevices.guardian),
+        ).encodeABI();
+
+        const output = await account.executeTransaction(
+          accountProvider.address,
+          0,
+          data, {
+            from: owner,
+          },
+        );
+
+        logGasUsed(output);
       });
     });
   });

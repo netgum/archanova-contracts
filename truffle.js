@@ -37,10 +37,14 @@ module.exports = {
       provider,
       network_id: '42',
     },
+    sokol: {
+      provider,
+      network_id: '77',
+    },
   },
   compilers: {
     solc: {
-      version: '0.5.2',
+      version: '0.5.10',
       settings: {
         optimizer: {
           enabled: true,

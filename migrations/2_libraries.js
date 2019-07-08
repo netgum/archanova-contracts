@@ -33,7 +33,9 @@ module.exports = async (deployer) => {
   deployer.link(ECDSA, AccountProvider);
   deployer.link(SafeMath, AccountProvider);
 
+  deployer.link(AccountLibrary, AccountProxy);
   deployer.link(AddressLibrary, AccountProxy);
+  deployer.link(BytesLib, AccountProxy);
   deployer.link(ECDSA, AccountProxy);
   deployer.link(SafeMath, AccountProxy);
 

@@ -8,6 +8,6 @@ const {
 module.exports = {
   providerMnemonic: PROVIDER_MNEMONIC || '',
   providerEndpoint: PROVIDER_ENDPOINT || 'http://localhost:8545',
-  ensTopLabels: (ENS_TOP_LABELS || 'archanova,smartsafe').split(','),
+  ensTopLabels: (ENS_TOP_LABELS || 'archanova,smartsafe,pillar').split(','),
   virtualPaymentLockPeriod: parseInt(VIRTUAL_PAYMENT_LOCK_PERIOD, 10) || 30 * 24 * 60 * 60,
 };

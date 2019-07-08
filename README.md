@@ -25,6 +25,10 @@ console.log(
   getContractAddress(ContractNames.AccountProvider, '4'),
 );
 console.log(
+  'AccountProvider kovan address:', 
+  getContractAddress(ContractNames.AccountProvider, '42'),
+);
+console.log(
   'Account abi:', 
   getContractAbi(ContractNames.Account),
 );
@@ -34,9 +38,9 @@ console.log(
 );
 ```
 
-Exported fields:
+Contracts:
 
-| Contract name 	| `abi` 	| `byteCodeHash` 	| `addresses` 	|
+| Name 	| `abi` 	| `byteCodeHash` 	| `addresses` 	|
 | --- | :---: | :---: | :---: |
 | `Account` 	| ✅ 	| ✅ 	| 	|
 | `AccountProvider` 	| ✅ 	| 	| ✅ 	|
@@ -44,6 +48,8 @@ Exported fields:
 | `AccountFriendRecovery` 	| ✅ 	| 	| ✅ 	|
 | `ENSRegistry` 	| ✅ 	| 	| ✅ 	|
 | `ENSResolver` 	| ✅ 	| 	|  	|
+| `ExampleToken` 	|  	| 	| ✅ 	|
+| `ERC20Token` 	| ✅ 	| 	|  	|
 | `Guardian` 	|  	| 	| ✅ 	|
 | `VirtualPaymentManager` 	| ✅ 	| 	| ✅ 	|
 
@@ -65,20 +71,17 @@ $ npm i
 | --- | ---|
 | PROVIDER_MNEMONIC 	| `-` 	|
 | PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
-| ENS_TOP_LABELS 	| `archanova,smartsafe` 	|
+| ENS_TOP_LABELS 	| `archanova,smartsafe,pillar` 	|
 | VIRTUAL_PAYMENT_LOCK_PERIOD 	| `30 * 24 * 60 * 60` 	|
 
 #### Start Migration:
 
 ```bash
-# Ropsten TestNet
+# testnets
 $ npm run migrate:ropsten
-
-# Rinkeby TestNet
 $ npm run migrate:rinkeby
-
-# Kovan TestNet
 $ npm run migrate:kovan
+$ npm run migrate:sokol
 ```
 
 ### Building `./dist`

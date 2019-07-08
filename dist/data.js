@@ -165,13 +165,14 @@ module.exports = {
         "signature": "0x3f579f42"
       }
     ],
-    "byteCodeHash": "0x38f70e2d9e8c2700595640dfbfb0b46d0f1af5c7873f7cf6d88d2565ef97f5cd"
+    "byteCodeHash": "0x54d2c5863a813bb041568ff305da1dcc695680ea9bdd91f05ae477b1c64b4468"
   },
   "AccountProvider": {
     "addresses": {
-      "3": "0x69Cd4Fd7B5622F892Ee8cFCaa20A930AecA64cAB",
-      "4": "0xD76fB46c4af359a1905193572832524987Ca5E24",
-      "42": "0x4fd179a80dFCa5f1529016F45f2eC74ea452B54C"
+      "3": "0x053659fB0025F2c2E1BaD364317d0F3205fb336a",
+      "4": "0xe19A2C8ce69CdC155026dA7e0d7eF89C1D2474dd",
+      "42": "0x82Fffce9679514F80807945Dc975a4Ed813Da9bD",
+      "77": "0xda3761645604656B3D9A7C965c4a8e67E9231D57"
     },
     "abi": [
       {
@@ -339,6 +340,19 @@ module.exports = {
         "inputs": [
           {
             "indexed": false,
+            "name": "account",
+            "type": "address"
+          }
+        ],
+        "name": "AccountEnsNameUpdated",
+        "type": "event",
+        "signature": "0x7eaf47b80dadd049c59d75e4fea0cff3ac993d779967e004590899fb0ce321f6"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
             "name": "rootNode",
             "type": "bytes32"
           },
@@ -408,6 +422,29 @@ module.exports = {
             "type": "bytes32"
           },
           {
+            "name": "_guardianSignature",
+            "type": "bytes"
+          }
+        ],
+        "name": "updateAccountEnsName",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x5acb1c1b"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_ensLabel",
+            "type": "bytes32"
+          },
+          {
+            "name": "_ensNode",
+            "type": "bytes32"
+          },
+          {
             "name": "_refundGas",
             "type": "uint256"
           },
@@ -459,9 +496,10 @@ module.exports = {
   },
   "AccountProxy": {
     "addresses": {
-      "3": "0xA6796c83024258E0aC222aC19f19def9D8f2e032",
-      "4": "0x6Aa0aE42bDc9DddC0e128af101fCF9198fAaD73a",
-      "42": "0xe77B0413Fa997f36d5aA4f3f19868C25F3f07548"
+      "3": "0xE73B1bd40a658A81ADeb0BC06c86c3c9735FE25B",
+      "4": "0xD67237450683738E17bF6B1C8425049018a605DA",
+      "42": "0xc62700E3ab599Fd21a9Ebe147c11BD2e2427f4da",
+      "77": "0xE4cF6a37B191EdA295f2F838ff97C2cF6E8c3072"
     },
     "abi": [
       {
@@ -532,15 +570,180 @@ module.exports = {
         "stateMutability": "nonpayable",
         "type": "function",
         "signature": "0x09403cb6"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "name": "_nonce",
+            "type": "uint256"
+          },
+          {
+            "name": "_data1",
+            "type": "bytes"
+          },
+          {
+            "name": "_data2",
+            "type": "bytes"
+          },
+          {
+            "name": "_fixedGas",
+            "type": "uint256"
+          },
+          {
+            "name": "_signature",
+            "type": "bytes"
+          }
+        ],
+        "name": "forwardAccountOwnerCalls2",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x5fd785bb"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "name": "_nonce",
+            "type": "uint256"
+          },
+          {
+            "name": "_data1",
+            "type": "bytes"
+          },
+          {
+            "name": "_data2",
+            "type": "bytes"
+          },
+          {
+            "name": "_data3",
+            "type": "bytes"
+          },
+          {
+            "name": "_fixedGas",
+            "type": "uint256"
+          },
+          {
+            "name": "_signature",
+            "type": "bytes"
+          }
+        ],
+        "name": "forwardAccountOwnerCalls3",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x671e8e22"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "name": "_nonce",
+            "type": "uint256"
+          },
+          {
+            "name": "_data1",
+            "type": "bytes"
+          },
+          {
+            "name": "_data2",
+            "type": "bytes"
+          },
+          {
+            "name": "_data3",
+            "type": "bytes"
+          },
+          {
+            "name": "_data4",
+            "type": "bytes"
+          },
+          {
+            "name": "_fixedGas",
+            "type": "uint256"
+          },
+          {
+            "name": "_signature",
+            "type": "bytes"
+          }
+        ],
+        "name": "forwardAccountOwnerCalls4",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x48fed175"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "name": "_nonce",
+            "type": "uint256"
+          },
+          {
+            "name": "_data1",
+            "type": "bytes"
+          },
+          {
+            "name": "_data2",
+            "type": "bytes"
+          },
+          {
+            "name": "_data3",
+            "type": "bytes"
+          },
+          {
+            "name": "_data4",
+            "type": "bytes"
+          },
+          {
+            "name": "_data5",
+            "type": "bytes"
+          },
+          {
+            "name": "_fixedGas",
+            "type": "uint256"
+          },
+          {
+            "name": "_signature",
+            "type": "bytes"
+          }
+        ],
+        "name": "forwardAccountOwnerCalls5",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0xec40de34"
       }
     ],
     "byteCodeHash": null
   },
   "AccountFriendRecovery": {
     "addresses": {
-      "3": "0x4d128BCfe76136d7Cf067F190757654c282d0875",
-      "4": "0xF5932C003DC297A74d920eAC231996D1d629C613",
-      "42": "0xc11F17D00569be0F279590DAa84eadBF5030219d"
+      "3": "0xDa2252779BC3F98ddD8644FCF4a8a1bF02DA19Ff",
+      "4": "0x0341dcfAE54dfcCDbe904C666C2bD94F82ad6f9B",
+      "42": "0x333cF5b0E70a3CebFDf75BA0a54a5aC7DD890B0e",
+      "77": "0xF0A87dDa0322836586E25990588051024fe62edd"
     },
     "abi": [
       {
@@ -688,9 +891,10 @@ module.exports = {
   },
   "ENSRegistry": {
     "addresses": {
-      "3": "0xAcCB4436F9f1C16D9384Ed95180D9Eee2dC293BD",
-      "4": "0x15DE0EA6B145Ffc544Cc955005179b2Bd5230CD2",
-      "42": "0x0297206c7a08F9Dd14D76D1f66D56d4463cF9d3B"
+      "3": "0x5603b867Bd80682ee2Fc5fA88B4725f2F8081297",
+      "4": "0x8556909D3D0C9f7c64d0A1B68942be6Af0e4035d",
+      "42": "0x52434535035214652C1FD163285CF1f663706f69",
+      "77": "0x5546dc6828Af8E5EaF3Be715Ed229Fb94f682fBB"
     },
     "abi": [
       {
@@ -980,20 +1184,339 @@ module.exports = {
     ],
     "byteCodeHash": null
   },
+  "ExampleToken": {
+    "addresses": {
+      "3": "0xF383e4C078b34Da69534A7B7F1F381d418315273",
+      "4": "0x6b69d738aFfca7b1F548c5fB92E80581375Dc0E5",
+      "42": "0xE23Bd5D126e0df28ec2edFCaDd774dBBe6079306",
+      "77": "0xB3B5f0ac0d0e11681b414f325c1e043619D0b4d7"
+    },
+    "abi": null,
+    "byteCodeHash": null
+  },
+  "ERC20Token": {
+    "addresses": {},
+    "abi": [
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+          {
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x06fdde03"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "approve",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x095ea7b3"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x18160ddd"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address"
+          },
+          {
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "transferFrom",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x23b872dd"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint8"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x313ce567"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address"
+          },
+          {
+            "name": "addedValue",
+            "type": "uint256"
+          }
+        ],
+        "name": "increaseAllowance",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x39509351"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address"
+          }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x70a08231"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [
+          {
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x95d89b41"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "spender",
+            "type": "address"
+          },
+          {
+            "name": "subtractedValue",
+            "type": "uint256"
+          }
+        ],
+        "name": "decreaseAllowance",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0xa457c2d7"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "transfer",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0xa9059cbb"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "name": "spender",
+            "type": "address"
+          }
+        ],
+        "name": "allowance",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0xdd62ed3e"
+      },
+      {
+        "inputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "constructor",
+        "signature": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "from",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "Transfer",
+        "type": "event",
+        "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "name": "spender",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "Approval",
+        "type": "event",
+        "signature": "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "mint",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0xa0712d68"
+      }
+    ],
+    "byteCodeHash": null
+  },
   "Guardian": {
     "addresses": {
-      "3": "0xfE6F6c554D1a32BE5b65728B9AF8a7c283642791",
-      "4": "0xfb19f10c1dA444d12E51C1429665a3A774022c4d",
-      "42": "0x1AEc00Fea01ef534e76DA54796d218E9a5696688"
+      "3": "0xA36C627Af27014fE65a7B6eb25af690167019082",
+      "4": "0x93CDf7113223D72363c3aaD7335A89795e27FD7d",
+      "42": "0x8603097a92723a6a4f6F60755Be7aA2B84b44190",
+      "77": "0x82BC78cDa8500f92a09b03277218BE845fb3Fd40"
     },
     "abi": null,
     "byteCodeHash": null
   },
   "VirtualPaymentManager": {
     "addresses": {
-      "3": "0x39B778aA9c0D7CA8e4287C5F538287b3f50a7142",
-      "4": "0xCccD693173C0fe39533388DE8C07C706416D3b40",
-      "42": "0xf9D669e8057D0c9bbf90FBe66b34B3eBA3b79f8c"
+      "3": "0x5a337ca042b7aee3b27d8a27594B9F989690D05E",
+      "4": "0x062e8393FD758fE45a83806533aEe3410eC160Bd",
+      "42": "0x4e7696Ff86eAb00Cc08d05776045f81dcc9e7151",
+      "77": "0xf1eA64422262e7C1b69659ff1dbaFFc8F8AA758F"
     },
     "abi": [
       {
@@ -1052,6 +1575,10 @@ module.exports = {
           {
             "name": "",
             "type": "address"
+          },
+          {
+            "name": "",
+            "type": "address"
           }
         ],
         "name": "deposits",
@@ -1068,7 +1595,7 @@ module.exports = {
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0xfc7e286d"
+        "signature": "0x8f601f66"
       },
       {
         "inputs": [
@@ -1096,7 +1623,12 @@ module.exports = {
         "inputs": [
           {
             "indexed": false,
-            "name": "sender",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "token",
             "type": "address"
           },
           {
@@ -1107,14 +1639,19 @@ module.exports = {
         ],
         "name": "NewDeposit",
         "type": "event",
-        "signature": "0x2cb77763bc1e8490c1a904905c4d74b4269919aca114464f4bb4d911e60de364"
+        "signature": "0x83df459d706116d1b3f1c7b7f77cfea4c635275f5d1e1a53827f536ef48db77d"
       },
       {
         "anonymous": false,
         "inputs": [
           {
             "indexed": false,
-            "name": "receiver",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "token",
             "type": "address"
           },
           {
@@ -1125,14 +1662,19 @@ module.exports = {
         ],
         "name": "NewWithdrawal",
         "type": "event",
-        "signature": "0x6e2e05fb6a732995d6952d9158ca6b75f11cc6bf5a4af943aa1eb475a249440b"
+        "signature": "0x342cefd1b5d176844b82654eddd03fb5a01ec1025b51048cff802621dd873da4"
       },
       {
         "anonymous": false,
         "inputs": [
           {
             "indexed": false,
-            "name": "receiver",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "token",
             "type": "address"
           },
           {
@@ -1143,7 +1685,7 @@ module.exports = {
         ],
         "name": "NewWithdrawalRequest",
         "type": "event",
-        "signature": "0x4c9080ec1aaa52271e38e548e49fca5ee3a853d5a59759393034ac00ca2ea7d7"
+        "signature": "0xe2feb33d2d0b48e1364da707aece2a0c371646b38401306e481b51468225cc34"
       },
       {
         "anonymous": false,
@@ -1155,7 +1697,12 @@ module.exports = {
           },
           {
             "indexed": false,
-            "name": "receiver",
+            "name": "recipient",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "name": "token",
             "type": "address"
           },
           {
@@ -1171,7 +1718,74 @@ module.exports = {
         ],
         "name": "NewPayment",
         "type": "event",
-        "signature": "0xf62e438cfa75c1fc743ada55b6e1437d24c0e0f83ddf8a7b62ef765e65285e86"
+        "signature": "0x8b265c5f47dbb02d85eec340b11f85b22d198c26fb58e93864ee4449b42a4bad"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_owner",
+            "type": "address"
+          },
+          {
+            "name": "_token",
+            "type": "address"
+          }
+        ],
+        "name": "getDepositValue",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x55aef0d6"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "_owner",
+            "type": "address"
+          },
+          {
+            "name": "_token",
+            "type": "address"
+          }
+        ],
+        "name": "getDepositWithdrawalUnlockedAt",
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0xa6f75a93"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_token",
+            "type": "address"
+          },
+          {
+            "name": "_value",
+            "type": "uint256"
+          }
+        ],
+        "name": "depositToken",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x338b5dea"
       },
       {
         "constant": false,
@@ -1181,7 +1795,11 @@ module.exports = {
             "type": "address"
           },
           {
-            "name": "_receiver",
+            "name": "_recipient",
+            "type": "address"
+          },
+          {
+            "name": "_token",
             "type": "address"
           },
           {
@@ -1206,7 +1824,7 @@ module.exports = {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0x2438f435"
+        "signature": "0xf398e872"
       },
       {
         "constant": false,
@@ -1216,7 +1834,11 @@ module.exports = {
             "type": "address"
           },
           {
-            "name": "_receiver",
+            "name": "_recipient",
+            "type": "address"
+          },
+          {
+            "name": "_token",
             "type": "address"
           },
           {
@@ -1241,17 +1863,22 @@ module.exports = {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0xa26ee3ae"
+        "signature": "0x29d7d95f"
       },
       {
         "constant": false,
-        "inputs": [],
+        "inputs": [
+          {
+            "name": "_token",
+            "type": "address"
+          }
+        ],
         "name": "withdrawDeposit",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0x117df088"
+        "signature": "0x51e41700"
       }
     ],
     "byteCodeHash": null
