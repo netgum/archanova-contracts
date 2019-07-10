@@ -45,6 +45,10 @@ module.exports = {
       provider,
       network_id: '77',
     },
+    xdai: {
+      provider,
+      network_id: '100',
+    },
   },
   compilers: {
     solc: {

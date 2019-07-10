@@ -71,6 +71,7 @@ $ npm i
 | --- | ---|
 | PROVIDER_MNEMONIC 	| `-` 	|
 | PROVIDER_ENDPOINT 	| `http://localhost:8545` 	|
+| ENS_ADDRESS 	| `-` 	|
 | ENS_TOP_LABELS 	| `archanova,smartsafe,pillar` 	|
 | VIRTUAL_PAYMENT_LOCK_PERIOD 	| `30 * 24 * 60 * 60` 	|
 
@@ -82,6 +83,7 @@ $ npm run migrate:ropsten
 $ npm run migrate:rinkeby
 $ npm run migrate:kovan
 $ npm run migrate:sokol
+$ npm run migrate:xdai
 ```
 
 ### Building `./dist`
