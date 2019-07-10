@@ -169,6 +169,7 @@ module.exports = {
   },
   "AccountProvider": {
     "addresses": {
+      "1": "0xa2E81C205E38324Bf7432AECBD2c7e20C717E1D3",
       "3": "0x053659fB0025F2c2E1BaD364317d0F3205fb336a",
       "4": "0xe19A2C8ce69CdC155026dA7e0d7eF89C1D2474dd",
       "42": "0x82Fffce9679514F80807945Dc975a4Ed813Da9bD",
@@ -496,6 +497,7 @@ module.exports = {
   },
   "AccountProxy": {
     "addresses": {
+      "1": "0x532EfbD6dea8985b4631d63b0C2010f24F7D5002",
       "3": "0xE73B1bd40a658A81ADeb0BC06c86c3c9735FE25B",
       "4": "0xD67237450683738E17bF6B1C8425049018a605DA",
       "42": "0xc62700E3ab599Fd21a9Ebe147c11BD2e2427f4da",
@@ -740,6 +742,7 @@ module.exports = {
   },
   "AccountFriendRecovery": {
     "addresses": {
+      "1": "0x2f038E0211C73aa036595581A50CAFC5b5B1AA43",
       "3": "0xDa2252779BC3F98ddD8644FCF4a8a1bF02DA19Ff",
       "4": "0x0341dcfAE54dfcCDbe904C666C2bD94F82ad6f9B",
       "42": "0x333cF5b0E70a3CebFDf75BA0a54a5aC7DD890B0e",
@@ -1186,6 +1189,7 @@ module.exports = {
   },
   "ExampleToken": {
     "addresses": {
+      "1": "0x6673b264272EAdCA70F13E0de4459F170b1E8DE2",
       "3": "0xF383e4C078b34Da69534A7B7F1F381d418315273",
       "4": "0x6b69d738aFfca7b1F548c5fB92E80581375Dc0E5",
       "42": "0xE23Bd5D126e0df28ec2edFCaDd774dBBe6079306",
@@ -1503,6 +1507,7 @@ module.exports = {
   },
   "Guardian": {
     "addresses": {
+      "1": "0x99819FEDBcF9986824BbE094df928887D1a443a6",
       "3": "0xA36C627Af27014fE65a7B6eb25af690167019082",
       "4": "0x93CDf7113223D72363c3aaD7335A89795e27FD7d",
       "42": "0x8603097a92723a6a4f6F60755Be7aA2B84b44190",
@@ -1513,6 +1518,7 @@ module.exports = {
   },
   "VirtualPaymentManager": {
     "addresses": {
+      "1": "0x07bFa78D66D104fe9936201427400b0D78A2284c",
       "3": "0x5a337ca042b7aee3b27d8a27594B9F989690D05E",
       "4": "0x062e8393FD758fE45a83806533aEe3410eC160Bd",
       "42": "0x4e7696Ff86eAb00Cc08d05776045f81dcc9e7151",

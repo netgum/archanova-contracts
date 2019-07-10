@@ -25,6 +25,10 @@ module.exports = {
       provider,
       network_id: '*',
     },
+    main: {
+      provider,
+      network_id: '1',
+    },
     ropsten: {
       provider,
       network_id: '3',

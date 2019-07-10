@@ -21,8 +21,8 @@ import {
 } from '@archanova/contracts'; 
 
 console.log(
-  'AccountProvider rinkeby address:', 
-  getContractAddress(ContractNames.AccountProvider, '4'),
+  'AccountProvider mainnet address:', 
+  getContractAddress(ContractNames.AccountProvider, '1'),
 );
 console.log(
   'AccountProvider kovan address:', 
@@ -77,7 +77,7 @@ $ npm i
 #### Start Migration:
 
 ```bash
-# testnets
+$ npm run migrate:main
 $ npm run migrate:ropsten
 $ npm run migrate:rinkeby
 $ npm run migrate:kovan
