@@ -2,7 +2,6 @@ pragma solidity ^0.5.10;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
 import "../address/AddressLibrary.sol";
 
 /**
@@ -35,8 +34,12 @@ contract VirtualPaymentManager {
   uint256 public depositWithdrawalLockPeriod;
 
   string constant ERR_INVALID_SIGNATURE = "Invalid signature";
+  string constant ERR_INVALID_OWNER = "Invalid owner";
   string constant ERR_INVALID_VALUE = "Invalid value";
   string constant ERR_INVALID_TOKEN = "Invalid token";
+
+  bytes4 constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
+  bytes4 constant ERC20_TRANSFER_FROM = bytes4(keccak256("transferFrom(address,address,uint256)"));
 
   constructor(
     address _guardian,
@@ -55,7 +58,27 @@ contract VirtualPaymentManager {
   }
 
   function() external payable {
+    require(
+      msg.value > 0,
+      ERR_INVALID_VALUE
+    );
+
     deposits[msg.sender][address(0)].value = deposits[msg.sender][address(0)].value.add(msg.value);
+
+    emit NewDeposit(msg.sender, address(0), msg.value);
+  }
+
+  function depositTo(address _owner) payable public {
+    require(
+      _owner != address(0),
+      ERR_INVALID_OWNER
+    );
+    require(
+      msg.value > 0,
+      ERR_INVALID_VALUE
+    );
+
+    deposits[_owner][address(0)].value = deposits[_owner][address(0)].value.add(msg.value);
 
     emit NewDeposit(msg.sender, address(0), msg.value);
   }
@@ -65,12 +88,37 @@ contract VirtualPaymentManager {
       _token != address(0),
       ERR_INVALID_TOKEN
     );
+    require(
+      _value > 0,
+      ERR_INVALID_VALUE
+    );
 
-    IERC20(_token).transferFrom(msg.sender, address(this), _value);
+    _transferTokenFrom(_token, msg.sender, _value);
 
     deposits[msg.sender][_token].value = deposits[msg.sender][_token].value.add(_value);
 
     emit NewDeposit(msg.sender, _token, _value);
+  }
+
+  function depositTokenTo(address _owner, address _token, uint256 _value) public {
+    require(
+      _owner != address(0),
+      ERR_INVALID_OWNER
+    );
+    require(
+      _token != address(0),
+      ERR_INVALID_TOKEN
+    );
+    require(
+      _value > 0,
+      ERR_INVALID_VALUE
+    );
+
+    _transferTokenFrom(_token, msg.sender, _value);
+
+    deposits[_owner][_token].value = deposits[_owner][_token].value.add(_value);
+
+    emit NewDeposit(_owner, _token, _value);
   }
 
   function depositPayment(
@@ -208,7 +256,32 @@ contract VirtualPaymentManager {
       address payable _payableRecipient = address(uint160(_recipient));
       _payableRecipient.transfer(_value);
     } else {
-      IERC20(_token).transfer(_recipient, _value);
+      _transferToken(_token, _recipient, _value);
     }
+  }
+
+  function _transferToken(address _token, address _recipient, uint256 _value) private {
+    bool _success;
+
+    (_success,) = _token.call(abi.encodeWithSelector(
+      ERC20_TRANSFER,
+      _recipient,
+      _value
+    ));
+
+    require(_success);
+  }
+
+  function _transferTokenFrom(address _token, address _sender, uint256 _value) private {
+    bool _success;
+
+    (_success,) = _token.call(abi.encodeWithSelector(
+      ERC20_TRANSFER_FROM,
+      _sender,
+      address(this),
+      _value
+    ));
+
+    require(_success);
   }
 }
