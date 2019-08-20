@@ -22,6 +22,7 @@ function getEnsNameHash(name) {
 }
 
 module.exports = {
+  sha3,
   getEnsLabelHash,
   getEnsNameHash,
 };

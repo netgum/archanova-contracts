@@ -1,4 +1,4 @@
-const { getEnsLabelHash, getEnsNameHash } = require('../shared/utils');
+const { getEnsLabelHash, getEnsNameHash, sha3 } = require('../shared/utils');
 const { ensTopLabels, virtualPaymentLockPeriod, ensAddress } = require('../config');
 
 const Account = artifacts.require('Account');
@@ -101,6 +101,7 @@ module.exports = async (deployer, network, addresses) => {
 
   printLabel('Env variables');
 
+  printEnv('ETH_ACCOUNT_BYTE_CODE_HASH', sha3(Account.binary));
   printEnv('ETH_ACCOUNT_PROVIDER_ADDRESS', AccountProvider.address);
   printEnv('ETH_ACCOUNT_PROXY_ADDRESS', AccountProxy.address);
   printEnv('ETH_ACCOUNT_FRIEND_RECOVERY_ADDRESS', AccountFriendRecovery.address);
